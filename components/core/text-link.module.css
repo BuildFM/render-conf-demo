@@ -1,0 +1,13 @@
+.link {
+  composes: micro from "../type.module.css";
+  display: inline-block;
+  letter-spacing: 0.18em;
+  text-decoration: none;
+  padding-bottom: var(--space-1);
+  border-bottom: var(--border-width) solid currentColor;
+  transition: color var(--transition-color), border-color var(--transition-color);
+}
+.link:hover { color: var(--link-hover); }
+
+.signal { color: var(--text-signal); }
+.dim { color: var(--text-dim); }

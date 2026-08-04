@@ -1,0 +1,26 @@
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-7);
+  padding-bottom: var(--space-3);
+}
+
+.ruleSignal { border-bottom: var(--border-width-strong) solid var(--border-signal); }
+.ruleDefault { border-bottom: var(--border-width) solid var(--border-default); }
+
+.title {
+  composes: sectionTitle from "../type.module.css";
+  color: var(--text-primary);
+}
+
+.meta {
+  composes: micro from "../type.module.css";
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.metaSignal {
+  composes: meta;
+  color: var(--text-signal);
+}

@@ -1,0 +1,64 @@
+.table { composes: table from "../type.module.css"; }
+
+.colNo { width: 56px; }
+.colTechnique { width: 150px; }
+.colTime { width: 110px; }
+
+.th {
+  composes: micro from "../type.module.css";
+  padding: var(--space-3) var(--space-5) var(--space-3) 0;
+  font-weight: var(--body-weight);
+  text-align: left;
+  color: var(--text-dim);
+  border-bottom: var(--border-width) solid var(--border-default);
+}
+.thRight {
+  composes: th;
+  padding-right: 0;
+  text-align: right;
+}
+
+.row {
+  transition: background var(--transition-color);
+}
+.row:hover { background: var(--surface-raised); }
+.row:last-child td,
+.row:last-child th { border-bottom: 0; }
+
+.row > td,
+.row > th {
+  padding: 15px var(--space-5) 15px 0;
+  vertical-align: baseline;
+  border-bottom: var(--border-width) solid var(--border-faint);
+}
+
+.no {
+  composes: data from "../type.module.css";
+  color: var(--text-signal);
+}
+
+.title {
+  composes: rowTitle from "../type.module.css";
+  text-align: left;
+  color: var(--text-primary);
+}
+.titleLink {
+  color: inherit;
+  text-decoration: none;
+}
+.titleLink:hover { color: var(--text-signal); }
+
+.technique {
+  composes: data from "../type.module.css";
+  color: var(--text-dim);
+}
+
+.value {
+  composes: data from "../type.module.css";
+  color: var(--text-body);
+}
+.valueRight {
+  composes: value;
+  padding-right: 0;
+  text-align: right;
+}

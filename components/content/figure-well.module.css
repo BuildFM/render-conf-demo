@@ -1,0 +1,51 @@
+.well {
+  position: relative;
+  margin: 0;
+  background: var(--surface-raised);
+  border: var(--border-width) solid var(--border-default);
+  overflow: hidden;
+}
+
+.portrait {
+  width: 440px;
+  height: 520px;
+}
+.landscape {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+}
+.fill {
+  width: 100%;
+  height: 100%;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Degradation, not a broken image: the alt text becomes the placeholder. */
+.empty {
+  composes: micro from "../type.module.css";
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-5);
+  color: var(--text-dim);
+}
+
+.tag {
+  composes: micro from "../type.module.css";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  background: var(--surface-signal);
+  color: var(--text-on-signal);
+  padding: 7px var(--space-4);
+  font-weight: 500;
+}

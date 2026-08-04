@@ -1,0 +1,12 @@
+.panel {
+  border-left: var(--border-width-strong) solid var(--border-signal);
+  padding-left: var(--space-5);
+}
+
+.label { margin-bottom: var(--space-3); }
+
+.body {
+  composes: body from "../type.module.css";
+  max-width: var(--measure-body);
+  color: var(--text-body);
+}

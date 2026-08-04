@@ -1,0 +1,74 @@
+.panel {
+  border: var(--border-width) solid var(--border-default);
+  padding: var(--space-9);
+}
+
+.eyebrow {
+  composes: microWide from "../type.module.css";
+  color: var(--text-signal);
+  margin-bottom: var(--space-4);
+}
+
+.title {
+  composes: displayM from "../type.module.css";
+  max-width: var(--measure-title);
+  color: var(--text-primary);
+}
+
+.body {
+  composes: body from "../type.module.css";
+  margin-top: var(--space-5);
+  max-width: var(--measure-body);
+  color: var(--text-body);
+}
+
+.form {
+  display: flex;
+  gap: 0;
+  max-width: 460px;
+  margin-top: var(--space-7);
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: var(--border-width) solid var(--border-default);
+  border-right: 0;
+  padding: var(--space-3) var(--space-4);
+  font-family: var(--font-mono);
+  font-weight: var(--body-weight);
+  font-size: var(--data-size);
+  color: var(--text-primary);
+  outline-offset: 2px;
+}
+
+.button {
+  background: var(--surface-signal);
+  color: var(--text-on-signal);
+  border: 0;
+  padding: var(--space-3) var(--space-6);
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" var(--button-wdth), "wght" var(--button-wght);
+  font-size: var(--button-size-sm);
+  letter-spacing: var(--button-track);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background var(--transition-color);
+}
+.button:hover { background: var(--paper); }
+
+.success {
+  composes: data from "../type.module.css";
+  margin: var(--space-7) 0 0;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-signal);
+}
+
+.error {
+  composes: micro from "../type.module.css";
+  margin: var(--space-3) 0 0;
+  letter-spacing: 0.08em;
+  color: var(--text-signal);
+}

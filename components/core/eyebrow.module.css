@@ -1,0 +1,8 @@
+.sm { composes: micro from "../type.module.css"; }
+.md { composes: microWide from "../type.module.css"; }
+.lg { composes: microWidest from "../type.module.css"; }
+
+.signal { color: var(--text-signal); }
+.dim { color: var(--text-dim); }
+.primary { color: var(--text-primary); }
+.onSignal { color: var(--text-on-signal); }

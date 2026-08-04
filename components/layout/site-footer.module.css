@@ -1,0 +1,10 @@
+.footer {
+  composes: microWide from "../type.module.css";
+  background: var(--surface-signal);
+  color: var(--text-on-signal);
+  padding: var(--space-4) var(--inset-section);
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-7);
+  font-weight: 500;
+}

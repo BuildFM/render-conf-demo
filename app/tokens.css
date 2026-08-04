@@ -1,0 +1,204 @@
+/* Mise design tokens — single source of truth.
+   Ported from the design kit's reference/styles.css (six files, concatenated and
+   ordered). Imported ONCE, in app/layout.tsx. Nothing else declares a value.
+
+   rev-02 changes from the kit, all projection-legibility fixes. See README §6.
+     --body-weight        300 -> 400
+     font-smoothing       antialiased -> auto
+     --micro-size         11px -> 11.5px, and the 10px/10.5px sizes are gone
+     --data-size          13px -> 15px
+     --body-sm/xs-size    removed; body is one size and it is 15px
+   There is deliberately no token for text below the floor. If you need one,
+   the answer is that you don't. */
+
+/* --- fonts ---------------------------------------------------------------- */
+/* Self-hosted. Archivo MUST be the variable cut — the wdth axis carries the
+   identity and a static cut will not reproduce the display type. */
+@font-face {
+  font-family: "Archivo";
+  src: url("/fonts/archivo-variable.woff2") format("woff2-variations");
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-style: normal;
+  font-display: swap;
+}
+/* Two weights only: 400 for everything, 500 for the acid strips. Weight 300
+   left the system at rev-02 — see README §Type floor. */
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("/fonts/ibm-plex-mono-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("/fonts/ibm-plex-mono-500.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  color-scheme: dark;
+
+  /* --- colour · eight values, one of them a signal --------------------------
+     Nothing gets added. A second accent would dissolve the identity. */
+  --ink-0: #0B0C0A;        /* page ground, warm-neutral near-black */
+  --ink-1: #14160F;        /* raised ground: image wells, row hover */
+  --rule-1: #2A2C24;       /* primary rule */
+  --rule-2: #191B14;       /* faint rule, dense table rows */
+  --paper: #F2F3EE;        /* primary text */
+  --paper-muted: #C6C9BC;  /* body copy, table values */
+  --paper-dim: #8A8E7E;    /* micro-labels, meta — contrast floor */
+  --acid: #D8FF47;         /* the single signal */
+
+  --surface-page: var(--ink-0);
+  --surface-raised: var(--ink-1);
+  --surface-signal: var(--acid);
+
+  --text-primary: var(--paper);
+  --text-body: var(--paper-muted);
+  --text-dim: var(--paper-dim);
+  --text-signal: var(--acid);
+  --text-on-signal: var(--ink-0);
+
+  --border-default: var(--rule-1);
+  --border-faint: var(--rule-2);
+  --border-signal: var(--acid);
+  --border-hover: var(--acid);
+
+  --link: var(--acid);
+  --link-hover: var(--paper);
+  --focus-ring: var(--acid);
+
+  /* --- type ----------------------------------------------------------------
+     Two families, hard contrast between them. Archivo, ultra-condensed and
+     uppercase, does every heading and numeral. IBM Plex Mono does everything
+     else. There is no third face and no serif anywhere. */
+  --font-display: "Archivo", "Archivo Condensed", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --display-xl-size: 104px;  /* hero headline only, one per page */
+  --display-xl-lh: 0.82;
+  --display-xl-track: -0.02em;
+  --display-xl-wdth: 62;
+  --display-xl-wght: 800;
+
+  --display-l-size: 44px;    /* the signal-band statement register */
+  --display-l-lh: 1.02;
+  --display-l-track: -0.015em;
+  --display-l-wdth: 68;
+  --display-l-wght: 700;
+
+  --display-m-size: 38px;    /* block headings inside bordered panels */
+  --display-m-lh: 0.92;
+  --display-m-track: -0.015em;
+  --display-m-wdth: 66;
+  --display-m-wght: 800;
+
+  --display-s-size: 30px;    /* card titles */
+  --display-s-lh: 0.92;
+  --display-s-track: -0.01em;
+  --display-s-wdth: 66;
+  --display-s-wght: 800;
+
+  --numeral-size: 44px;      /* big acid index numerals */
+  --numeral-lh: 0.8;
+  --numeral-wdth: 62;
+  --numeral-wght: 800;
+
+  --row-size: 19px;          /* table rows, wider so it holds up small */
+  --row-track: 0.01em;
+  --row-wdth: 74;
+  --row-wght: 700;
+
+  --section-size: 17px;      /* rule-underlined section titles */
+  --section-track: 0.16em;
+  --section-wdth: 70;
+  --section-wght: 800;
+
+  --button-size: 15px;
+  --button-size-sm: 13px;
+  --button-track: 0.16em;
+  --button-wdth: 70;
+  --button-wght: 700;
+
+  --body-size: 15px;         /* the floor. mono body is never smaller. */
+  --body-lh: 1.6;
+  --body-lh-loose: 1.8;
+  --body-weight: 400;
+
+  --data-size: 15px;         /* table values, quantities, dates */
+
+  --micro-size: 11.5px;      /* micro-label floor */
+  --micro-track: 0.16em;
+  --micro-track-wide: 0.2em;
+  --micro-track-widest: 0.24em;
+  --micro-lh: 1.7;
+
+  --measure-body: 52ch;
+  --measure-wide: 62ch;
+  --measure-note: 78ch;
+  --measure-statement: 26ch;
+  --measure-lede: 56ch;
+  --measure-title: 20ch;
+
+  /* --- spacing · observed in the design, not snapped to a 4px grid --------- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 14px;
+  --space-5: 20px;
+  --space-6: 22px;
+  --space-7: 24px;
+  --space-8: 28px;
+  --space-9: 32px;
+  --space-10: 40px;
+  --space-11: 48px;
+  --space-12: 52px;
+  --space-13: 56px;
+
+  --inset-section: 40px;   /* every full-bleed section insets its content by this */
+  --rhythm-section: 56px;  /* vertical gap between sections */
+  --canvas-width: 1180px;  /* the design canvas; desktop only */
+  --grid-gap: 28px;
+
+  /* --- rules · they do the work boxes and shadows usually do --------------- */
+  --radius: 0;                     /* zero. everywhere. no exceptions. */
+  --border-width: 1px;
+  --border-width-strong: 2px;      /* acid rule under section heads, fork rules */
+  --shadow: none;                  /* there are no shadows in this system */
+  --transition-color: 130ms linear; /* colour and border only — never transform */
+}
+
+/* --- global ground -------------------------------------------------------- */
+body {
+  margin: 0;
+  background: var(--surface-page);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  /* NOT antialiased: it optically thins mono at projection distance. */
+  -webkit-font-smoothing: auto;
+}
+
+*, *::before, *::after {
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+a {
+  color: var(--link);
+  text-decoration: none;
+  transition: color var(--transition-color), border-color var(--transition-color);
+}
+a:hover { color: var(--link-hover); }
+
+/* Required, not optional — on everything interactive. */
+:focus-visible {
+  outline: var(--border-width-strong) solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+input::placeholder { color: var(--text-dim); }
+::selection { background: var(--acid); color: var(--ink-0); }

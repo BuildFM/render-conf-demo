@@ -1,0 +1,117 @@
+/* The type scale, once. Every component `composes` from here rather than
+   restating font-family + size + line-height + tracking + variation settings.
+   These classes carry NO colour and NO spacing — those are the component's
+   business, and a type class that also sets colour is how drift starts. */
+
+.displayXl {
+  margin: 0;
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" var(--display-xl-wdth), "wght" var(--display-xl-wght);
+  font-size: var(--display-xl-size);
+  line-height: var(--display-xl-lh);
+  letter-spacing: var(--display-xl-track);
+  text-transform: uppercase;
+}
+
+.displayL {
+  margin: 0;
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" var(--display-l-wdth), "wght" var(--display-l-wght);
+  font-size: var(--display-l-size);
+  line-height: var(--display-l-lh);
+  letter-spacing: var(--display-l-track);
+  text-transform: uppercase;
+}
+
+.displayM {
+  margin: 0;
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" var(--display-m-wdth), "wght" var(--display-m-wght);
+  font-size: var(--display-m-size);
+  line-height: var(--display-m-lh);
+  letter-spacing: var(--display-m-track);
+  text-transform: uppercase;
+}
+
+.displayS {
+  margin: 0;
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" var(--display-s-wdth), "wght" var(--display-s-wght);
+  font-size: var(--display-s-size);
+  line-height: var(--display-s-lh);
+  letter-spacing: var(--display-s-track);
+  text-transform: uppercase;
+}
+
+.numeral {
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" var(--numeral-wdth), "wght" var(--numeral-wght);
+  font-size: var(--numeral-size);
+  line-height: var(--numeral-lh);
+}
+
+/* Row title: the one display setting that appears inside tables. */
+.rowTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" var(--row-wdth), "wght" var(--row-wght);
+  font-size: var(--row-size);
+  letter-spacing: var(--row-track);
+  text-transform: uppercase;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" var(--section-wdth), "wght" var(--section-wght);
+  font-size: var(--section-size);
+  letter-spacing: var(--section-track);
+  text-transform: uppercase;
+}
+
+.body {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-weight: var(--body-weight);
+  font-size: var(--body-size);
+  line-height: var(--body-lh);
+}
+
+/* Data: values, dates, quantities. Same size as body, tighter leading. */
+.data {
+  font-family: var(--font-mono);
+  font-weight: var(--body-weight);
+  font-size: var(--data-size);
+  line-height: 1.4;
+}
+
+.micro {
+  font-family: var(--font-mono);
+  font-weight: var(--body-weight);
+  font-size: var(--micro-size);
+  letter-spacing: var(--micro-track);
+  text-transform: uppercase;
+}
+
+.microWide {
+  font-family: var(--font-mono);
+  font-weight: var(--body-weight);
+  font-size: var(--micro-size);
+  letter-spacing: var(--micro-track-wide);
+  text-transform: uppercase;
+}
+
+.microWidest {
+  font-family: var(--font-mono);
+  font-weight: var(--body-weight);
+  font-size: var(--micro-size);
+  letter-spacing: var(--micro-track-widest);
+  text-transform: uppercase;
+}
+
+/* Table primitives. Real tables, fixed layout, colgroup carries the widths. */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}

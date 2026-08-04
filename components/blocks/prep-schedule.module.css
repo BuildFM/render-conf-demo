@@ -1,0 +1,63 @@
+.title { margin-bottom: var(--space-7); }
+
+.day {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: var(--space-7);
+  align-items: start;
+  padding: var(--space-4) 0;
+  border-top: var(--border-width) solid var(--border-default);
+}
+
+/* One acid rule in the whole block: the day the shared base is made. */
+.dayShared {
+  composes: day;
+  border-top: var(--border-width-strong) solid var(--border-signal);
+}
+
+.dayLast { border-bottom: var(--border-width) solid var(--border-default); }
+
+.dayName {
+  composes: sectionTitle from "../type.module.css";
+  color: var(--text-primary);
+}
+
+.dayNote { margin-top: var(--space-2); }
+
+.tasks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.task {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-5);
+  align-items: baseline;
+}
+
+.taskText {
+  composes: body from "../type.module.css";
+  color: var(--text-body);
+}
+
+.taskTextShared {
+  composes: taskText;
+  color: var(--text-signal);
+}
+
+.collapsed { display: block; }
+
+.collapsedTitle {
+  composes: rowTitle from "../type.module.css";
+  color: var(--text-primary);
+}
+
+.collapsedBody {
+  composes: body from "../type.module.css";
+  margin-top: var(--space-2);
+  color: var(--text-body);
+}
+
+.signal { color: var(--text-signal); }

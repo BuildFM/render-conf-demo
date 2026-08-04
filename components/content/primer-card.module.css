@@ -1,0 +1,83 @@
+.card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border: var(--border-width) solid var(--border-default);
+  transition: border-color var(--transition-color);
+}
+.card:hover { border-color: var(--border-hover); }
+
+.top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: var(--space-5) var(--space-6) 0;
+}
+
+.numeral {
+  composes: numeral from "../type.module.css";
+  color: var(--text-signal);
+}
+
+.kicker {
+  composes: micro from "../type.module.css";
+  color: var(--text-dim);
+}
+
+.main { padding: var(--space-6); }
+
+.eyebrow {
+  composes: microWide from "../type.module.css";
+  color: var(--text-signal);
+  margin-bottom: var(--space-3);
+}
+
+.title {
+  composes: displayS from "../type.module.css";
+  color: var(--text-primary);
+}
+
+.body {
+  composes: body from "../type.module.css";
+  margin-top: var(--space-4);
+  color: var(--text-body);
+}
+
+/* The only ordered list in the system. Acid numeral at row scale, never bullets. */
+.steps {
+  list-style: none;
+  margin: var(--space-5) 0 0;
+  padding: var(--space-4) 0 0;
+  border-top: var(--border-width) solid var(--border-default);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.step {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: var(--space-4);
+  align-items: baseline;
+}
+
+.stepNo {
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" var(--row-wdth), "wght" var(--row-wght);
+  font-size: var(--row-size);
+  color: var(--text-signal);
+}
+
+.stepText {
+  composes: body from "../type.module.css";
+  color: var(--text-body);
+}
+
+.meta {
+  composes: micro from "../type.module.css";
+  margin-top: var(--space-5);
+  padding-top: var(--space-3);
+  border-top: var(--border-width) solid var(--border-default);
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+}

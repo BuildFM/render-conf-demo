@@ -1,0 +1,65 @@
+.control {
+  border: var(--border-width) solid var(--border-default);
+  padding: var(--space-5) var(--space-6);
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: var(--space-7);
+  align-items: center;
+}
+
+.labels {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.label {
+  composes: microWide from "../type.module.css";
+  color: var(--text-signal);
+}
+
+.note {
+  composes: micro from "../type.module.css";
+  color: var(--text-dim);
+}
+
+.stepper {
+  display: flex;
+  align-items: stretch;
+  border: var(--border-width) solid var(--border-default);
+}
+
+.step {
+  background: transparent;
+  border: 0;
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--data-size);
+  color: var(--text-signal);
+  cursor: pointer;
+  transition: background var(--transition-color), color var(--transition-color);
+}
+.step:hover:not(:disabled) {
+  background: var(--surface-signal);
+  color: var(--text-on-signal);
+}
+.step:disabled {
+  color: var(--text-dim);
+  cursor: not-allowed;
+}
+
+.value {
+  composes: rowTitle from "../type.module.css";
+  min-width: 52px;
+  padding: var(--space-2) 0;
+  text-align: center;
+  color: var(--text-primary);
+  border-left: var(--border-width) solid var(--border-default);
+  border-right: var(--border-width) solid var(--border-default);
+}
+
+.factor {
+  composes: micro from "../type.module.css";
+  color: var(--text-dim);
+  white-space: nowrap;
+}

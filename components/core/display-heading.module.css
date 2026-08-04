@@ -1,0 +1,8 @@
+.xl { composes: displayXl from "../type.module.css"; }
+.l { composes: displayL from "../type.module.css"; }
+.m { composes: displayM from "../type.module.css"; }
+.s { composes: displayS from "../type.module.css"; }
+
+.primary { color: var(--text-primary); }
+.onSignal { color: var(--text-on-signal); }
+.balance { text-wrap: balance; }

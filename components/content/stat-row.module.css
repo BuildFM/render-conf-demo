@@ -1,0 +1,15 @@
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-5);
+  padding-top: var(--space-4);
+  border-top: var(--border-width) solid var(--border-default);
+  font-family: var(--font-mono);
+  font-weight: var(--body-weight);
+  font-size: var(--data-size);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.value { color: var(--text-primary); }

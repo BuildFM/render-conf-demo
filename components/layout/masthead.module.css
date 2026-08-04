@@ -1,0 +1,77 @@
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-7);
+  padding: var(--space-4) var(--inset-section);
+  border-bottom: var(--border-width) solid var(--border-default);
+}
+
+.wordmark {
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 66, "wght" 800;
+  font-size: 26px;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text-signal);
+  text-decoration: none;
+}
+
+.nav {
+  display: flex;
+  gap: var(--space-8);
+}
+
+.navItem {
+  composes: micro from "../type.module.css";
+  letter-spacing: 0.18em;
+  text-decoration: none;
+  color: var(--text-dim);
+}
+.navItem:hover { color: var(--text-primary); }
+
+.navItemActive {
+  composes: navItem;
+  color: var(--text-primary);
+}
+
+/* Search sits between nav and stamp. Square, flush, no icon. */
+.search {
+  display: flex;
+  align-items: stretch;
+}
+
+.searchInput {
+  width: 200px;
+  background: transparent;
+  border: var(--border-width) solid var(--border-default);
+  border-right: 0;
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-mono);
+  font-weight: var(--body-weight);
+  font-size: var(--data-size);
+  color: var(--text-primary);
+  outline-offset: 2px;
+}
+
+.searchButton {
+  background: var(--surface-signal);
+  color: var(--text-on-signal);
+  border: 0;
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" var(--button-wdth), "wght" var(--button-wght);
+  font-size: var(--button-size-sm);
+  letter-spacing: var(--button-track);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background var(--transition-color);
+}
+.searchButton:hover { background: var(--paper); }
+
+.stamp {
+  composes: micro from "../type.module.css";
+  color: var(--text-dim);
+  white-space: nowrap;
+}

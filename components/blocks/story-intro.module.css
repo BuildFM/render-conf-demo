@@ -1,0 +1,22 @@
+.full { display: block; }
+
+.collapsed { display: block; }
+
+.label { margin-bottom: var(--space-3); }
+
+.body {
+  composes: body from "../type.module.css";
+  max-width: var(--measure-lede);
+  color: var(--text-body);
+}
+
+/* collapsed keeps the whole first sentence — clamping mid-sentence is worse
+   than a two-line paragraph. */
+.bodyCollapsed {
+  composes: body;
+  max-width: var(--measure-note);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}

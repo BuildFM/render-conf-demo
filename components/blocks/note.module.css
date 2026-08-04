@@ -1,0 +1,21 @@
+/* LeftoversNote, FromYourHistory and SeasonalNote are one line each and share
+   this shell. They are separate components because their export names are what
+   the model asks for, but there is only one drawing. */
+
+.note {
+  composes: body from "../type.module.css";
+  display: flex;
+  gap: var(--space-4);
+  align-items: baseline;
+  color: var(--text-body);
+}
+
+.glyph { color: var(--text-signal); }
+
+.subject { color: var(--text-primary); }
+
+.label {
+  composes: micro from "../type.module.css";
+  color: var(--text-signal);
+  white-space: nowrap;
+}

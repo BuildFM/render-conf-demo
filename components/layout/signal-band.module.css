@@ -1,0 +1,23 @@
+.band {
+  background: var(--surface-signal);
+  color: var(--text-on-signal);
+  padding: var(--space-9) var(--inset-section);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-10);
+  align-items: end;
+}
+.withLines { grid-template-columns: 1fr auto; }
+
+.statement {
+  composes: displayL from "../type.module.css";
+  max-width: var(--measure-statement);
+  text-wrap: balance;
+}
+
+.lines {
+  composes: micro from "../type.module.css";
+  line-height: var(--micro-lh);
+  letter-spacing: 0.08em;
+  text-align: right;
+}

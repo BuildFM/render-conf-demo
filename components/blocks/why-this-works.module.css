@@ -1,0 +1,55 @@
+.full {
+  border-top: var(--border-width-strong) solid var(--border-signal);
+  padding-top: var(--space-7);
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: var(--space-11);
+  align-items: start;
+}
+
+.kicker { margin-bottom: var(--space-5); }
+
+.principle { max-width: var(--measure-statement); }
+
+.body {
+  composes: body from "../type.module.css";
+  color: var(--text-body);
+}
+
+.evidence { margin-top: var(--space-7); }
+
+.evidenceRow {
+  display: grid;
+  grid-template-columns: 1fr 150px;
+  gap: var(--space-5);
+  align-items: baseline;
+  padding: var(--space-3) 0;
+  border-bottom: var(--border-width) solid var(--border-faint);
+}
+.evidenceRow:first-child { border-top: var(--border-width) solid var(--border-default); }
+.evidenceRow:last-child { border-bottom: 0; }
+
+.evidenceTitle {
+  composes: rowTitle from "../type.module.css";
+  color: var(--text-primary);
+}
+
+.evidenceValue {
+  composes: data from "../type.module.css";
+  text-align: right;
+  color: var(--text-body);
+}
+
+.collapsed { display: block; }
+
+.collapsedPrinciple {
+  composes: rowTitle from "../type.module.css";
+  margin-top: var(--space-3);
+  color: var(--text-primary);
+}
+
+.collapsedList {
+  composes: body from "../type.module.css";
+  margin-top: var(--space-2);
+  color: var(--text-body);
+}

@@ -1,0 +1,90 @@
+.card { border: var(--border-width) solid var(--border-default); }
+
+.head { padding: var(--space-8); }
+
+.headRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-7);
+}
+
+.title { margin-top: var(--space-4); }
+
+.shared {
+  composes: body from "../type.module.css";
+  margin-top: var(--space-4);
+  max-width: var(--measure-wide);
+  color: var(--text-body);
+}
+
+/* The fork itself: a labelled acid rule across the card. */
+.forkRule {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-5);
+  align-items: center;
+  padding: 0 var(--space-8) var(--space-4);
+}
+
+.forkLabel { white-space: nowrap; }
+
+.rule {
+  height: var(--border-width-strong);
+  background: var(--acid);
+}
+
+.branches {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.branch {
+  padding: var(--space-7) var(--space-8) var(--space-8);
+  border-top: var(--border-width) solid var(--border-default);
+}
+.branchLeft {
+  composes: branch;
+  border-right: var(--border-width) solid var(--border-default);
+}
+
+.branchLabel { margin-bottom: var(--space-3); }
+
+.branchTitle {
+  composes: rowTitle from "../type.module.css";
+  color: var(--text-primary);
+}
+
+.branchBody {
+  composes: body from "../type.module.css";
+  margin-top: var(--space-3);
+  color: var(--text-body);
+}
+
+/* collapsed: the fork survives as a single acid divider. */
+.collapsed { display: block; }
+
+.collapsedTitle {
+  composes: rowTitle from "../type.module.css";
+  color: var(--text-primary);
+}
+
+.collapsedSplit {
+  display: grid;
+  grid-template-columns: 1fr var(--border-width-strong) 1fr;
+  gap: var(--space-5);
+  margin-top: var(--space-4);
+  align-items: start;
+}
+
+.collapsedBranch {
+  composes: body from "../type.module.css";
+  color: var(--text-body);
+}
+
+.branchMark { color: var(--text-signal); }
+
+.divider {
+  background: var(--acid);
+  align-self: stretch;
+}

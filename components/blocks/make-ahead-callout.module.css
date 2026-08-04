@@ -1,0 +1,18 @@
+.panel {
+  border-top: var(--border-width-strong) solid var(--border-signal);
+  border-bottom: var(--border-width) solid var(--border-default);
+  padding: var(--space-5) 0;
+}
+
+.label { margin-bottom: var(--space-3); }
+
+.step {
+  composes: rowTitle from "../type.module.css";
+  color: var(--text-primary);
+}
+
+.recipe {
+  composes: micro from "../type.module.css";
+  margin-top: var(--space-3);
+  color: var(--text-dim);
+}

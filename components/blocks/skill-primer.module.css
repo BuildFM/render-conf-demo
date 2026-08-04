@@ -1,0 +1,24 @@
+/* collapsed drops the steps and the numeral, keeps the title. */
+.collapsed {
+  border: var(--border-width) solid var(--border-default);
+  padding: var(--space-6);
+}
+
+.collapsedHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-5);
+  margin-bottom: var(--space-4);
+}
+
+.collapsedTitle {
+  composes: rowTitle from "../type.module.css";
+  color: var(--text-primary);
+}
+
+.collapsedBody {
+  composes: body from "../type.module.css";
+  margin-top: var(--space-3);
+  color: var(--text-body);
+}

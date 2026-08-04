@@ -1,0 +1,73 @@
+.full {
+  border: var(--border-width) solid var(--border-default);
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  min-height: 300px;
+}
+
+/* No image on the recipe: the card degrades to one column rather than leaving
+   an empty well. */
+.fullNoImage {
+  composes: full;
+  grid-template-columns: 1fr;
+  min-height: 0;
+}
+
+.well {
+  border: 0;
+  border-right: var(--border-width) solid var(--border-default);
+}
+
+.body { padding: var(--space-8); }
+
+.kicker { margin-bottom: var(--space-4); }
+
+.summary {
+  composes: body from "../type.module.css";
+  margin-top: var(--space-4);
+  max-width: var(--measure-body);
+  color: var(--text-body);
+}
+
+.stats { margin-top: var(--space-6); }
+
+/* collapsed: the index row, same column rhythm as IndexTable */
+.row {
+  display: grid;
+  grid-template-columns: 56px 1fr 170px 110px 110px;
+  gap: var(--space-5);
+  align-items: baseline;
+  padding: 15px 0;
+  border-top: var(--border-width) solid var(--border-default);
+  border-bottom: var(--border-width) solid var(--border-faint);
+}
+
+.no {
+  composes: data from "../type.module.css";
+  color: var(--text-signal);
+}
+
+.rowTitle {
+  composes: rowTitle from "../type.module.css";
+  color: var(--text-primary);
+}
+
+.rowValue {
+  composes: data from "../type.module.css";
+  color: var(--text-body);
+}
+.rowValueRight {
+  composes: rowValue;
+  text-align: right;
+}
+
+/* oneline: one sentence, an acid arrow, nothing else */
+.oneline {
+  composes: body from "../type.module.css";
+  display: flex;
+  gap: var(--space-4);
+  align-items: baseline;
+  color: var(--text-body);
+}
+
+.arrow { color: var(--text-signal); }

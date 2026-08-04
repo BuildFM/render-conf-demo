@@ -1,0 +1,56 @@
+.columns {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--grid-gap);
+  align-items: start;
+}
+
+.table { composes: table from "../type.module.css"; }
+
+.colQty { width: 90px; }
+
+/* Section names are the only acid in the block. */
+.caption {
+  composes: microWide from "../type.module.css";
+  text-align: left;
+  color: var(--text-signal);
+  padding-bottom: var(--space-3);
+  border-bottom: var(--border-width) solid var(--border-default);
+}
+
+.row > th,
+.row > td {
+  padding: var(--space-3) 0;
+  vertical-align: baseline;
+  border-bottom: var(--border-width) solid var(--border-faint);
+}
+.row:last-child > th,
+.row:last-child > td { border-bottom: 0; }
+
+.name {
+  composes: data from "../type.module.css";
+  font-weight: var(--body-weight);
+  text-align: left;
+  color: var(--text-body);
+}
+
+.qty {
+  composes: data from "../type.module.css";
+  text-align: right;
+  color: var(--text-primary);
+}
+
+.collapsed { display: block; }
+
+.collapsedHead {
+  composes: microWide from "../type.module.css";
+  color: var(--text-signal);
+  padding-bottom: var(--space-3);
+  border-bottom: var(--border-width) solid var(--border-default);
+}
+
+.collapsedList {
+  composes: body from "../type.module.css";
+  margin-top: var(--space-3);
+  color: var(--text-body);
+}

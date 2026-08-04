@@ -1,0 +1,82 @@
+.full { display: block; }
+
+.kicker { margin-bottom: var(--space-5); }
+
+.log { margin-top: var(--space-9); }
+
+.logHead {
+  composes: micro from "../type.module.css";
+  display: grid;
+  grid-template-columns: 110px 1fr 1.1fr;
+  gap: var(--space-7);
+  padding: var(--space-3) 0;
+  border-bottom: var(--border-width) solid var(--border-default);
+  color: var(--text-dim);
+}
+
+.logRow {
+  display: grid;
+  grid-template-columns: 110px 1fr 1.1fr;
+  gap: var(--space-7);
+  align-items: baseline;
+  padding: var(--space-4) 0;
+  border-bottom: var(--border-width) solid var(--border-faint);
+}
+.logRow:last-child { border-bottom: 0; }
+
+.date {
+  composes: data from "../type.module.css";
+  color: var(--text-signal);
+}
+
+.attempt {
+  composes: rowTitle from "../type.module.css";
+  color: var(--text-primary);
+}
+
+.changed {
+  composes: body from "../type.module.css";
+  color: var(--text-body);
+}
+
+/* The untried variable is the point of the block: acid rule, Display L. */
+.untried {
+  margin-top: var(--space-8);
+  padding-top: var(--space-5);
+  border-top: var(--border-width-strong) solid var(--border-signal);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-7);
+  align-items: baseline;
+}
+
+.collapsed { display: block; }
+
+.collapsedHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-7);
+}
+
+.collapsedTitle {
+  composes: rowTitle from "../type.module.css";
+  color: var(--text-primary);
+}
+
+.collapsedLatest {
+  composes: data from "../type.module.css";
+  color: var(--text-body);
+  white-space: nowrap;
+}
+
+.inlineUntried {
+  composes: body from "../type.module.css";
+  margin-top: var(--space-3);
+  display: flex;
+  gap: var(--space-4);
+  align-items: baseline;
+  color: var(--text-body);
+}
+
+.arrow { color: var(--text-signal); }
