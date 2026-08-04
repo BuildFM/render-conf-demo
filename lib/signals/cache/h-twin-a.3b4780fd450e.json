@@ -1,0 +1,38 @@
+{
+  "characterization": "They cook almost every night, one dish at a sitting, and open two or three candidates before committing. The repertoire is deep rather than wide: flattened quail, charred cabbage, white beans and brothy beans come back again and again, while chicken under a brick gets opened constantly and cooked only occasionally — it has become the thing they consider rather than the thing they make. Two dishes they never get past the opening step, and both are the same kind of dish. Their stated dairy-free constraint doesn't hold up: brown butter is a fixture.",
+  "salientInference": "Across ninety days you only bail at step one when the sauce is the dish — butter and anchovy inside something else are fine.",
+  "signals": {
+    "cookedRecipeIds": [
+      "033",
+      "039",
+      "038",
+      "041",
+      "031",
+      "034",
+      "036",
+      "035",
+      "037",
+      "032"
+    ],
+    "repeatRecipeIds": [
+      "033",
+      "039",
+      "038",
+      "031",
+      "034",
+      "036",
+      "035",
+      "037",
+      "041"
+    ],
+    "abandonedRecipeIds": [
+      "030",
+      "040"
+    ],
+    "neverOpens": [],
+    "makeAheadPattern": false,
+    "expandsTechnique": true,
+    "abandonThreshold": null,
+    "rhythm": "Near-nightly single dish, no batch day; deliberates over two or three options, then falls back on the same handful"
+  }
+}

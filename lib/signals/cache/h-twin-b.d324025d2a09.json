@@ -1,0 +1,34 @@
+{
+  "characterization": "This household cooks constantly and on a tight rotation: bread, a pot of beans, potatoes, cabbage, over and over, with two or three dishes stacked on Saturday and Sunday and a single dish every other weekday. Every dish they finish has five or fewer real steps of shopping behind it — four to six ingredients. They do open the ambitious weighted-sear dishes, chicken under a brick and pressed pork belly, again and again, and back out before step one every time. Yet they cook weighted cabbage happily, which means the pressing-and-searing method isn't what they're refusing.",
+  "salientInference": "Across ninety days you keep opening the brick-pressed meat dishes and cooking weighted cabbage instead — the seven-item shopping list stops you, never the technique.",
+  "signals": {
+    "cookedRecipeIds": [
+      "036",
+      "038",
+      "035",
+      "032"
+    ],
+    "repeatRecipeIds": [
+      "036",
+      "038",
+      "035",
+      "032"
+    ],
+    "abandonedRecipeIds": [
+      "041",
+      "034",
+      "031",
+      "037"
+    ],
+    "neverOpens": [
+      "033 Flattened quail, two ways",
+      "039 Charred cabbage, brown butter",
+      "040 Cacio e pepe, properly",
+      "030 Anchovy butter, for everything"
+    ],
+    "makeAheadPattern": true,
+    "expandsTechnique": true,
+    "abandonThreshold": 7,
+    "rhythm": "Weekend stacking — two or three dishes Saturday and Sunday, one simple dish every other weekday"
+  }
+}

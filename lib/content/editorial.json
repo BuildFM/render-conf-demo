@@ -1,6 +1,5 @@
 {
   "_": "Authored prose. The composer selects which of this appears and for whom; it never writes any of it. This is what makes the safety property structural rather than procedural — the model cannot state a falsehood about a dish because it never states anything about a dish.",
-
   "techniques": {
     "weighted-sear": {
       "label": "Weighted sear",
@@ -193,9 +192,7 @@
       ]
     }
   },
-
   "_techniques_continued": "emulsion, dry-heat, knife-work and ferment. Every technique tag on a recipe needs an entry here or the blocks keyed to it silently never resolve — scripts/check-content.mjs enforces it.",
-
   "threadNarrative": {
     "_": "One line per attempt, authored. What the cook changed that time. The composer picks which attempts form a thread; it does not write these.",
     "041:first": "The first one. Pan too crowded, skin steamed.",
@@ -205,14 +202,11 @@
     "033": "Started skin-down cold. Rendered further before colour set.",
     "034": "Cast iron on top, no foil. Weight went up to 4 kg."
   },
-
   "untried": {
     "weighted-sear": "Starting the pan cold"
   },
-
   "forks": {
     "_": "Both branches of every dish that divides. The composer decides whether a fork is worth showing this household; it never writes either branch. Branch A is always the one without the constraint — it is not the compromise, and the copy should never imply it is.",
-
     "039": {
       "forkPoint": "Step 4 of 6",
       "shared": "The cabbage is quartered, oiled, salted and cooked cut-face down until the flat side is genuinely black at the edges. That takes twenty minutes and no attention, and nothing before this point differs.",
@@ -229,7 +223,6 @@
         }
       ]
     },
-
     "038": {
       "forkPoint": "Step 6 of 9",
       "shared": "Beans, aromatics and three hours are shared by everyone at the table. Nothing before step six differs, so the pot stays one pot until the last twenty minutes.",
@@ -246,7 +239,6 @@
         }
       ]
     },
-
     "033": {
       "forkPoint": "Step 3 of 5",
       "shared": "Both birds go in skin-down under the weight and stay there for six minutes without being touched. The flip is where they part company, and by then the skin has already done what it is going to do.",
@@ -263,7 +255,6 @@
         }
       ]
     },
-
     "031": {
       "forkPoint": "Step 2 of 5",
       "shared": "The beans and their liquid are already made. Greens are stripped, garlic sliced, chilli measured — everything from here is under twenty minutes and the two versions take exactly the same time.",
@@ -281,7 +272,6 @@
       ]
     }
   },
-
   "substitutions": {
     "_": "What a gap can become. Authored, never generated — a wrong substitution is a ruined dinner, and this is exactly the class of fact the composer is not allowed to invent.",
     "Pancetta, in a piece": "Anchovy and chilli in the same quantity of oil. Different route to the same depth, and the dish stops being about pork.",
@@ -295,7 +285,6 @@
     "Fennel seed": "Caraway, half the quantity. It is a different dish and a good one.",
     "Capers": "Green olives, chopped, rinsed. Less sharp, so add lemon."
   },
-
   "evidence": {
     "_": "One line per recipe when it appears as evidence under a principle: the tool that dish uses to solve the shared problem.",
     "041": "Weight",
@@ -303,5 +292,12 @@
     "039": "Cut face",
     "035": "Surface area",
     "034": "Weight and time"
+  },
+  "seasonal": {
+    "_": "One line, tying tonight to the time of year. Keyed by month; the composer picks whether to show one, never what it says.",
+    "05": "Cabbage is at its best for three more weeks, and then it is not.",
+    "06": "The first proper tomatoes are two weeks away. Nothing you do now improves them.",
+    "07": "Heat like this is an argument for cooking once and eating three times.",
+    "08": "Stone fruit is peaking, which is the only reason to turn the oven on this week."
   }
 }

@@ -261,8 +261,12 @@ export const resolveBlock = (
     case "StoryIntro":
       return fail("no editorial authored");
 
-    case "SeasonalNote":
-      return fail("no editorial authored");
+    case "SeasonalNote": {
+      const month = new Date().toISOString().slice(5, 7);
+      const text = (editorial.seasonal as unknown as Record<string, string>)[month];
+      if (!text) return fail(`no seasonal line for month ${month}`);
+      return ok({ text });
+    }
 
     default:
       return fail("no resolver");

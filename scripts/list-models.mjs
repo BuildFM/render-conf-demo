@@ -1,17 +1,10 @@
-/**
- * What the gateway actually offers. Model slugs move; the two in .env.example are
- * a best guess until this has been run once against a real key.
- *
- *   node --env-file=.env.local scripts/list-models.mjs
- */
-import { gateway } from "ai";
-
-if (!process.env.AI_GATEWAY_API_KEY && !process.env.VERCEL_OIDC_TOKEN) {
-  console.error("No AI_GATEWAY_API_KEY or VERCEL_OIDC_TOKEN. See .env.example.");
-  process.exit(1);
+/** What the gateway actually offers. Slugs move; do not trust a hardcoded guess.
+ *    node --env-file=.env.local scripts/list-models.mjs */
+if (!process.env.AI_GATEWAY_API_KEY && process.env.VERCEL_AI_GATEWAY_API_KEY) {
+  process.env.AI_GATEWAY_API_KEY = process.env.VERCEL_AI_GATEWAY_API_KEY;
 }
-
+const { gateway } = await import("ai");
 const { models } = await gateway.getAvailableModels();
-const anthropic = models.filter((m) => m.id.startsWith("anthropic/"));
+const anth = models.filter((m) => m.id.startsWith("anthropic/"));
 console.log(`${models.length} models available. Anthropic:\n`);
-for (const m of anthropic) console.log(`  ${m.id}`);
+for (const m of anth) console.log("  " + m.id);

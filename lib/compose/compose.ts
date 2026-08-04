@@ -4,6 +4,7 @@ import type { Manifest, ComponentSpec } from "@/lib/manifest/load";
 import type { Recipe } from "@/lib/types";
 import type { Household, Profile } from "@/lib/signals/types";
 import type { FiredObligation } from "./gates";
+import { hasGatewayKey } from "@/lib/env";
 
 /**
  * CALL 2 — composition. What should this page be?
@@ -37,6 +38,7 @@ export type LayoutSpec = z.infer<typeof layoutSpecSchema>;
 
 const describe = (c: ComponentSpec) =>
   `${c.name} — ${c.intent} Treatments: ${c.treatments.join("/")}. Max ${c.adjacency.maxPerPage} per page.` +
+  (c.slots.requires ? ` NEEDS ${c.slots.requires}` : "") +
   (c.adjacency.neverWith?.length ? ` Never with: ${c.adjacency.neverWith.join(", ")}.` : "") +
   (c.adjacency.mustFollow?.length ? ` Must follow: ${c.adjacency.mustFollow.join(" or ")}.` : "");
 
@@ -58,18 +60,21 @@ THE VOCABULARY YOU MAY USE — already filtered to what this household qualifies
 Anything not on this list does not exist for this page.
 ${eligible.map(describe).join("\n")}
 
-ALREADY PLACED, NOT YOUR DECISION
-${fired.length ? fired.map((f) => `${f.name} for "${f.props.recipeTitle}" — ${f.placement}`).join("\n") : "(none fired)"}
+ALREADY PLACED BY THE APPLICATION — DO NOT INCLUDE THESE IN YOUR OUTPUT
+These are obligations. They are rendered automatically for any recipe you place.
+Listing one in your blocks array is an error and the whole spec is rejected.
+${fired.length ? fired.map((f) => `${f.name} — fires automatically if you place "${f.props.recipeTitle}"`).join("\n") : "(none fired)"}
 
-ASSEMBLIES — these move as one block. Include both members adjacently and in this
-order, or neither.
+ASSEMBLIES — one unit, not two blocks. Include EVERY member, adjacent, in this
+exact order, or include none of them. A partial assembly is rejected.
 ${manifest.assemblies.map((a) => `${a.name}: ${a.members.join(" then ")}`).join("\n")}
 
 INVARIANTS
 ${manifest.invariants.map((i) => `- ${i}`).join("\n")}
 
-THE CONTENT
-${recipes.map((r) => `${r.id} ${r.title} — ${r.technique.join("/")}; serves ${r.yield}; ${r.activeTime} min active, ${r.totalTime} total; ${r.ingredientCount} ingredients; allergens ${r.allergens.join("/") || "none"}${r.makeAhead ? "; make-ahead" : ""}${r.forkPoint ? "; forks" : ""}`).join("\n")}
+THE CONTENT — "techniques" is a list of individual tags. When a block takes a
+techniqueTag, pass exactly one of them, never a joined string.
+${recipes.map((r) => `${r.id} ${r.title} — techniques: ${r.technique.join(", ")}; serves ${r.yield}; ${r.activeTime} min active, ${r.totalTime} total; ${r.ingredientCount} ingredients; allergens ${r.allergens.join("/") || "none"}${r.makeAhead ? "; make-ahead" : ""}${r.forkPoint ? "; forks" : ""}`).join("\n")}
 
 THIS HOUSEHOLD
 ${profile.characterization}
@@ -97,7 +102,7 @@ you keep returning to". Under 25 words.
 /** The cheap, per-view call. See the note in lib/signals/profile.ts. */
 const COMPOSE_MODEL = process.env.MISE_COMPOSE_MODEL ?? "anthropic/claude-sonnet-5";
 
-const hasKey = () => Boolean(process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN);
+const hasKey = hasGatewayKey;
 
 export const compose = async (args: {
   manifest: Manifest;
@@ -115,6 +120,16 @@ export const compose = async (args: {
     model: COMPOSE_MODEL,
     schema: layoutSpecSchema,
     temperature: 0,
+    // Arrangement, not judgment: the judgment already happened in call 1, which
+    // runs nightly and keeps its reasoning budget. Measured on the compose call:
+    // 16.5s -> 4.8s, output tokens 1525 -> 290, which is what makes "fast and
+    // cheap" true when said on stage.
+    //
+    // NOT free, though. With thinking off the model needs more repair passes —
+    // it has emitted an obligation it may not place and split an assembly, both
+    // caught by validation. Keep an eye on whether the repair rate is acceptable
+    // before treating this as settled.
+    providerOptions: { anthropic: { thinking: { type: "disabled" } } },
     prompt:
       prompt(args.manifest, args.eligible, args.recipes, args.profile, args.household, args.fired) +
       (args.repairNotes?.length

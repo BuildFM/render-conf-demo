@@ -4,6 +4,7 @@ import { createHash } from "node:crypto";
 import { generateObject } from "ai";
 import { profileSchema, type CookEvent, type Household, type Profile } from "./types";
 import type { Recipe } from "@/lib/types";
+import { hasGatewayKey } from "@/lib/env";
 
 /**
  * CALL 1 — inference. What kind of cook is this?
@@ -61,7 +62,7 @@ would not have thought to say. Never a count.
  *  run `node scripts/list-models.mjs` to see what the gateway actually offers. */
 const PROFILE_MODEL = process.env.MISE_PROFILE_MODEL ?? "anthropic/claude-opus-5";
 
-const hasKey = () => Boolean(process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN);
+const hasKey = hasGatewayKey;
 
 export const getProfile = async (
   household: Household,

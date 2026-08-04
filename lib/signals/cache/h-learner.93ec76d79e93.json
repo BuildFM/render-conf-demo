@@ -1,0 +1,23 @@
+{
+  "characterization": "This person browses far more than they cook — two to four recipes opened and dismissed in a sitting, roughly twice a week, with an actual cook about every two weeks. Every single dish they finished uses weight or pressing to do the work: chicken under a brick, weighted cabbage, flattened quail, pressed pork belly. They stalled on the brick chicken mid-cook early on, then came back two months later, read the technique note again, and finished it. The dishes they open most and never make — cacio e pepe, the green sauce, anchovy butter — are the ones where you have to judge an emulsion by feel with nothing holding the food down.",
+  "salientInference": "Across ninety days you only finished dishes where weight does the work; the emulsions you reopen ask you to judge by feel.",
+  "signals": {
+    "cookedRecipeIds": [
+      "041",
+      "032",
+      "033",
+      "034"
+    ],
+    "repeatRecipeIds": [
+      "041"
+    ],
+    "abandonedRecipeIds": [
+      "041"
+    ],
+    "neverOpens": [],
+    "makeAheadPattern": false,
+    "expandsTechnique": true,
+    "abandonThreshold": null,
+    "rhythm": "Long browsing stretches, one committed cook roughly every other week, almost always midweek"
+  }
+}
