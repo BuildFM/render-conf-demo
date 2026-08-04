@@ -2,7 +2,6 @@ import { readFile, writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 import { createHash } from "node:crypto";
 import { generateObject } from "ai";
-import { anthropic } from "@ai-sdk/anthropic";
 import { profileSchema, type CookEvent, type Household, type Profile } from "./types";
 import type { Recipe } from "@/lib/types";
 
@@ -56,7 +55,13 @@ Write the salient inference as something they would recognise about themselves a
 would not have thought to say. Never a count.
 `;
 
-const hasKey = () => Boolean(process.env.ANTHROPIC_API_KEY);
+/** Routed through the Vercel AI Gateway: a plain "provider/model" string routes
+ *  automatically, authenticated by AI_GATEWAY_API_KEY (or a Vercel OIDC token).
+ *  Overridable by env so the slug can be corrected without a code change —
+ *  run `node scripts/list-models.mjs` to see what the gateway actually offers. */
+const PROFILE_MODEL = process.env.MISE_PROFILE_MODEL ?? "anthropic/claude-opus-5";
+
+const hasKey = () => Boolean(process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN);
 
 export const getProfile = async (
   household: Household,
@@ -80,7 +85,7 @@ export const getProfile = async (
 
   const started = Date.now();
   const { object } = await generateObject({
-    model: anthropic("claude-opus-5"),
+    model: PROFILE_MODEL,
     schema: profileSchema,
     temperature: 0,
     prompt: prompt(household, events, recipes)

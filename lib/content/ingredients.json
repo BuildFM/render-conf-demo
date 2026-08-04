@@ -1,0 +1,96 @@
+{
+  "_": "Keyed by recipe id. Sections are the order you walk a shop, which is the order ShoppingList groups by. Counts here are the source of truth for Recipe.ingredientCount — scripts/check-content.mjs enforces that they agree.",
+
+  "041": [
+    { "name": "Chicken, spatchcocked", "qty": "1.6 kg", "section": "Butcher" },
+    { "name": "Lemons", "qty": "2", "section": "Produce" },
+    { "name": "Rosemary", "qty": "1 sprig", "section": "Produce" },
+    { "name": "Garlic", "qty": "1 head", "section": "Produce" },
+    { "name": "Olive oil", "qty": "3 tbsp", "section": "Dry goods" },
+    { "name": "Flaky salt", "qty": "2 tbsp", "section": "Dry goods" },
+    { "name": "Black pepper", "qty": "1 tsp", "section": "Dry goods" }
+  ],
+  "040": [
+    { "name": "Tonnarelli or spaghetti", "qty": "200 g", "section": "Dry goods" },
+    { "name": "Pecorino Romano", "qty": "120 g", "section": "Dairy" },
+    { "name": "Black peppercorns", "qty": "2 tbsp", "section": "Dry goods" },
+    { "name": "Sea salt", "qty": "for the water", "section": "Dry goods" }
+  ],
+  "039": [
+    { "name": "Savoy cabbage", "qty": "1", "section": "Produce" },
+    { "name": "Butter", "qty": "80 g", "section": "Dairy" },
+    { "name": "Lemon", "qty": "1", "section": "Produce" },
+    { "name": "Capers", "qty": "2 tbsp", "section": "Dry goods" },
+    { "name": "Olive oil", "qty": "2 tbsp", "section": "Dry goods" },
+    { "name": "Flaky salt", "qty": "to finish", "section": "Dry goods" }
+  ],
+  "038": [
+    { "name": "Cannellini, dried", "qty": "500 g", "section": "Dry goods" },
+    { "name": "Garlic", "qty": "1 head", "section": "Produce" },
+    { "name": "Rosemary", "qty": "2 sprigs", "section": "Produce" },
+    { "name": "Olive oil", "qty": "100 ml", "section": "Dry goods" },
+    { "name": "Bay leaves", "qty": "2", "section": "Dry goods" },
+    { "name": "Sea salt", "qty": "to taste", "section": "Dry goods" }
+  ],
+  "037": [
+    { "name": "Flat parsley", "qty": "2 bunches", "section": "Produce" },
+    { "name": "Anchovy fillets", "qty": "6", "section": "Fish" },
+    { "name": "Capers", "qty": "2 tbsp", "section": "Dry goods" },
+    { "name": "Garlic", "qty": "1 clove", "section": "Produce" },
+    { "name": "Lemon", "qty": "1", "section": "Produce" },
+    { "name": "Olive oil", "qty": "150 ml", "section": "Dry goods" },
+    { "name": "Red wine vinegar", "qty": "1 tbsp", "section": "Dry goods" }
+  ],
+  "036": [
+    { "name": "Strong flour", "qty": "500 g", "section": "Dry goods" },
+    { "name": "Dried yeast", "qty": "7 g", "section": "Dry goods" },
+    { "name": "Olive oil", "qty": "80 ml", "section": "Dry goods" },
+    { "name": "Flaky salt", "qty": "1 tbsp", "section": "Dry goods" },
+    { "name": "Water", "qty": "400 ml", "section": "Dry goods" }
+  ],
+  "035": [
+    { "name": "Small waxy potatoes", "qty": "1 kg", "section": "Produce" },
+    { "name": "Olive oil", "qty": "60 ml", "section": "Dry goods" },
+    { "name": "Rosemary", "qty": "2 sprigs", "section": "Produce" },
+    { "name": "Flaky salt", "qty": "2 tsp", "section": "Dry goods" }
+  ],
+  "034": [
+    { "name": "Pork belly, boned", "qty": "1.5 kg", "section": "Butcher" },
+    { "name": "Fennel seed", "qty": "1 tbsp", "section": "Dry goods" },
+    { "name": "Garlic", "qty": "1 head", "section": "Produce" },
+    { "name": "Bay leaves", "qty": "3", "section": "Dry goods" },
+    { "name": "White wine", "qty": "250 ml", "section": "Dry goods" },
+    { "name": "Chicken stock", "qty": "500 ml", "section": "Dry goods" },
+    { "name": "Olive oil", "qty": "2 tbsp", "section": "Dry goods" },
+    { "name": "Sea salt", "qty": "2 tbsp", "section": "Dry goods" }
+  ],
+  "033": [
+    { "name": "Quail, spatchcocked", "qty": "4", "section": "Butcher" },
+    { "name": "Honey", "qty": "2 tbsp", "section": "Dry goods" },
+    { "name": "Sherry vinegar", "qty": "1 tbsp", "section": "Dry goods" },
+    { "name": "Thyme", "qty": "4 sprigs", "section": "Produce" },
+    { "name": "Olive oil", "qty": "2 tbsp", "section": "Dry goods" },
+    { "name": "Flaky salt", "qty": "to finish", "section": "Dry goods" }
+  ],
+  "032": [
+    { "name": "Hispi cabbage", "qty": "2", "section": "Produce" },
+    { "name": "Olive oil", "qty": "3 tbsp", "section": "Dry goods" },
+    { "name": "Chilli flakes", "qty": "1 tsp", "section": "Dry goods" },
+    { "name": "Flaky salt", "qty": "to finish", "section": "Dry goods" }
+  ],
+  "031": [
+    { "name": "Cooked white beans", "qty": "600 g", "section": "Dry goods" },
+    { "name": "Cavolo nero", "qty": "2 bunches", "section": "Produce" },
+    { "name": "Pancetta, in a piece", "qty": "120 g", "section": "Butcher" },
+    { "name": "Garlic", "qty": "2 cloves", "section": "Produce" },
+    { "name": "Chilli flakes", "qty": "1 tsp", "section": "Dry goods" },
+    { "name": "Olive oil", "qty": "3 tbsp", "section": "Dry goods" },
+    { "name": "Lemon", "qty": "1", "section": "Produce" }
+  ],
+  "030": [
+    { "name": "Butter, softened", "qty": "250 g", "section": "Dairy" },
+    { "name": "Anchovy fillets", "qty": "10", "section": "Fish" },
+    { "name": "Lemon", "qty": "1", "section": "Produce" },
+    { "name": "Black pepper", "qty": "1 tsp", "section": "Dry goods" }
+  ]
+}

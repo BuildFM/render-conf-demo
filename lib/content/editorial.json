@@ -66,6 +66,108 @@
         }
       ]
     },
+    "emulsion": {
+      "label": "Emulsion",
+      "note": "Two things that do not want to combine, held together by agitation and something starchy. It is a physical state, not an ingredient, and it can be lost in seconds.",
+      "principle": "Starch is the peacemaker",
+      "whyBody": "Fat and water will not mix on their own and every dish here makes them anyway. The agent is nearly always starch — from pasta water, from beans, from the dish itself — and once you know to look for it you stop pouring it down the sink.",
+      "primer": {
+        "title": "Off the heat,\nthen agitate",
+        "body": "Heat is what breaks an emulsion. Almost every failure is a pan that was still on the flame when it should not have been.",
+        "steps": [
+          "Take the pan off the heat before the fat goes in.",
+          "Add fat in stages, not all at once.",
+          "Agitate constantly — a whisk, a spoon, or the pan itself.",
+          "If it looks tight, a spoon of starchy water loosens it. Water alone will not."
+        ],
+        "readingTime": "Read · 5 min",
+        "numeral": "04"
+      },
+      "troubleshooting": [
+        {
+          "symptom": "It split into oil and grit",
+          "cause": "Too hot. The fat came out of suspension and the solids seized.",
+          "fix": "Off the heat, a splash of the starchy water, and beat hard. It usually comes back once."
+        },
+        {
+          "symptom": "Thin and watery",
+          "cause": "Not enough starch, or the water was fresh rather than the water the pasta cooked in.",
+          "fix": "Reduce for a minute more. If it is still thin, the water was the problem, not the technique."
+        }
+      ]
+    },
+    "dry-heat": {
+      "label": "Dry heat",
+      "note": "No liquid in the pan, so the surface can pass 100°C and start browning. The moment you add liquid you have changed technique.",
+      "principle": "Contact is the whole job",
+      "whyBody": "Water boils at a temperature too low for browning to happen. Everything here is about getting the surface dry and keeping it that way long enough for the interesting reactions to start.",
+      "primer": {
+        "title": "Nothing wet\nin the pan",
+        "body": "Crowding is the usual culprit: each piece releases moisture, and a full pan traps it.",
+        "steps": [
+          "Preheat properly. A cold pan steams whatever goes into it.",
+          "One layer, with gaps. Two batches beat one bad one.",
+          "Salt at the end if the surface matters."
+        ],
+        "readingTime": "Read · 4 min",
+        "numeral": "05"
+      },
+      "troubleshooting": [
+        {
+          "symptom": "Everything went limp instead of browning",
+          "cause": "The pan was crowded and the food steamed in its own moisture.",
+          "fix": "Take half out and go again. What is already limp will not come back."
+        }
+      ]
+    },
+    "knife-work": {
+      "label": "Knife work",
+      "note": "Chopped and blended are different foods. A blade cuts; a blender bruises and emulsifies, and it is why a chopped sauce looks like ingredients and a blended one looks like paint.",
+      "principle": "You should see what went in",
+      "whyBody": "Texture is information. A sauce you can read — parsley here, caper there — tells you what it will taste like before you taste it, which is most of what makes it feel handmade.",
+      "primer": {
+        "title": "Chop it,\ndon't blend it",
+        "body": "The only real skill is keeping the pieces even. Uneven pieces make some bites bitter and others bland.",
+        "steps": [
+          "Sharp knife. A dull one bruises herbs and turns them black.",
+          "Gather and re-chop twice, no more. Over-chopping makes a paste.",
+          "Dress at the end so nothing sits in acid and dulls."
+        ],
+        "readingTime": "Read · 3 min",
+        "numeral": "06"
+      },
+      "troubleshooting": [
+        {
+          "symptom": "The herbs went dark and bitter",
+          "cause": "A dull blade, or the sauce sat in lemon too long before serving.",
+          "fix": "Acid last, always. Nothing improves in the twenty minutes after it goes in."
+        }
+      ]
+    },
+    "ferment": {
+      "label": "Ferment",
+      "note": "Time doing work you would otherwise have to do yourself. Cold slows it down without stopping it, which is what turns a schedule into an option.",
+      "principle": "Time is the ingredient",
+      "whyBody": "Everything here trades attention for waiting. The fridge is not a pause button, it is a slower speed, and it is why a long proof needs less of your day rather than more.",
+      "primer": {
+        "title": "Cold buys\nyou the day",
+        "body": "A warm proof needs you present. A cold one needs you to leave, which is easier to arrange.",
+        "steps": [
+          "Mix, then straight into the fridge. No warm rest first.",
+          "Twenty-four hours minimum; seventy-two is still fine.",
+          "Bring it back to room temperature before it goes near heat."
+        ],
+        "readingTime": "Read · 5 min",
+        "numeral": "07"
+      },
+      "troubleshooting": [
+        {
+          "symptom": "Dense, no bubbles",
+          "cause": "It went into the oven cold, or the yeast was dead before it started.",
+          "fix": "Two hours out of the fridge first. If it never rose at all, the yeast was the problem."
+        }
+      ]
+    },
     "braise": {
       "label": "Braise",
       "note": "Low heat, enough liquid, and long enough that the collagen gives up. Nothing about it rewards attention after the first twenty minutes.",
@@ -92,6 +194,8 @@
     }
   },
 
+  "_techniques_continued": "emulsion, dry-heat, knife-work and ferment. Every technique tag on a recipe needs an entry here or the blocks keyed to it silently never resolve — scripts/check-content.mjs enforces it.",
+
   "threadNarrative": {
     "_": "One line per attempt, authored. What the cook changed that time. The composer picks which attempts form a thread; it does not write these.",
     "041:first": "The first one. Pan too crowded, skin steamed.",
@@ -104,6 +208,92 @@
 
   "untried": {
     "weighted-sear": "Starting the pan cold"
+  },
+
+  "forks": {
+    "_": "Both branches of every dish that divides. The composer decides whether a fork is worth showing this household; it never writes either branch. Branch A is always the one without the constraint — it is not the compromise, and the copy should never imply it is.",
+
+    "039": {
+      "forkPoint": "Step 4 of 6",
+      "shared": "The cabbage is quartered, oiled, salted and cooked cut-face down until the flat side is genuinely black at the edges. That takes twenty minutes and no attention, and nothing before this point differs.",
+      "branches": [
+        {
+          "label": "Branch A · No dairy",
+          "title": "Capers, lemon and the pan juices",
+          "body": "Lift the wedges out. Into the hot pan go the capers and a squeeze of lemon, and thirty seconds of scraping picks up everything the cabbage left behind. Pour it back over. Sharper than the butter version, and it holds better if it has to wait."
+        },
+        {
+          "label": "Branch B · With dairy",
+          "title": "Brown butter, capers, lemon",
+          "body": "Butter into the same pan, foaming, then quiet, then nutty — about ninety seconds, and it goes from right to wrong in fifteen. Capers in at the colour change, lemon off the heat. Spoon over immediately."
+        }
+      ]
+    },
+
+    "038": {
+      "forkPoint": "Step 6 of 9",
+      "shared": "Beans, aromatics and three hours are shared by everyone at the table. Nothing before step six differs, so the pot stays one pot until the last twenty minutes.",
+      "branches": [
+        {
+          "label": "Branch A · No dairy",
+          "title": "Olive oil and lemon",
+          "body": "Lift two thirds into a second pan. Reduce hard for four minutes, then a long pour of oil off the heat — the starch already in the liquid does the emulsifying, and it will look like it has cream in it."
+        },
+        {
+          "label": "Branch B · With dairy",
+          "title": "Butter and a parmesan rind",
+          "body": "The rind goes in at step four if you know in advance; an hour is enough to matter. Otherwise butter, off the heat, one cube at a time, and do not let it boil after or it will split."
+        }
+      ]
+    },
+
+    "033": {
+      "forkPoint": "Step 3 of 5",
+      "shared": "Both birds go in skin-down under the weight and stay there for six minutes without being touched. The flip is where they part company, and by then the skin has already done what it is going to do.",
+      "branches": [
+        {
+          "label": "Branch A · Plain",
+          "title": "Salt, thyme, and the weight back on",
+          "body": "Flip, weight back on, ninety seconds, out. Thyme into the fat at the flip so it fries rather than steams. This is the one to cook if you have never done it — nothing can go wrong in ninety seconds."
+        },
+        {
+          "label": "Branch B · Glazed",
+          "title": "Honey and sherry vinegar",
+          "body": "Flip, then honey and vinegar straight into the pan, where it will seize and then loosen. Baste for a minute — no longer, because the honey will catch and turn bitter faster than you expect it to."
+        }
+      ]
+    },
+
+    "031": {
+      "forkPoint": "Step 2 of 5",
+      "shared": "The beans and their liquid are already made. Greens are stripped, garlic sliced, chilli measured — everything from here is under twenty minutes and the two versions take exactly the same time.",
+      "branches": [
+        {
+          "label": "Branch A · No meat",
+          "title": "Anchovy and chilli",
+          "body": "Anchovies into warm oil until they dissolve, which takes about two minutes and stops smelling of anchovy almost immediately. Garlic and chilli after. It reads as depth rather than as fish, and nobody at the table will name it."
+        },
+        {
+          "label": "Branch B · With pancetta",
+          "title": "Pancetta, rendered slowly",
+          "body": "Diced pancetta into a cold pan, low heat, ten minutes, until the fat is out and the pieces are hard. Garlic and chilli into that fat. Everything after this step is identical to Branch A."
+        }
+      ]
+    }
+  },
+
+  "substitutions": {
+    "_": "What a gap can become. Authored, never generated — a wrong substitution is a ruined dinner, and this is exactly the class of fact the composer is not allowed to invent.",
+    "Pancetta, in a piece": "Anchovy and chilli in the same quantity of oil. Different route to the same depth, and the dish stops being about pork.",
+    "Cavolo nero": "Any dark brassica that holds its shape. Kale wants two more minutes, chard two fewer.",
+    "Savoy cabbage": "Hispi or pointed cabbage, cut the same way. Anything that gives you a flat cut face.",
+    "Pecorino Romano": "Parmesan works and is milder. Nothing non-dairy emulsifies this sauce — see the allergen notice.",
+    "Butter": "Olive oil, and finish with lemon rather than trying to replace the richness.",
+    "Sherry vinegar": "Red wine vinegar with a pinch of sugar, or cider vinegar on its own.",
+    "Quail, spatchcocked": "Poussin, halved. Same weight, same method, four minutes longer.",
+    "Cannellini, dried": "Any medium white bean. Tinned works and the liquid is worse — add a parmesan rind or accept a thinner broth.",
+    "Fennel seed": "Caraway, half the quantity. It is a different dish and a good one.",
+    "Capers": "Green olives, chopped, rinsed. Less sharp, so add lemon."
   },
 
   "evidence": {

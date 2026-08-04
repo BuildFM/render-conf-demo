@@ -16,8 +16,16 @@ export const computeFacts = (
   recipes: Recipe[],
   profile: Profile,
   household: Household,
-  now: { timeOfDay: "morning" | "afternoon" | "evening" }
+  now: { timeOfDay: "morning" | "afternoon" | "evening" },
+  ingredients: Map<string, { name: string }[]> = new Map()
 ): Facts => {
+  const pantry = household.pantry.map((p) => p.toLowerCase());
+  const pantryGaps = recipes.reduce((n, r) => {
+    const missing = (ingredients.get(r.id) ?? []).filter(
+      (i) => !pantry.some((h) => i.name.toLowerCase().includes(h) || h.includes(i.name.toLowerCase()))
+    );
+    return n + (missing.length > 0 && missing.length <= 2 ? 1 : 0);
+  }, 0);
   const byTechnique = new Map<string, Recipe[]>();
   for (const r of recipes) {
     for (const t of r.technique) byTechnique.set(t, [...(byTechnique.get(t) ?? []), r]);
@@ -54,7 +62,7 @@ export const computeFacts = (
     // state — session and account, not history. Where cart and auth would live.
     "state.timeOfDay": now.timeOfDay,
     "state.pantryKnown": household.pantry.length > 0,
-    "state.pantryGaps": 0, // needs per-recipe ingredient lists — see docs/CONTENT-GAP.md
+    "state.pantryGaps": pantryGaps,
     "state.dietarySplit": household.declared.dietary.length > 0 && household.declared.size > 1,
     "state.allergenMatches": allergenMatches
   };

@@ -17,11 +17,26 @@ import editorial from "@/lib/content/editorial.json";
 type Ed = typeof editorial;
 const techniques = editorial.techniques as unknown as Record<string, Ed["techniques"]["weighted-sear"]>;
 
+type Fork = {
+  forkPoint: string;
+  shared: string;
+  branches: [{ label: string; title: string; body: string }, { label: string; title: string; body: string }];
+};
+
+export type Ingredient = { name: string; qty: string; section: string };
+
 export type Resolved =
   | { ok: true; component: string; props: Record<string, unknown> }
   | { ok: false; component: string; reason: string };
 
 const dateOf = (iso?: string) => (iso ? new Date(iso).toLocaleDateString("en-GB", { day: "2-digit", month: "short" }) : "");
+
+const dedupe = (items: { name: string; qty: string }[]) => {
+  const seen = new Map<string, { name: string; qty: string }>();
+  for (const i of items) if (!seen.has(i.name)) seen.set(i.name, i);
+  return [...seen.values()];
+};
+const dedupeStrings = (xs: string[]) => [...new Set(xs)];
 
 export const resolveBlock = (
   block: LayoutSpec["blocks"][number],
@@ -30,6 +45,8 @@ export const resolveBlock = (
     profile: Profile;
     householdSize: number;
     cookDates: Map<string, string[]>;
+    ingredients: Map<string, Ingredient[]>;
+    pantry: string[];
   }
 ): Resolved => {
   const pick = (ids: string[]) => ids.map((id) => ctx.recipes.get(id)).filter((r): r is Recipe => Boolean(r));
@@ -155,13 +172,91 @@ export const resolveBlock = (
       });
     }
 
-    // Blocks whose content layer is not authored yet — see docs/CONTENT-GAP.md.
-    case "ShoppingList":
-    case "PantryMatch":
-    case "SubstitutionTable":
-    case "PrepSchedule":
-    case "ForkedRecipeCard":
-      return fail("content layer not authored yet");
+    case "ForkedRecipeCard": {
+      const r = rs.find((x) => x.forkPoint);
+      if (!r) return fail("no recipe with a fork point");
+      const fork = (editorial.forks as unknown as Record<string, Fork>)[r.id];
+      if (!fork) return fail(`no branches authored for ${r.id}`);
+      return ok({
+        recipe: { ...r, summary: fork.shared },
+        forkPoint: fork.forkPoint,
+        branches: fork.branches,
+        treatment: block.treatment
+      });
+    }
+
+    case "ShoppingList": {
+      if (rs.length < 2) return fail("needs two or more planned recipes");
+      const bySection = new Map<string, { name: string; qty: string }[]>();
+      for (const r of rs) {
+        for (const i of ctx.ingredients.get(r.id) ?? []) {
+          bySection.set(i.section, [...(bySection.get(i.section) ?? []), { name: i.name, qty: i.qty }]);
+        }
+      }
+      if (!bySection.size) return fail("no ingredients for those recipes");
+      const order = ["Produce", "Butcher", "Fish", "Dairy", "Dry goods"];
+      const sections = [...bySection.entries()]
+        .sort((a, b) => order.indexOf(a[0]) - order.indexOf(b[0]))
+        .map(([name, items]) => ({ name, items: dedupe(items) }));
+      return ok({ sections, treatment: block.treatment });
+    }
+
+    case "PantryMatch": {
+      const pool = rs.length ? rs : [...ctx.recipes.values()];
+      const have = ctx.pantry.map((p) => p.toLowerCase());
+      const missingFor = (r: Recipe) =>
+        (ctx.ingredients.get(r.id) ?? [])
+          .filter((i) => !have.some((h) => i.name.toLowerCase().includes(h) || h.includes(i.name.toLowerCase())))
+          .map((i) => i.name);
+      const matches = pool
+        .map((r) => ({ recipe: r, missing: missingFor(r) }))
+        .sort((a, b) => a.missing.length - b.missing.length)
+        .slice(0, 4);
+      if (!matches.length) return fail("nothing to match");
+      return ok({
+        have: ctx.pantry,
+        missing: dedupeStrings(matches.flatMap((m) => m.missing)).slice(0, 6),
+        matches,
+        treatment: block.treatment
+      });
+    }
+
+    case "SubstitutionTable": {
+      const r = rs[0];
+      if (!r) return fail("no recipe");
+      const have = ctx.pantry.map((p) => p.toLowerCase());
+      const gaps = (ctx.ingredients.get(r.id) ?? []).filter(
+        (i) => !have.some((h) => i.name.toLowerCase().includes(h) || h.includes(i.name.toLowerCase()))
+      );
+      if (!gaps.length) return fail("no gaps against this pantry");
+      const subs = editorial.substitutions as unknown as Record<string, string>;
+      const rows = gaps
+        .filter((g) => subs[g.name])
+        .map((g) => ({ wants: g.name, have: ctx.pantry[0] ?? "—", note: subs[g.name] }));
+      if (!rows.length) return fail("no substitutions authored for those gaps");
+      return ok({ rows, treatment: block.treatment });
+    }
+
+    case "PrepSchedule": {
+      const aheads = rs.filter((r) => r.makeAhead);
+      if (aheads.length < 2) return fail("needs two or more recipes with a make-ahead step");
+      const shared = aheads[0];
+      const days = [
+        {
+          day: "Sunday",
+          tasks: aheads.map((r, i) => ({
+            text: r.makeAhead!,
+            recipeTitle: r.title,
+            sharedBase: i === 0
+          }))
+        },
+        ...aheads.slice(1).map((r, i) => ({
+          day: ["Tuesday", "Wednesday", "Thursday"][i] ?? "Later",
+          tasks: [{ text: `Finish ${r.title.toLowerCase()}.`, recipeTitle: r.title, sharedBase: false }]
+        }))
+      ];
+      return ok({ title: `${shared.title}\nfeeds the week`, days, treatment: block.treatment });
+    }
 
     case "StoryIntro":
       return fail("no editorial authored");

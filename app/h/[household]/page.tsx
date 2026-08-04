@@ -11,6 +11,7 @@ import { registry, registryNames } from "@/lib/render/registry";
 import { getProfile } from "@/lib/signals/profile";
 import type { CookEvent, Household } from "@/lib/signals/types";
 import type { Recipe } from "@/lib/types";
+import type { Ingredient } from "@/lib/render/resolve";
 import { SiteChrome } from "@/components/blocks/site-chrome";
 import { SignalBand } from "@/components/layout/signal-band";
 import { TelemetryRail } from "@/components/stage/telemetry-rail";
@@ -37,6 +38,8 @@ const HomePage = async ({ params }: { params: Promise<{ household: string }> }) 
   const household = households.find((h) => h.id === id);
   if (!household) notFound();
   const events = await read<CookEvent[]>(`lib/signals/logs/${id}.json`);
+  const ingredientsRaw = await read<Record<string, Ingredient[]>>("lib/content/ingredients.json");
+  const ingredients = new Map(Object.entries(ingredientsRaw).filter(([k]) => k !== "_"));
 
   /* the slow call — nightly in principle, cached here */
   const { profile, cached, ms: profileMs } = await getProfile(household, events, recipes);
@@ -45,7 +48,7 @@ const HomePage = async ({ params }: { params: Promise<{ household: string }> }) 
   const now = { timeOfDay: "evening" as const };
 
   /* facts, computed from content + profile + state */
-  const facts = computeFacts(recipes, profile, household, now);
+  const facts = computeFacts(recipes, profile, household, now, ingredients);
 
   /* 03 — obligation conditions are evaluated in code, before the model is consulted.
      Instances attach after composition, to the dishes actually on the page. */
@@ -89,7 +92,10 @@ const HomePage = async ({ params }: { params: Promise<{ household: string }> }) 
   const fired = placeObligations(candidates, onPage);
 
   const resolved = spec.blocks.map((b) =>
-    resolveBlock(b, { recipes: byId, profile, householdSize: household.declared.size, cookDates })
+    resolveBlock(b, {
+      recipes: byId, profile, householdSize: household.declared.size,
+      cookDates, ingredients, pantry: household.pantry
+    })
   );
   const dropped = resolved.filter((r) => !r.ok);
 
@@ -132,7 +138,7 @@ const HomePage = async ({ params }: { params: Promise<{ household: string }> }) 
           ...(drift.ok ? [] : [`drift: ${[...drift.missingComponent, ...drift.missingEntry].join(", ")}`]),
           ...errors.map((e) => `invalid: ${e}`),
           ...dropped.map((d) => `dropped ${d.ok ? "" : `${d.component} — ${d.reason}`}`),
-          ...(live ? [] : ["NO ANTHROPIC_API_KEY — composition is a stub, not a model"])
+          ...(live ? [] : ["NO AI_GATEWAY_API_KEY — composition is a stub, not a model"])
         ]}
       />
     </>

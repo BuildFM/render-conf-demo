@@ -1,5 +1,4 @@
 import { generateObject } from "ai";
-import { anthropic } from "@ai-sdk/anthropic";
 import { z } from "zod";
 import type { Manifest, ComponentSpec } from "@/lib/manifest/load";
 import type { Recipe } from "@/lib/types";
@@ -95,7 +94,10 @@ and it must reference the history — "across the last ninety days", "the four d
 you keep returning to". Under 25 words.
 `;
 
-const hasKey = () => Boolean(process.env.ANTHROPIC_API_KEY);
+/** The cheap, per-view call. See the note in lib/signals/profile.ts. */
+const COMPOSE_MODEL = process.env.MISE_COMPOSE_MODEL ?? "anthropic/claude-sonnet-5";
+
+const hasKey = () => Boolean(process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN);
 
 export const compose = async (args: {
   manifest: Manifest;
@@ -110,7 +112,7 @@ export const compose = async (args: {
 
   const started = Date.now();
   const { object } = await generateObject({
-    model: anthropic("claude-sonnet-5"),
+    model: COMPOSE_MODEL,
     schema: layoutSpecSchema,
     temperature: 0,
     prompt:
