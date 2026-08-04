@@ -3,7 +3,8 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-7);
-  padding: var(--space-4) var(--inset-section);
+  padding-block: var(--space-4);
+  padding-inline: max(var(--inset-section), calc((100% - var(--canvas-width)) / 2));
   border-bottom: var(--border-width) solid var(--border-default);
 }
 
@@ -32,7 +33,12 @@
 .navItem:hover { color: var(--text-primary); }
 
 .navItemActive {
-  composes: navItem;
+  /* Composes `micro` directly. Chaining `composes: navItem` here silently dropped
+     the cross-file composition, so the active item rendered at 16px and lost its
+     uppercase — visibly a different typeface from its neighbours. */
+  composes: micro from "../type.module.css";
+  letter-spacing: 0.18em;
+  text-decoration: none;
   color: var(--text-primary);
 }
 

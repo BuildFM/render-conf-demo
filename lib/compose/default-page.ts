@@ -1,5 +1,10 @@
 import type { LayoutSpec } from "./compose";
 
+/** The default page may label a group. Composed pages do not — each block carries
+ *  its own heading, and a section head the model did not choose would be a design
+ *  decision smuggled in by the renderer. */
+export type DefaultBlock = LayoutSpec["blocks"][number] & { section?: string };
+
 /**
  * The un-personalised home page. It does two jobs.
  *
@@ -21,11 +26,18 @@ import type { LayoutSpec } from "./compose";
  * allowed to make that mistake in the first place. That is the argument in
  * miniature and it happened by accident.
  */
-export const defaultPageSpec = (): LayoutSpec => ({
+export const defaultPageSpec = (): LayoutSpec & { blocks: DefaultBlock[] } => ({
   blocks: [
-    { component: "SeasonalNote", treatment: "oneline", recipeIds: [], axes: [], emphasis: [] },
-    { component: "RecipeCard", treatment: "full", recipeIds: ["041"], axes: [], emphasis: [] },
-    { component: "TonightShortlist", treatment: "collapsed", recipeIds: ["040", "039", "037"], axes: [], emphasis: [] },
+    // Leads with the dish, not with an editorial aside. A one-line seasonal note
+    // opening the page reads as a stray sentence; it closes the page instead.
+    { component: "RecipeCard", treatment: "full", recipeIds: ["041"], section: "This week", axes: [], emphasis: [] },
+    {
+      component: "TonightShortlist",
+      treatment: "collapsed",
+      recipeIds: ["040", "039", "037"],
+      axes: [],
+      emphasis: []
+    },
     {
       component: "WhyThisWorks",
       treatment: "collapsed",
@@ -34,8 +46,12 @@ export const defaultPageSpec = (): LayoutSpec => ({
       axes: [],
       emphasis: []
     },
-    { component: "RecipeCard", treatment: "collapsed", recipeIds: ["038"], axes: [], emphasis: [] },
-    { component: "RecipeCard", treatment: "oneline", recipeIds: ["036"], axes: [], emphasis: [] }
+    // Three collapsed cards read as an index when they sit under one heading and
+    // as leftovers when they do not.
+    { component: "RecipeCard", treatment: "collapsed", recipeIds: ["038"], section: "The index", axes: [], emphasis: [] },
+    { component: "RecipeCard", treatment: "collapsed", recipeIds: ["036"], axes: [], emphasis: [] },
+    { component: "RecipeCard", treatment: "collapsed", recipeIds: ["034"], axes: [], emphasis: [] },
+    { component: "SeasonalNote", treatment: "oneline", recipeIds: [], axes: [], emphasis: [] }
   ],
   rationale: "This is the best home page we can make for everyone."
 });

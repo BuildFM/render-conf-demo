@@ -202,3 +202,10 @@ a:hover { color: var(--link-hover); }
 
 input::placeholder { color: var(--text-dim); }
 ::selection { background: var(--acid); color: var(--ink-0); }
+
+/* The canvas. Full-bleed backgrounds, content capped at 1180px and centred.
+   Every band in the design insets its content by 40px; above 1260px that inset
+   has to grow, or the page stretches to the width of the monitor. */
+.canvas {
+  padding-inline: max(var(--inset-section), calc((100% - var(--canvas-width)) / 2));
+}

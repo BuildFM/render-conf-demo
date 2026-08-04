@@ -1,7 +1,8 @@
 .band {
   background: var(--surface-signal);
   color: var(--text-on-signal);
-  padding: var(--space-9) var(--inset-section);
+  padding-block: var(--space-9);
+  padding-inline: max(var(--inset-section), calc((100% - var(--canvas-width)) / 2));
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--space-10);

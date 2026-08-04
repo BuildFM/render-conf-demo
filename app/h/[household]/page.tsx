@@ -128,7 +128,7 @@ const HomePage = async ({ params }: { params: Promise<{ household: string }> }) 
     <>
       <SiteChrome />
 
-      <main style={{ padding: "40px", display: "flex", flexDirection: "column", gap: "56px" }}>
+      <main className="canvas" style={{ paddingBlock: "56px", display: "flex", flexDirection: "column", gap: "56px" }}>
         {fired.map((f, i) => {
           const Obligation = registry[f.name];
           return <Obligation key={`o${i}`} {...(f.props as Record<string, never>)} />;
