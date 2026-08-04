@@ -1,0 +1,117 @@
+{
+  "_": "Authored prose. The composer selects which of this appears and for whom; it never writes any of it. This is what makes the safety property structural rather than procedural — the model cannot state a falsehood about a dish because it never states anything about a dish.",
+
+  "techniques": {
+    "weighted-sear": {
+      "label": "Weighted sear",
+      "note": "Weight is not about speed. It is about contact — holding the whole surface against the pan at once so it browns in one event instead of in patches.",
+      "principle": "Contact is the whole job",
+      "whyBody": "Browning is a surface event. Every dish here solves the same problem — how to keep food pressed against hot metal long enough for the surface to change — and each one solves it with a different tool. Once you see it as one problem, they stop being separate things to remember.",
+      "primer": {
+        "title": "Press once,\nthen leave it",
+        "body": "Anything that lifts food off the pan — moisture, crowding, fidgeting — costs you colour. The weight solves two of those three, and you have to solve the third yourself.",
+        "steps": [
+          "Dry the surface. Wet food steams before it browns.",
+          "Give each piece a hand's width of pan.",
+          "Press once, then leave it alone for four minutes.",
+          "Move it only when it releases on its own."
+        ],
+        "readingTime": "Read · 6 min",
+        "numeral": "02"
+      },
+      "troubleshooting": [
+        {
+          "symptom": "Skin is pale and rubbery",
+          "cause": "Moisture left on the surface, or the pan never got back to temperature after the food went in.",
+          "fix": "Lift it out, dry the pan, and go again for four minutes with the weight on."
+        },
+        {
+          "symptom": "Browned in patches, not evenly",
+          "cause": "The weight is bridging. It is sitting on the high points and never touching the low ones.",
+          "fix": "Something flat and heavy, not something heavy. A second pan beats a tin any day."
+        },
+        {
+          "symptom": "It sticks and tears when you lift it",
+          "cause": "You moved it before it was ready. Protein releases on its own when the crust forms.",
+          "fix": "Wait. If it resists, it is not done — that is the only test there is."
+        }
+      ]
+    },
+    "browning": {
+      "label": "Browning",
+      "note": "Sugar and protein rearranging under heat. It needs a dry surface and real contact, and it is the difference between cooked and worth eating.",
+      "principle": "Contact is the whole job",
+      "whyBody": "Browning is a surface event. Every dish here solves the same problem — how to keep food pressed against hot metal long enough for the surface to change — and each one solves it with a different tool.",
+      "primer": {
+        "title": "Dry surface,\nreal contact",
+        "body": "Two conditions, and both are about what is between the food and the pan. Water is the enemy of one and air is the enemy of the other.",
+        "steps": [
+          "Pat it dry, then let it sit uncovered if you have time.",
+          "Heat the pan before the fat, and the fat before the food.",
+          "Crowd nothing. Steam from one piece lands on its neighbour."
+        ],
+        "readingTime": "Read · 4 min",
+        "numeral": "01"
+      },
+      "troubleshooting": [
+        {
+          "symptom": "The pan smokes within a minute",
+          "cause": "Too much oil, or the oil went in before the pan was up to heat.",
+          "fix": "A film, not a pool. Most things bring their own fat within two minutes."
+        },
+        {
+          "symptom": "Grey, not brown",
+          "cause": "The pan is crowded and the food is steaming in its own moisture.",
+          "fix": "Two batches. It is faster than one bad batch you have to fix."
+        }
+      ]
+    },
+    "braise": {
+      "label": "Braise",
+      "note": "Low heat, enough liquid, and long enough that the collagen gives up. Nothing about it rewards attention after the first twenty minutes.",
+      "principle": "Time is the ingredient",
+      "whyBody": "The work is at the start and the end. Everything between is the pot doing something you cannot speed up and should not try to.",
+      "primer": {
+        "title": "Start it,\nthen leave",
+        "body": "The temptation is to check. Every check costs heat and none of them change the outcome.",
+        "steps": [
+          "Brown first, properly, or the liquid tastes of nothing.",
+          "Liquid to two thirds, never covered entirely.",
+          "Lid ajar, lowest heat that keeps a lazy bubble."
+        ],
+        "readingTime": "Read · 5 min",
+        "numeral": "03"
+      },
+      "troubleshooting": [
+        {
+          "symptom": "Tough after three hours",
+          "cause": "It was boiling, not simmering. High heat tightens what low heat relaxes.",
+          "fix": "Drop the heat and give it another hour. It will come back."
+        }
+      ]
+    }
+  },
+
+  "threadNarrative": {
+    "_": "One line per attempt, authored. What the cook changed that time. The composer picks which attempts form a thread; it does not write these.",
+    "041:first": "The first one. Pan too crowded, skin steamed.",
+    "041:second": "Dry-brined 24 hr instead of 4. Skin finally shattered.",
+    "041:third": "Same as last time, but the pan went in the oven to preheat. Best yet.",
+    "032": "First time off protein. Same principle, quarter the time.",
+    "033": "Started skin-down cold. Rendered further before colour set.",
+    "034": "Cast iron on top, no foil. Weight went up to 4 kg."
+  },
+
+  "untried": {
+    "weighted-sear": "Starting the pan cold"
+  },
+
+  "evidence": {
+    "_": "One line per recipe when it appears as evidence under a principle: the tool that dish uses to solve the shared problem.",
+    "041": "Weight",
+    "032": "Weight, less of it",
+    "039": "Cut face",
+    "035": "Surface area",
+    "034": "Weight and time"
+  }
+}

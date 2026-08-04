@@ -1,34 +1,189 @@
 {
-  "version": "0.1.0-spike",
+  "version": "1.0.0",
+
+  "_": "The design system, as far as the model is concerned. It never sees CSS, tokens or markup — only this. Four kinds of statement: permissions (what MAY appear), obligations (what MUST), assemblies (what moves as one unit), and the content contract in slots. Read from disk on every request, never bundled — this file is edited live on stage.",
+
+  "invariants": [
+    "SiteChrome is always present and always in the same position.",
+    "Search is always reachable without scrolling.",
+    "The reasoning sentence, when shown, is always in the same location.",
+    "No composition may omit every means of reaching a full recipe.",
+    "Type scale, colour and spacing are fixed. The model selects and orders blocks. It never styles them."
+  ],
+
+  "density": { "maxBlocks": 7, "maxFullImages": 2 },
+
   "components": [
     {
-      "name": "RecipeCard",
-      "intent": "a single dish presented for selection",
-      "requires": [],
-      "adjacency": { "maxPerPage": 4 },
-      "treatments": ["full", "collapsed", "oneline"]
+      "name": "TechniqueThread",
+      "intent": "Every attempt at one technique, in order, with what changed each time and the one variable not yet tried. For someone who repeats dishes to learn rather than to eat.",
+      "requires": [{ "fact": "user.techniqueRepeats", "op": ">=", "value": 3 }],
+      "adjacency": { "neverWith": ["TonightShortlist"], "maxPerPage": 1 },
+      "treatments": ["full", "collapsed"],
+      "slots": { "entries": "recipes sharing one technique tag, cooked on separate occasions" }
     },
     {
       "name": "ComparisonTable",
-      "intent": "comparing 3-5 peers on axes chosen for this household, when the user is choosing rather than reading",
-      "requires": ["content.comparable >= 3", "user.hasCooked(those) >= 2"],
+      "intent": "Three to five dishes compared on axes chosen for this household. Use when the user is choosing rather than reading.",
+      "requires": [
+        { "fact": "content.comparable", "op": ">=", "value": 3 },
+        { "fact": "user.cookedOfComparable", "op": ">=", "value": 2 }
+      ],
       "adjacency": { "maxPerPage": 1 },
-      "treatments": ["full", "collapsed"]
+      "treatments": ["full", "collapsed"],
+      "slots": { "rows": "recipes", "axes": "chosen for this household, never a filter UI's columns" }
+    },
+    {
+      "name": "RecipeCard",
+      "intent": "A single dish presented for selection. The workhorse.",
+      "requires": [],
+      "adjacency": { "maxPerPage": 4 },
+      "treatments": ["full", "collapsed", "oneline"],
+      "slots": { "recipe": "recipe" }
+    },
+    {
+      "name": "ForkedRecipeCard",
+      "intent": "A dish that splits partway to serve two constraints at one table. The split is drawn, not described.",
+      "requires": [
+        { "fact": "content.forkPoints", "op": ">=", "value": 1 },
+        { "fact": "state.dietarySplit", "op": "==", "value": true }
+      ],
+      "adjacency": { "maxPerPage": 2 },
+      "treatments": ["full", "collapsed"],
+      "slots": { "recipe": "a recipe with a forkPoint" }
+    },
+    {
+      "name": "WhyThisWorks",
+      "intent": "The principle several dishes share. The most editorial block in the system.",
+      "requires": [{ "fact": "content.sharedTechnique", "op": ">=", "value": 3 }],
+      "adjacency": { "maxPerPage": 1 },
+      "treatments": ["full", "collapsed"],
+      "slots": { "recipes": "three or more dishes sharing one technique" }
+    },
+    {
+      "name": "SkillPrimer",
+      "intent": "A fundamentals explainer on one technique.",
+      "requires": [{ "fact": "user.techniqueAttempts", "op": ">=", "value": 2 }],
+      "adjacency": { "neverWith": ["TonightShortlist"], "maxPerPage": 1 },
+      "treatments": ["full", "collapsed"],
+      "slots": { "technique": "a technique tag the user has attempted" }
+    },
+    {
+      "name": "TroubleshootingList",
+      "intent": "The ways this dish goes wrong. A description of a pan, never an alert.",
+      "requires": [{ "fact": "user.abandonedOrRepeated", "op": ">=", "value": 1 }],
+      "adjacency": { "maxPerPage": 1 },
+      "treatments": ["full", "collapsed"],
+      "slots": { "items": "symptom, cause and fix for a dish the user struggled with" }
+    },
+    {
+      "name": "PrepSchedule",
+      "intent": "Work sequenced across days when several dishes share a base. The shared base is the reason the block exists.",
+      "requires": [{ "fact": "content.makeAheadShared", "op": ">=", "value": 2 }],
+      "adjacency": { "maxPerPage": 1 },
+      "treatments": ["full", "collapsed"],
+      "slots": { "days": "tasks across a week, shared base marked" }
+    },
+    {
+      "name": "ShoppingList",
+      "intent": "Buying, grouped by store section, in the order you walk it.",
+      "requires": [{ "fact": "content.plannedRecipes", "op": ">=", "value": 2 }],
+      "adjacency": { "neverWith": ["PantryMatch"], "maxPerPage": 1 },
+      "treatments": ["full", "collapsed"],
+      "slots": { "sections": "ingredients grouped by store section" }
+    },
+    {
+      "name": "PantryMatch",
+      "intent": "Starting from what is in the house rather than from a dish. The gap matters as much as the matches.",
+      "requires": [{ "fact": "state.pantryKnown", "op": "==", "value": true }],
+      "adjacency": { "neverWith": ["ShoppingList"], "maxPerPage": 1 },
+      "treatments": ["full", "collapsed"],
+      "slots": { "matches": "recipes rankable against pantry contents" }
+    },
+    {
+      "name": "TonightShortlist",
+      "intent": "Choosing among two to four dishes when deciding what to cook now.",
+      "requires": [{ "fact": "state.timeOfDay", "op": "==", "value": "evening" }],
+      "adjacency": { "neverWith": ["TechniqueThread", "SkillPrimer"], "maxPerPage": 1 },
+      "treatments": ["full", "collapsed"],
+      "slots": { "recipes": "two to four recipes" }
+    },
+    {
+      "name": "MakeAheadCallout",
+      "intent": "The step that can be done in advance, surfaced for someone who works that way.",
+      "requires": [
+        { "fact": "user.makeAheadPattern", "op": "==", "value": true },
+        { "fact": "content.makeAhead", "op": ">=", "value": 1 }
+      ],
+      "adjacency": { "mustFollow": ["RecipeCard", "ForkedRecipeCard"], "maxPerPage": 2 },
+      "treatments": ["full", "oneline"],
+      "slots": { "step": "a recipe's makeAhead" }
+    },
+    {
+      "name": "SubstitutionTable",
+      "intent": "The gap between what a dish wants and what is available.",
+      "requires": [{ "fact": "state.pantryGaps", "op": ">=", "value": 1 }],
+      "adjacency": { "maxPerPage": 1 },
+      "treatments": ["full", "collapsed"],
+      "slots": { "rows": "wants, have, note" }
+    },
+    {
+      "name": "StoryIntro",
+      "intent": "Editorial framing before a dish.",
+      "requires": [],
+      "adjacency": { "maxPerPage": 1 },
+      "treatments": ["full", "collapsed"],
+      "slots": { "body": "editorial copy" }
+    },
+    {
+      "name": "TechniqueNote",
+      "intent": "Why a step works.",
+      "requires": [{ "fact": "user.expandsTechnique", "op": "==", "value": true }],
+      "adjacency": { "maxPerPage": 2 },
+      "treatments": ["full", "oneline"],
+      "slots": { "technique": "a technique tag" }
+    },
+    {
+      "name": "LeftoversNote",
+      "intent": "What tomorrow does with tonight.",
+      "requires": [{ "fact": "content.yieldExceedsHousehold", "op": "==", "value": true }],
+      "adjacency": { "maxPerPage": 1 },
+      "treatments": ["oneline"],
+      "slots": { "recipe": "a recipe yielding more than the household size" }
+    },
+    {
+      "name": "FromYourHistory",
+      "intent": "A callback to something they made before.",
+      "requires": [{ "fact": "user.repeats", "op": ">=", "value": 1 }],
+      "adjacency": { "maxPerPage": 1 },
+      "treatments": ["oneline"],
+      "slots": { "recipe": "a recipe the user has cooked more than once" }
+    },
+    {
+      "name": "SeasonalNote",
+      "intent": "One line tying tonight to the time of year.",
+      "requires": [],
+      "adjacency": { "maxPerPage": 1 },
+      "treatments": ["oneline"],
+      "slots": { "text": "editorial copy" }
     }
   ],
+
   "obligations": [
     {
       "name": "AllergenNotice",
-      "intent": "declaring an allergen present in a dish on this page",
-      "requiredWhen": "recipe.allergens ∩ household.allergies != {}",
+      "intent": "Declaring an allergen present in a dish on this page.",
+      "requiredWhen": { "fact": "state.allergenMatches", "op": ">=", "value": 1 },
       "locked": {
         "treatment": "full",
-        "placement": "immediately before first mention of that recipe",
+        "placement": "immediately before the first block mentioning that recipe",
         "exemptFromDensity": true
       }
     }
   ],
+
   "assemblies": [
-    { "name": "ImprovisePath", "members": ["PantryMatch", "SubstitutionTable"] }
+    { "name": "ImprovisePath", "members": ["PantryMatch", "SubstitutionTable"] },
+    { "name": "PlanTheWeek", "members": ["PrepSchedule", "ShoppingList"] }
   ]
 }
