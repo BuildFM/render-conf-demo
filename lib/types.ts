@@ -13,6 +13,10 @@ export type Recipe = {
   yield: number
   activeTime: number      // minutes
   totalTime: number       // minutes
+  /** How long the shopping list is. Not shown by any block — it exists because
+   *  one household abandons on list length, and the profile pass has to be able
+   *  to find that. Content facts the model reasons over need not be rendered. */
+  ingredientCount: number
   image?: { src: string; alt: string }
   /** One or two sentences. RecipeCard "full" sets it at body scale. Added to the
    *  handoff type — see README §Deviations. */

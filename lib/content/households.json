@@ -1,0 +1,53 @@
+{
+  "note": "Declared profile only — every field here is something a person stated at signup or in settings. Nothing derived from behaviour lives in this file. The two twins are byte-identical below the id and label, which is the entire point of the beat: a segmentation engine has nothing to key on.",
+
+  "households": [
+    {
+      "id": "h-learner",
+      "label": "The learner",
+      "declared": {
+        "size": 1,
+        "weeknightMinutes": 45,
+        "planningStyle": "both",
+        "statedSkill": "learning",
+        "dietary": []
+      },
+      "pantry": [
+        "Olive oil", "Garlic", "Rosemary", "Anchovy", "Lemon", "Chilli flakes",
+        "Parmesan rind", "Cannellini, dried", "Strong flour"
+      ]
+    },
+
+    {
+      "id": "h-twin-a",
+      "label": "Twin A",
+      "declared": {
+        "size": 6,
+        "weeknightMinutes": 45,
+        "planningStyle": "both",
+        "statedSkill": "confident",
+        "dietary": ["dairy-free"]
+      },
+      "pantry": [
+        "Cannellini, dried", "Olive oil", "Garlic", "Rosemary", "Anchovy",
+        "Lemon", "Strong flour", "Parmesan rind", "Chilli flakes"
+      ]
+    },
+
+    {
+      "id": "h-twin-b",
+      "label": "Twin B",
+      "declared": {
+        "size": 6,
+        "weeknightMinutes": 45,
+        "planningStyle": "both",
+        "statedSkill": "confident",
+        "dietary": ["dairy-free"]
+      },
+      "pantry": [
+        "Cannellini, dried", "Olive oil", "Garlic", "Rosemary", "Anchovy",
+        "Lemon", "Strong flour", "Parmesan rind", "Chilli flakes"
+      ]
+    }
+  ]
+}

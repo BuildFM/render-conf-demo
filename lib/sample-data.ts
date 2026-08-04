@@ -12,6 +12,7 @@ export const brick: Recipe = {
   yield: 3,
   activeTime: 35,
   totalTime: 1560,
+  ingredientCount: 6,
   image: {
     src: "/images/hero-chicken.png",
     alt: "Chicken under a brick, charred lemon, herb sauce"
@@ -29,6 +30,7 @@ export const beans: Recipe = {
   yield: 6,
   activeTime: 25,
   totalTime: 180,
+  ingredientCount: 6,
   summary:
     "Beans, aromatics and three hours are shared by everyone at the table. Nothing before step six differs, so the pot stays one pot until the last twenty minutes.",
   forkPoint: "Step 6 of 9",
@@ -43,6 +45,7 @@ export const focaccia: Recipe = {
   yield: 8,
   activeTime: 20,
   totalTime: 1500,
+  ingredientCount: 6,
   summary: "A wet dough, a cold night in the fridge, and twenty-two minutes of real heat.",
   makeAhead: "Dough, 24 hr ahead",
   season: "All year"
@@ -56,6 +59,7 @@ export const cacio: Recipe = {
   yield: 2,
   activeTime: 15,
   totalTime: 15,
+  ingredientCount: 6,
   summary:
     "Pecorino, pepper, pasta water and nothing else. The whole dish is one emulsion that either holds or does not."
 }
@@ -68,7 +72,8 @@ export const cabbage: Recipe = {
   allergens: ["Dairy"],
   yield: 4,
   activeTime: 20,
-  totalTime: 40
+  totalTime: 40,
+  ingredientCount: 6
 }
 
 export const recipes = [brick, beans, focaccia, cacio, cabbage]

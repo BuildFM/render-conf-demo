@@ -1,0 +1,809 @@
+[
+  {
+    "type": "opened",
+    "recipeId": "038",
+    "at": "2026-05-09T11:03:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "038",
+    "at": "2026-05-09T11:05:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "041",
+    "at": "2026-05-09T11:08:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "041",
+    "at": "2026-05-09T11:10:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "031",
+    "at": "2026-05-09T11:13:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "031",
+    "at": "2026-05-09T11:15:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "040",
+    "at": "2026-05-12T18:03:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "040",
+    "at": "2026-05-12T18:05:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "032",
+    "at": "2026-05-12T18:08:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "032",
+    "at": "2026-05-12T18:10:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "041",
+    "at": "2026-05-12T18:14:00.000Z"
+  },
+  {
+    "type": "expanded",
+    "recipeId": "041",
+    "component": "TechniqueNote",
+    "at": "2026-05-12T18:16:00.000Z"
+  },
+  {
+    "type": "abandoned",
+    "recipeId": "041",
+    "atStep": 3,
+    "at": "2026-05-12T18:41:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "035",
+    "at": "2026-05-16T11:03:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "035",
+    "at": "2026-05-16T11:05:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "037",
+    "at": "2026-05-16T11:08:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "037",
+    "at": "2026-05-16T11:10:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "033",
+    "at": "2026-05-16T11:13:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "033",
+    "at": "2026-05-16T11:15:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "033",
+    "at": "2026-05-19T18:03:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "033",
+    "at": "2026-05-19T18:05:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "041",
+    "at": "2026-05-19T18:08:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "041",
+    "at": "2026-05-19T18:10:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "035",
+    "at": "2026-05-23T11:03:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "035",
+    "at": "2026-05-23T11:05:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "037",
+    "at": "2026-05-23T11:08:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "037",
+    "at": "2026-05-23T11:10:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "032",
+    "at": "2026-05-23T11:13:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "032",
+    "at": "2026-05-23T11:15:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "030",
+    "at": "2026-05-23T11:18:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "030",
+    "at": "2026-05-23T11:20:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "032",
+    "at": "2026-05-26T18:03:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "032",
+    "at": "2026-05-26T18:05:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "039",
+    "at": "2026-05-26T18:08:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "039",
+    "at": "2026-05-26T18:10:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "041",
+    "at": "2026-05-26T18:14:00.000Z"
+  },
+  {
+    "type": "expanded",
+    "recipeId": "041",
+    "component": "WhyThisWorks",
+    "at": "2026-05-26T18:16:00.000Z"
+  },
+  {
+    "type": "completed",
+    "recipeId": "041",
+    "at": "2026-05-26T18:41:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "030",
+    "at": "2026-05-30T11:03:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "030",
+    "at": "2026-05-30T11:05:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "040",
+    "at": "2026-05-30T11:08:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "040",
+    "at": "2026-05-30T11:10:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "034",
+    "at": "2026-05-30T11:13:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "034",
+    "at": "2026-05-30T11:15:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "038",
+    "at": "2026-06-02T18:03:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "038",
+    "at": "2026-06-02T18:05:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "036",
+    "at": "2026-06-02T18:08:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "036",
+    "at": "2026-06-02T18:10:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "040",
+    "at": "2026-06-06T11:03:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "040",
+    "at": "2026-06-06T11:05:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "033",
+    "at": "2026-06-06T11:08:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "033",
+    "at": "2026-06-06T11:10:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "035",
+    "at": "2026-06-06T11:13:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "035",
+    "at": "2026-06-06T11:15:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "040",
+    "at": "2026-06-09T18:03:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "040",
+    "at": "2026-06-09T18:05:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "041",
+    "at": "2026-06-09T18:08:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "041",
+    "at": "2026-06-09T18:10:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "038",
+    "at": "2026-06-09T18:13:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "038",
+    "at": "2026-06-09T18:15:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "032",
+    "at": "2026-06-09T18:19:00.000Z"
+  },
+  {
+    "type": "expanded",
+    "recipeId": "032",
+    "component": "WhyThisWorks",
+    "at": "2026-06-09T18:21:00.000Z"
+  },
+  {
+    "type": "completed",
+    "recipeId": "032",
+    "at": "2026-06-09T18:46:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "039",
+    "at": "2026-06-13T11:03:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "039",
+    "at": "2026-06-13T11:05:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "037",
+    "at": "2026-06-13T11:08:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "037",
+    "at": "2026-06-13T11:10:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "033",
+    "at": "2026-06-16T18:03:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "033",
+    "at": "2026-06-16T18:05:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "041",
+    "at": "2026-06-16T18:08:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "041",
+    "at": "2026-06-16T18:10:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "032",
+    "at": "2026-06-20T11:03:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "032",
+    "at": "2026-06-20T11:05:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "038",
+    "at": "2026-06-20T11:08:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "038",
+    "at": "2026-06-20T11:10:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "035",
+    "at": "2026-06-20T11:13:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "035",
+    "at": "2026-06-20T11:15:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "031",
+    "at": "2026-06-20T11:18:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "031",
+    "at": "2026-06-20T11:20:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "037",
+    "at": "2026-06-23T18:03:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "037",
+    "at": "2026-06-23T18:05:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "036",
+    "at": "2026-06-23T18:08:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "036",
+    "at": "2026-06-23T18:10:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "034",
+    "at": "2026-06-23T18:13:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "034",
+    "at": "2026-06-23T18:15:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "034",
+    "at": "2026-06-26T18:03:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "034",
+    "at": "2026-06-26T18:05:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "040",
+    "at": "2026-06-26T18:08:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "040",
+    "at": "2026-06-26T18:10:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "038",
+    "at": "2026-06-26T18:13:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "038",
+    "at": "2026-06-26T18:15:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "033",
+    "at": "2026-06-26T18:19:00.000Z"
+  },
+  {
+    "type": "expanded",
+    "recipeId": "033",
+    "component": "WhyThisWorks",
+    "at": "2026-06-26T18:21:00.000Z"
+  },
+  {
+    "type": "completed",
+    "recipeId": "033",
+    "at": "2026-06-26T18:46:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "036",
+    "at": "2026-06-27T11:03:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "036",
+    "at": "2026-06-27T11:05:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "031",
+    "at": "2026-06-27T11:08:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "031",
+    "at": "2026-06-27T11:10:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "035",
+    "at": "2026-06-27T11:13:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "035",
+    "at": "2026-06-27T11:15:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "033",
+    "at": "2026-06-30T18:03:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "033",
+    "at": "2026-06-30T18:05:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "039",
+    "at": "2026-06-30T18:08:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "039",
+    "at": "2026-06-30T18:10:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "037",
+    "at": "2026-06-30T18:13:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "037",
+    "at": "2026-06-30T18:15:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "041",
+    "at": "2026-07-04T11:03:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "041",
+    "at": "2026-07-04T11:05:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "035",
+    "at": "2026-07-04T11:08:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "035",
+    "at": "2026-07-04T11:10:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "036",
+    "at": "2026-07-04T11:13:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "036",
+    "at": "2026-07-04T11:15:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "036",
+    "at": "2026-07-07T18:03:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "036",
+    "at": "2026-07-07T18:05:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "032",
+    "at": "2026-07-07T18:08:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "032",
+    "at": "2026-07-07T18:10:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "040",
+    "at": "2026-07-07T18:13:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "040",
+    "at": "2026-07-07T18:15:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "037",
+    "at": "2026-07-11T11:03:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "037",
+    "at": "2026-07-11T11:05:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "038",
+    "at": "2026-07-11T11:08:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "038",
+    "at": "2026-07-11T11:10:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "035",
+    "at": "2026-07-11T11:13:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "035",
+    "at": "2026-07-11T11:15:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "036",
+    "at": "2026-07-14T18:03:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "036",
+    "at": "2026-07-14T18:05:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "033",
+    "at": "2026-07-14T18:08:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "033",
+    "at": "2026-07-14T18:10:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "034",
+    "at": "2026-07-14T18:14:00.000Z"
+  },
+  {
+    "type": "expanded",
+    "recipeId": "034",
+    "component": "WhyThisWorks",
+    "at": "2026-07-14T18:16:00.000Z"
+  },
+  {
+    "type": "completed",
+    "recipeId": "034",
+    "at": "2026-07-14T18:41:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "040",
+    "at": "2026-07-18T11:03:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "040",
+    "at": "2026-07-18T11:05:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "034",
+    "at": "2026-07-18T11:08:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "034",
+    "at": "2026-07-18T11:10:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "038",
+    "at": "2026-07-18T11:13:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "038",
+    "at": "2026-07-18T11:15:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "041",
+    "at": "2026-07-18T11:18:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "041",
+    "at": "2026-07-18T11:20:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "033",
+    "at": "2026-07-21T18:03:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "033",
+    "at": "2026-07-21T18:05:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "032",
+    "at": "2026-07-21T18:08:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "032",
+    "at": "2026-07-21T18:10:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "031",
+    "at": "2026-07-25T11:03:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "031",
+    "at": "2026-07-25T11:05:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "037",
+    "at": "2026-07-25T11:08:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "037",
+    "at": "2026-07-25T11:10:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "040",
+    "at": "2026-07-28T18:03:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "040",
+    "at": "2026-07-28T18:05:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "031",
+    "at": "2026-07-28T18:08:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "031",
+    "at": "2026-07-28T18:10:00.000Z"
+  },
+  {
+    "type": "returned",
+    "recipeId": "041",
+    "at": "2026-07-28T18:14:00.000Z"
+  },
+  {
+    "type": "expanded",
+    "recipeId": "041",
+    "component": "TechniqueNote",
+    "at": "2026-07-28T18:16:00.000Z"
+  },
+  {
+    "type": "completed",
+    "recipeId": "041",
+    "at": "2026-07-28T18:41:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "041",
+    "at": "2026-08-01T11:03:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "041",
+    "at": "2026-08-01T11:05:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "030",
+    "at": "2026-08-01T11:08:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "030",
+    "at": "2026-08-01T11:10:00.000Z"
+  },
+  {
+    "type": "opened",
+    "recipeId": "040",
+    "at": "2026-08-01T11:13:00.000Z"
+  },
+  {
+    "type": "skipped",
+    "recipeId": "040",
+    "at": "2026-08-01T11:15:00.000Z"
+  }
+]
