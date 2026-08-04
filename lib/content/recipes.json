@@ -2,7 +2,10 @@
   {
     "id": "041",
     "title": "Chicken under a brick",
-    "technique": ["weighted-sear", "browning"],
+    "technique": [
+      "weighted-sear",
+      "browning"
+    ],
     "allergens": [],
     "yield": 3,
     "activeTime": 35,
@@ -10,37 +13,58 @@
     "ingredientCount": 7,
     "summary": "Flattened and pressed, the bird cooks in a single plane — thigh and breast finish in the same minute instead of arguing about it.",
     "makeAhead": "Dry-brine uncovered on the top shelf, twenty-four hours ahead. This is the whole difference between good skin and shattering skin.",
-    "image": { "src": "/images/recipes/041-chicken-under-a-brick.jpg", "alt": "Chicken under a brick, charred lemon, herb sauce" }
+    "image": {
+      "src": "/images/recipes/041-chicken-under-brick.jpg",
+      "alt": "Chicken under a brick, charred lemon, herb sauce"
+    }
   },
   {
     "id": "040",
     "title": "Cacio e pepe, properly",
-    "technique": ["emulsion"],
-    "allergens": ["dairy", "gluten"],
+    "technique": [
+      "emulsion"
+    ],
+    "allergens": [
+      "dairy",
+      "gluten"
+    ],
     "yield": 2,
     "activeTime": 20,
     "totalTime": 20,
     "ingredientCount": 4,
     "summary": "Four ingredients, and three of them are technique. The sauce is starch, fat and agitation — if it breaks, it broke because the pan was too hot, not because you were short of cheese.",
-    "image": { "src": "/images/recipes/040-cacio-e-pepe.jpg", "alt": "Cacio e pepe, pepper-flecked, in a warm bowl" }
+    "image": {
+      "src": "/images/recipes/040-cacio-e-pepe.jpg",
+      "alt": "Cacio e pepe, pepper-flecked, in a warm bowl"
+    }
   },
   {
     "id": "039",
     "title": "Charred cabbage, brown butter",
-    "technique": ["browning", "dry-heat"],
-    "allergens": ["dairy"],
+    "technique": [
+      "browning",
+      "dry-heat"
+    ],
+    "allergens": [
+      "dairy"
+    ],
     "yield": 4,
     "activeTime": 25,
     "totalTime": 45,
     "ingredientCount": 6,
     "summary": "Cut face down, undisturbed, until the flat side is genuinely black at the edges. Cabbage has enough sugar to behave like an onion if you let it.",
     "forkPoint": "Before the butter goes in, at step 4 of 6",
-    "image": { "src": "/images/recipes/039-charred-cabbage.jpg", "alt": "Charred cabbage wedges, blackened cut faces, brown butter" }
+    "image": {
+      "src": "/images/recipes/039-charred-cabbage.jpg",
+      "alt": "Charred cabbage wedges, blackened cut faces, brown butter"
+    }
   },
   {
     "id": "038",
     "title": "White beans, long cooked",
-    "technique": ["braise"],
+    "technique": [
+      "braise"
+    ],
     "allergens": [],
     "yield": 6,
     "activeTime": 15,
@@ -49,38 +73,59 @@
     "summary": "Three hours of nothing happening, and then everything has happened. Keep the liquid — it is the reason to make this rather than open a tin.",
     "makeAhead": "The whole pot, up to four days ahead. It is better on day two and best on day three.",
     "forkPoint": "At step 6 of 9, when the pot divides",
-    "image": { "src": "/images/recipes/038-white-beans.jpg", "alt": "White beans in their liquid, olive oil, rosemary" }
+    "image": {
+      "src": "/images/recipes/038-white-beans.jpg",
+      "alt": "White beans in their liquid, olive oil, rosemary"
+    }
   },
   {
     "id": "037",
     "title": "Green sauce for everything",
-    "technique": ["knife-work", "emulsion"],
-    "allergens": ["fish"],
+    "technique": [
+      "knife-work",
+      "emulsion"
+    ],
+    "allergens": [
+      "fish"
+    ],
     "yield": 8,
     "activeTime": 15,
     "totalTime": 15,
     "ingredientCount": 7,
     "summary": "Chopped, not blended. A blender makes a smoothie and a knife makes a sauce, and the difference is whether you can still see what went into it.",
     "makeAhead": "Make it the day before. The parsley darkens and the anchovy stops announcing itself.",
-    "image": { "src": "/images/recipes/037-green-sauce.jpg", "alt": "Coarse green herb sauce, oil separating at the edge" }
+    "image": {
+      "src": "/images/recipes/037-green-sauce.jpg",
+      "alt": "Coarse green herb sauce, oil separating at the edge"
+    }
   },
   {
     "id": "036",
     "title": "Focaccia, cold proof",
-    "technique": ["ferment"],
-    "allergens": ["gluten"],
+    "technique": [
+      "ferment"
+    ],
+    "allergens": [
+      "gluten"
+    ],
     "yield": 8,
     "activeTime": 20,
     "totalTime": 1440,
     "ingredientCount": 5,
     "summary": "Twenty minutes of work spread across a day, almost none of it consecutive. The fridge does the part that used to need a schedule.",
     "makeAhead": "Mix the dough and put it straight in the fridge. It wants twenty-four hours and will tolerate seventy-two.",
-    "image": { "src": "/images/recipes/036-focaccia.jpg", "alt": "Dimpled focaccia, olive oil pooling, coarse salt" }
+    "image": {
+      "src": "/images/recipes/036-focaccia.jpg",
+      "alt": "Dimpled focaccia, olive oil pooling, coarse salt"
+    }
   },
   {
     "id": "035",
     "title": "Smashed potatoes",
-    "technique": ["browning", "dry-heat"],
+    "technique": [
+      "browning",
+      "dry-heat"
+    ],
     "allergens": [],
     "yield": 4,
     "activeTime": 20,
@@ -88,12 +133,18 @@
     "ingredientCount": 4,
     "summary": "Boiled soft, crushed flat, then roasted hard. Smashing is not a flourish — it is how you turn one surface into nine.",
     "makeAhead": "Boil and smash them, then refrigerate on the tray. They roast from cold without complaint.",
-    "image": { "src": "/images/recipes/035-smashed-potatoes.jpg", "alt": "Craggy smashed potatoes, deeply browned edges" }
+    "image": {
+      "src": "/images/recipes/035-smashed-potatoes.jpg",
+      "alt": "Craggy smashed potatoes, deeply browned edges"
+    }
   },
   {
     "id": "034",
     "title": "Pressed pork belly",
-    "technique": ["weighted-sear", "braise"],
+    "technique": [
+      "weighted-sear",
+      "braise"
+    ],
     "allergens": [],
     "yield": 6,
     "activeTime": 30,
@@ -101,12 +152,17 @@
     "ingredientCount": 8,
     "summary": "Braised until it gives, then pressed cold overnight and seared under weight. The pressing is what makes it a slab instead of a pile.",
     "makeAhead": "Braise and press up to three days ahead. The sear takes eight minutes from the fridge.",
-    "image": { "src": "/images/recipes/034-pressed-pork-belly.jpg", "alt": "Pressed pork belly, lacquered top, sharp square edges" }
+    "image": {
+      "src": "/images/recipes/034-pressed-pork-belly.jpg",
+      "alt": "Pressed pork belly, lacquered top, sharp square edges"
+    }
   },
   {
     "id": "033",
     "title": "Flattened quail, two ways",
-    "technique": ["weighted-sear"],
+    "technique": [
+      "weighted-sear"
+    ],
     "allergens": [],
     "yield": 2,
     "activeTime": 25,
@@ -114,24 +170,35 @@
     "ingredientCount": 6,
     "summary": "Small birds, high heat, and a weight — the whole cook is over in nine minutes, which means every one of them counts.",
     "forkPoint": "At the flip, step 3 of 5",
-    "image": { "src": "/images/recipes/033-flattened-quail.jpg", "alt": "Two flattened quail, one glazed, one plain, in a black pan" }
+    "image": {
+      "src": "/images/recipes/033-flattened-quail.jpg",
+      "alt": "Two flattened quail, one glazed, one plain, in a black pan"
+    }
   },
   {
     "id": "032",
     "title": "Cabbage, weighted",
-    "technique": ["weighted-sear", "browning"],
+    "technique": [
+      "weighted-sear",
+      "browning"
+    ],
     "allergens": [],
     "yield": 4,
     "activeTime": 15,
     "totalTime": 25,
     "ingredientCount": 4,
     "summary": "The same press you use on a bird, on a vegetable. Nothing is being rendered, so it happens in a quarter of the time and the principle is identical.",
-    "image": { "src": "/images/recipes/032-cabbage-weighted.jpg", "alt": "Cabbage steaks pressed flat in a pan under a weight" }
+    "image": {
+      "src": "/images/recipes/032-cabbage-weighted.jpg",
+      "alt": "Cabbage steaks pressed flat in a pan under a weight"
+    }
   },
   {
     "id": "031",
     "title": "Beans and greens, brothy",
-    "technique": ["braise"],
+    "technique": [
+      "braise"
+    ],
     "allergens": [],
     "yield": 4,
     "activeTime": 20,
@@ -139,19 +206,30 @@
     "ingredientCount": 7,
     "summary": "What the second half of a pot of beans is for. Looser, greener, and finished in the bowl rather than the pan.",
     "forkPoint": "Before the pancetta, at step 2 of 5",
-    "image": { "src": "/images/recipes/031-beans-and-greens.jpg", "alt": "Brothy beans with wilted greens, oil on the surface" }
+    "image": {
+      "src": "/images/recipes/031-beans-and-greens.jpg",
+      "alt": "Brothy beans with wilted greens, oil on the surface"
+    }
   },
   {
     "id": "030",
     "title": "Anchovy butter, for everything",
-    "technique": ["emulsion"],
-    "allergens": ["dairy", "fish"],
+    "technique": [
+      "emulsion"
+    ],
+    "allergens": [
+      "dairy",
+      "fish"
+    ],
     "yield": 12,
     "activeTime": 10,
     "totalTime": 10,
     "ingredientCount": 4,
     "summary": "Not a recipe so much as a thing to have. It turns bread, fish, steak, and any green vegetable into dinner without being noticed.",
     "makeAhead": "Rolled in paper it keeps two weeks in the fridge and three months in the freezer.",
-    "image": { "src": "/images/recipes/030-anchovy-butter.jpg", "alt": "A roll of anchovy butter, cut into coins" }
+    "image": {
+      "src": "/images/recipes/030-anchovy-butter.jpg",
+      "alt": "A roll of anchovy butter, cut into coins"
+    }
   }
 ]

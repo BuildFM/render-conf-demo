@@ -148,3 +148,61 @@ export const placeObligations = (
   candidates: FiredObligation[],
   recipeIdsOnPage: Set<string>
 ): FiredObligation[] => candidates.filter((c) => recipeIdsOnPage.has(c.props.recipeId as string));
+
+/**
+ * ASSEMBLIES, enforced rather than requested.
+ *
+ * The manifest says an assembly moves as one unit: the model chooses whether it
+ * appears, never the order within. Asking it to honour that in the output turns out
+ * to be the single most common validation failure — four of five models split
+ * ImprovisePath on the same household.
+ *
+ * So stop asking. If the model placed any member, it chose the assembly; the app
+ * completes it, in order, adjacent. Same shape as obligations: the decision that
+ * belongs to the model stays with the model, and the part that was never its
+ * decision is done in code.
+ */
+export const completeAssemblies = <T extends { component: string }>(
+  blocks: T[],
+  manifest: Manifest,
+  make: (component: string, near: T) => T | null
+): { blocks: T[]; completed: string[] } => {
+  let out = [...blocks];
+  const completed: string[] = [];
+
+  for (const a of manifest.assemblies) {
+    const present = a.members.filter((m) => out.some((b) => b.component === m));
+    if (present.length === 0 || present.length === a.members.length) {
+      // Absent entirely, or whole — but possibly out of order. Normalise below.
+    }
+    if (present.length === 0) continue;
+
+    const anchorIdx = out.findIndex((b) => a.members.includes(b.component));
+    const anchor = out[anchorIdx];
+
+    const unit: T[] = [];
+    for (const m of a.members) {
+      const existing = out.find((b) => b.component === m);
+      if (existing) {
+        unit.push(existing);
+        continue;
+      }
+      const built = make(m, anchor);
+      if (!built) {
+        // Cannot construct the missing member — drop the whole assembly rather
+        // than render half of a flow.
+        out = out.filter((b) => !a.members.includes(b.component));
+        completed.push(`${a.name}: dropped, could not complete`);
+        break;
+      }
+      unit.push(built);
+      completed.push(`${a.name}: added ${m}`);
+    }
+    if (unit.length !== a.members.length) continue;
+
+    out = out.filter((b) => !a.members.includes(b.component));
+    out.splice(Math.min(anchorIdx, out.length), 0, ...unit);
+  }
+
+  return { blocks: out, completed };
+};

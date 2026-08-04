@@ -3,8 +3,9 @@ import path from "node:path";
 import { notFound } from "next/navigation";
 
 import { loadManifest, checkDrift } from "@/lib/manifest/load";
-import { computeFacts, eligible, obligationCandidates, placeObligations } from "@/lib/compose/gates";
-import { compose, type LayoutSpec } from "@/lib/compose/compose";
+import { computeFacts, eligible, obligationCandidates, placeObligations, completeAssemblies } from "@/lib/compose/gates";
+import { compose } from "@/lib/compose/compose";
+import { defaultPageSpec } from "@/lib/compose/default-page";
 import { validate } from "@/lib/compose/validate";
 import { resolveBlock } from "@/lib/render/resolve";
 import { registry, registryNames } from "@/lib/render/registry";
@@ -62,6 +63,20 @@ const HomePage = async ({ params }: { params: Promise<{ household: string }> }) 
     manifest, eligible: allowed, recipes, profile, household, fired: candidates
   });
 
+  /* 05b — assemblies are completed in code, not requested of the model. */
+  const assembled = completeAssemblies(spec.blocks, manifest, (component, near) => {
+    const spec2 = manifest.components.find((c) => c.name === component);
+    if (!spec2 || !allowed.some((c) => c.name === component)) return null;
+    return {
+      component,
+      treatment: spec2.treatments.includes(near.treatment) ? near.treatment : spec2.treatments[0],
+      recipeIds: near.recipeIds.slice(0, 1),
+      axes: [],
+      emphasis: []
+    };
+  });
+  spec = { ...spec, blocks: assembled.blocks };
+
   /* 06 / 07 — validate, then one repair, then fall back */
   const known = new Set(recipes.map((r) => r.id));
   let errors = validate(spec, manifest, candidates, known);
@@ -79,6 +94,15 @@ const HomePage = async ({ params }: { params: Promise<{ household: string }> }) 
     } else {
       errors = retryErrors;
     }
+  }
+
+  /* Still invalid after one repair: fall back to the hand-authored default page.
+     A half-valid layout never reaches a person — build spec §7b. The failure is
+     surfaced in the rail rather than swallowed. */
+  let fellBack = false;
+  if (errors.length) {
+    fellBack = true;
+    spec = defaultPageSpec();
   }
 
   /* 08 — resolve slots: ids in, values out. The model never supplied a fact. */
@@ -132,10 +156,13 @@ const HomePage = async ({ params }: { params: Promise<{ household: string }> }) 
           ["profile", cached ? "cached" : live ? `${profileMs}ms` : "no key"],
           ["compose", live ? `${composeMs}ms` : "stub"],
           ["repaired", repaired ? "yes" : "no"],
+          ["fallback", fellBack ? "DEFAULT PAGE" : "no"],
+          ["assemblies", assembled.completed.length ? assembled.completed.join("; ") : "intact"],
           ["total", `${Date.now() - t0}ms`]
         ]}
         warnings={[
           ...(drift.ok ? [] : [`drift: ${[...drift.missingComponent, ...drift.missingEntry].join(", ")}`]),
+          ...(fellBack ? [`fell back to the default page — ${errors.length} unrecoverable error(s)`] : []),
           ...errors.map((e) => `invalid: ${e}`),
           ...dropped.map((d) => `dropped ${d.ok ? "" : `${d.component} — ${d.reason}`}`),
           ...(live ? [] : ["NO AI_GATEWAY_API_KEY — composition is a stub, not a model"])
