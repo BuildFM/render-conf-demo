@@ -1,0 +1,34 @@
+{
+  "version": "0.1.0-spike",
+  "components": [
+    {
+      "name": "RecipeCard",
+      "intent": "a single dish presented for selection",
+      "requires": [],
+      "adjacency": { "maxPerPage": 4 },
+      "treatments": ["full", "collapsed", "oneline"]
+    },
+    {
+      "name": "ComparisonTable",
+      "intent": "comparing 3-5 peers on axes chosen for this household, when the user is choosing rather than reading",
+      "requires": ["content.comparable >= 3", "user.hasCooked(those) >= 2"],
+      "adjacency": { "maxPerPage": 1 },
+      "treatments": ["full", "collapsed"]
+    }
+  ],
+  "obligations": [
+    {
+      "name": "AllergenNotice",
+      "intent": "declaring an allergen present in a dish on this page",
+      "requiredWhen": "recipe.allergens ∩ household.allergies != {}",
+      "locked": {
+        "treatment": "full",
+        "placement": "immediately before first mention of that recipe",
+        "exemptFromDensity": true
+      }
+    }
+  ],
+  "assemblies": [
+    { "name": "ImprovisePath", "members": ["PantryMatch", "SubstitutionTable"] }
+  ]
+}
