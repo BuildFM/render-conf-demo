@@ -28,8 +28,11 @@ const StagePage = async () => {
       households={households.map((h) => ({ id: h.id, label: h.label }))}
       initialRaw={raw}
       initialHash={hash}
-      /* Opens on the section the beat edits. No scroll hunting on camera. */
-      initialSection="obligations"
+      /* Opens on the vocabulary — the fifteen blocks — because that is what the
+         manifest IS, and it reads as a list rather than as a file. The beat that
+         edits `obligations` is one click away; before, the drawer opened mid-file
+         on the section being typed into, which showed the demo's punchline first. */
+      initialSection="components"
     />
   );
 };

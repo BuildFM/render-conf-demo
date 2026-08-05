@@ -117,7 +117,7 @@ const trial = async (label, configure) => {
           };
         });
         const ordered = enforceAdjacency(done.blocks, manifest);
-        const errors = validate({ ...spec, blocks: ordered.blocks }, manifest, candidates, known);
+        const errors = validate({ ...spec, blocks: ordered.blocks }, manifest, candidates, known, allowed);
 
         if (!errors.length) valid++;
         else for (const e of errors) failures.set(e, (failures.get(e) ?? 0) + 1);

@@ -100,7 +100,7 @@ for (const h of households) {
     return { ...s, blocks: ordered.blocks };
   };
   spec = finalize(spec);
-  const errors = validate(spec, manifest, candidates, known);
+  const errors = validate(spec, manifest, candidates, known, allowed);
   const ms = Date.now() - t;
 
   const cookDates = new Map();

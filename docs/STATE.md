@@ -122,7 +122,7 @@ repairs, no fallbacks, 3.5–6s each.
 | `/` default | RecipeCard @ hero | shortlist, index |
 | `/h/h-learner` | **TechniqueThread** | Troubleshooting, TechniqueNote |
 | `/h/h-twin-a` | **ForkedRecipeCard** | Shortlist, Comparison |
-| `/h/h-twin-b` | **RecipeCard @ hero** ⚠ | ComparisonTable — *see below, this used to be PrepSchedule* |
+| `/h/h-twin-b` | **PrepSchedule** | ShoppingList, RecipeCard, MakeAheadCallout |
 
 The learner page has **no recipe on it at all**. The twins declare byte-identical
 profiles and share no lead block. Those two facts are most of the demo.
@@ -253,21 +253,41 @@ must appear as completions; a log with completions cannot yield none) before
 caching, retrying once at a nudged temperature because temperature 0 would
 reproduce the same degenerate output. Two failures now throw rather than cache.
 
-### `role: lead` is not actually enforced ⚠
+### `role: lead` is enforced now — it was not
 
-Exposed by the regeneration. Twin B's only eligible lead is still `PrepSchedule`,
-and the prompt says "if only one lead is listed, that is the answer" — but the model
-returned `RecipeCard @ hero` as blocks[0] and **the validator accepted it**, because
-`validate.ts` permits a support block to lead when its treatment is `hero`. That
-exception exists so the default page (no household, no eligible leads) can lead with
-a recipe; it was never meant to override an eligible lead.
+Twin B lost its story to this. Its only eligible lead was `PrepSchedule`, the prompt
+said "if only one lead is listed, that is the answer", and the model returned
+`RecipeCard @ hero` — which **validated**, because `validate.ts` let a support block
+lead whenever its treatment was `hero`. That exception exists so the hand-authored
+default page, which has no household and therefore no eligible leads, can open on a
+dish. It was never meant to outrank a lead that qualified, and Twin B's page opened
+exactly the way the page for someone with no history opens.
 
-The cost is not abstract: Twin B's page now opens the same way the default page
-does, so the twins' contrast is weaker than it was, and "the filtering already
-decided" is undercut by the one case where the model overrode the filtering.
-**Open decision** — tighten the predicate to "a support block may lead at hero only
-when no lead is eligible", which is a composition rule change and recomposes
-everything, or accept it.
+`validate` now takes the eligible list, and a support block may lead **only when no
+lead qualified**. The rule is also stated in the prompt, so the model stops doing it
+rather than being corrected afterwards — with the validator alone Twin B cost a
+repair call every load. Verified: it now leads with `PrepSchedule` on the first
+call, valid, no repair, and picks up the `PlanTheWeek` assembly.
+
+The default page passes no eligible list and validates unchanged.
+
+### Comparison axes are an enum, not free text
+
+`axes` was `z.array(z.string())` — the one place in the spec where the model wrote
+prose that reached a finished page. It went wrong twice. First "The split itself",
+which no reader could decode. Then "Protein", which `resolve.ts` has no way to
+compute, so two thirds of Twin B's table rendered as a column of em-dashes.
+Constraining the wording in the prompt fixed the first and could never have fixed
+the second.
+
+`AXES` in `compose.ts` is now a closed list, and `AXIS_VALUE` in `resolve.ts` is a
+`Record<Axis, …>` — **exhaustive by construction**. A heading added to the
+vocabulary without a way to fill it fails to typecheck instead of rendering a dash.
+The old resolver matched substrings and fell back to "—", which is worse than not
+compiling: it produced a plausible-looking empty cell.
+
+This is the demo's own argument applied to the last place it was not: give the model
+a vocabulary instead of a blank.
 
 ### `/stage` — the split screen
 
@@ -295,6 +315,13 @@ differ. Below roughly 1280×700 the editor drops under 11px and it becomes a pre
 rather than somewhere to work.
 
 - **A `PAGES | DATA` switch above the panes** shows the households' data (⌘D) — see below. ⌘S saves, ⌘\ collapses.
+- **The drawer is 660px and opens on `blocks`.** It was 820 and opened on
+  `obligations` — mid-file, on the section the finale types into, which showed the
+  punchline before the argument. Opening on the vocabulary reads as a list rather
+  than a file, and the narrower drawer gives each pane ~578px instead of ~530px.
+  The editor dropped from 17px to the projection floor at the same time; at 17 it
+  ran visibly larger than the blocks list beside it and the two tabs looked like two
+  different tools.
 - The drawer **collapses to a rail, not to zero** (`DRAWER_RAIL_W`) — the cause has
   to stay on screen while the pages change, or the beat is showing outputs again.
 - It **edits one top-level manifest section at a time**, spliced back by byte offset

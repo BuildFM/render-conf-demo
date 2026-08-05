@@ -14,7 +14,11 @@ export const validate = (
   spec: LayoutSpec,
   manifest: Manifest,
   fired: FiredObligation[],
-  knownRecipeIds: Set<string>
+  knownRecipeIds: Set<string>,
+  /* Which components this household actually qualified for. Needed for one rule
+     only — see the lead check — and optional so the hand-authored default page,
+     which has no household and therefore no eligibility, validates unchanged. */
+  eligible?: { name: string; role: string }[]
 ): string[] => {
   const errors: string[] = [];
   const specs = new Map(manifest.components.map((c) => [c.name, c]));
@@ -59,13 +63,29 @@ export const validate = (
     );
   }
 
-  // A support block may open a page only at "hero" — the treatment that makes it the
-  // subject rather than an item. That is how the hand-authored default page leads
-  // with a dish while a composed page leads with what the household is about.
+  /* A support block may open a page only at "hero" — the treatment that makes it the
+     subject rather than an item — AND only when no lead was eligible.
+
+     The hero exception exists so the hand-authored default page can lead with a
+     dish: it has no household, so nothing qualifies as a lead and something has to
+     go first. It was never meant to outrank an eligible lead, and it was doing
+     exactly that. Twin B's only eligible lead was PrepSchedule, the prompt says "if
+     only one lead is listed, that is the answer", and the model returned
+     RecipeCard @ hero — which validated. The page then opened the way the DEFAULT
+     page opens, the twins stopped contrasting, and "the filtering already decided"
+     was undercut by the one case where the model overrode the filtering. */
   const first = spec.blocks[0];
   const firstSpec = specs.get(first?.component ?? "");
-  if (firstSpec && firstSpec.role !== "lead" && first?.treatment !== "hero") {
-    errors.push(`${firstSpec.name} is a support block and cannot lead a page unless at "hero".`);
+  const leadWasAvailable = eligible ? eligible.some((c) => c.role === "lead") : false;
+  if (firstSpec && firstSpec.role !== "lead") {
+    if (leadWasAvailable) {
+      errors.push(
+        `${firstSpec.name} is a support block and cannot lead this page: ` +
+          `${eligible!.filter((c) => c.role === "lead").map((c) => c.name).join(", ")} qualified as a lead.`
+      );
+    } else if (first?.treatment !== "hero") {
+      errors.push(`${firstSpec.name} is a support block and cannot lead a page unless at "hero".`);
+    }
   }
 
   // Density.

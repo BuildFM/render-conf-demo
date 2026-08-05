@@ -57,7 +57,7 @@ for (const model of CANDIDATES) {
         manifest, eligible: allowed, recipes, profile, household: h, fired: candidates
       });
       const ms = Date.now() - t;
-      const errs = validate(spec, manifest, candidates, known);
+      const errs = validate(spec, manifest, candidates, known, allowed);
       console.log(
         `${model.padEnd(30)} ${h.id.padEnd(11)} ${String(ms).padStart(5)}  ${String(spec.blocks.length).padStart(5)}   ${errs.length ? "NO " : "yes"}    ${errs[0] ? errs[0].slice(0, 40) : ""}`
       );

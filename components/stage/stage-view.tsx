@@ -42,10 +42,13 @@ const GAP = Math.round(24 * K);
 const PANE_GAP = Math.round(20 * K);
 
 /** Deliberately NOT multiplied by K. The manifest pane has a fixed legibility
- *  requirement — a column of 17px mono — and it was already comfortable at 1920.
- *  Holding it still is what hands the extra width to the panes: they go from 344px
- *  to ~530px open, and from 544px to ~730px collapsed. */
-const DRAWER_OPEN_W = 820;
+ *  requirement and was already comfortable at 1920; holding it still is what hands
+ *  the extra width to the panes.
+ *
+ *  Came down from 820 once the blocks list replaced the wall of JSON. The list is
+ *  short lines and does not need the width, and every pixel taken off here is three
+ *  pixels given to the composed pages — the panes go from ~530px to ~583px each. */
+const DRAWER_OPEN_W = 660;
 /** Collapsed to a rail rather than to zero: the beat needs the cause on screen at
  *  the moment the pages change. Set to 0 to record the alternative. */
 const DRAWER_RAIL_W = 200;

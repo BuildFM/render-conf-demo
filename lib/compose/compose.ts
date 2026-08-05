@@ -20,6 +20,33 @@ import { generateLocalObject } from "./ollama";
  * generated copy, and it is structural rather than procedural.
  */
 
+/**
+ * The column headings a ComparisonTable may use. An ENUM, not free text.
+ *
+ * These were `z.array(z.string())` — the one place in the whole spec where the
+ * model wrote prose that reached a finished page, and it went wrong twice. It
+ * produced "The split itself", which no reader could decode; then it produced
+ * "Protein", which the resolver has no way to compute, so two thirds of Twin B's
+ * table rendered as a column of em-dashes. Constraining the wording in the prompt
+ * fixed the first and could never have fixed the second.
+ *
+ * A heading the app cannot fill is a dead column, and the fix is the same one the
+ * whole demo argues for: give the model a vocabulary instead of a blank. Every
+ * member here has a resolver in `lib/render/resolve.ts`, and that map is exhaustive
+ * over this list — add a heading without a way to compute it and it fails to
+ * typecheck rather than rendering a dash.
+ */
+export const AXES = [
+  "Active time",
+  "Total time",
+  "Technique",
+  "Make-ahead",
+  "Dairy",
+  "Serves",
+  "Ingredients",
+  "Where it splits"
+] as const;
+
 export const layoutSpecSchema = z.object({
   /* Naming the dominant block is a separate decision from listing the blocks, and
      making it separate is what stops the model reaching for whatever is generically
@@ -37,14 +64,9 @@ export const layoutSpecSchema = z.object({
       recipeIds: z.array(z.string()).default([]),
       techniqueTag: z.string().optional(),
       axes: z
-        .array(z.string())
+        .array(z.enum(AXES))
         .default([])
-        .describe(
-          "ComparisonTable only. 2–4 COLUMN HEADINGS chosen for this household. Each names " +
-            'what its column measures, in one to three words — "Active time", "Total time", ' +
-            '"Where it splits", "Hands off". Sentence case. Never a sentence, never a phrase ' +
-            'about the dishes, never a comment on the comparison itself.'
-        ),
+        .describe("ComparisonTable only. 2–4 of these, chosen for this household."),
       emphasis: z.array(z.number()).default([]).describe("ComparisonTable only: which value per row carries the answer.")
     })
   ),
@@ -54,6 +76,7 @@ export const layoutSpecSchema = z.object({
 });
 
 export type LayoutSpec = z.infer<typeof layoutSpecSchema>;
+export type Axis = (typeof AXES)[number];
 
 const describe = (c: ComponentSpec) =>
   `${c.name} [${c.role}] — ${c.intent} Treatments: ${c.treatments.join("/")}. Max ${c.adjacency.maxPerPage} per page.` +
@@ -137,6 +160,10 @@ OUTPUT ORDER — do this in this order, it matters
 1. Pick the LEAD. It is blocks[0] and it goes in "dominant", at the most prominent
    treatment it supports. If only one lead is listed, that is the answer — the
    filtering already decided, and it decided from ninety days of behaviour.
+   A SUPPORT block cannot open the page while any lead is listed, at any treatment,
+   including "hero". Putting RecipeCard first because a dish feels like a friendly
+   opening is the specific mistake: it gives this household the page everybody who
+   has no history gets.
 2. Add two or three SUPPORT blocks that are about the same thing as the lead.
 3. If a support block does not relate to the lead, leave it out. Three blocks that
    agree beat four that do not.
@@ -158,13 +185,9 @@ RULES
   RecipeCard at "hero" and TechniqueThread at "full" both claim it, so they cannot
   appear on the same page. Choose which one this household opens the page for.
 - Only use a treatment the component actually supports.
-- ComparisonTable's "axes" are COLUMN HEADINGS, and they are the only words on the
-  finished page you write. Every other label is authored. So they have to sound like
-  the rest of the page: one to three words naming what the column measures, the way a
-  recipe site heads a column. "Active time". "Total time". "Where it splits".
-  "Hands off". Not "The split itself", not "How they differ", not anything that
-  describes the comparison rather than heading a column — a heading a reader has to
-  decode is a heading that failed.
+- ComparisonTable's "axes" are COLUMN HEADINGS and you pick them from a fixed list:
+  ${AXES.join(", ")}. Two to four, and choose the ones that separate THESE dishes for
+  THIS household — a column where every row reads the same is a wasted column.
 - Order is meaning. What comes first is what this household opens the page for.
 - Absence is a decision. A recipe site's home page with no recipe above the fold is
   a legitimate composition if this household's history argues for it.

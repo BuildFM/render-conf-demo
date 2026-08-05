@@ -1,6 +1,6 @@
 import type { Recipe } from "@/lib/types";
 import type { Profile } from "@/lib/signals/types";
-import type { LayoutSpec } from "@/lib/compose/compose";
+import type { Axis, LayoutSpec } from "@/lib/compose/compose";
 import editorial from "@/lib/content/editorial.json";
 
 /**
@@ -38,6 +38,27 @@ const dedupe = (items: { name: string; qty: string }[]) => {
   return [...seen.values()];
 };
 const dedupeStrings = (xs: string[]) => [...new Set(xs)];
+
+/**
+ * How each column heading is computed. Keyed by the AXES enum, so the map is
+ * EXHAUSTIVE by construction — a heading added to the vocabulary without a way to
+ * fill it fails to typecheck.
+ *
+ * The previous version matched substrings against a free-text heading and returned
+ * an em-dash when nothing matched. The model asked for "Protein", nothing matched,
+ * and two thirds of Twin B's table rendered as dashes. A fallback that produces a
+ * plausible-looking empty cell is worse than one that will not compile.
+ */
+const AXIS_VALUE: Record<Axis, (r: Recipe) => string> = {
+  "Active time": (r) => `${r.activeTime} min`,
+  "Total time": (r) => (r.totalTime >= 90 ? `${Math.round(r.totalTime / 60)} hr` : `${r.totalTime} min`),
+  Technique: (r) => r.technique.join(", "),
+  "Make-ahead": (r) => (r.makeAhead ? "Yes" : "No"),
+  Dairy: (r) => (r.allergens.includes("dairy") ? "Dairy" : "None"),
+  Serves: (r) => String(r.yield),
+  Ingredients: (r) => String(r.ingredientCount),
+  "Where it splits": (r) => r.forkPoint ?? "Does not split"
+};
 
 export const resolveBlock = (
   block: LayoutSpec["blocks"][number],
@@ -154,17 +175,7 @@ export const resolveBlock = (
     case "ComparisonTable": {
       if (rs.length < 3) return fail("needs three to five dishes");
       if (block.axes.length < 2) return fail("needs at least two axes");
-      const value = (r: Recipe, axis: string): string => {
-        const a = axis.toLowerCase();
-        if (a.includes("active")) return `${r.activeTime} min`;
-        if (a.includes("total") || a.includes("oven") || a.includes("time")) return `${Math.round(r.totalTime / 60)} hr`;
-        if (a.includes("ahead")) return r.makeAhead ? "Yes" : "No";
-        if (a.includes("dairy")) return r.allergens.includes("dairy") ? "Dairy" : "None";
-        if (a.includes("serve") || a.includes("feed")) return String(r.yield);
-        if (a.includes("ingredient")) return String(r.ingredientCount);
-        if (a.includes("fork") || a.includes("split")) return r.forkPoint ?? "No";
-        return "—";
-      };
+      const value = (r: Recipe, axis: Axis): string => AXIS_VALUE[axis](r);
       return ok({
         title: "Compared side by side",
         axes: block.axes,

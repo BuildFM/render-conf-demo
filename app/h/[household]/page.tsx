@@ -90,7 +90,7 @@ const HomePage = async ({ params }: { params: Promise<{ household: string }> }) 
 
   /* 06 / 07 — validate, then one repair, then fall back */
   const known = new Set(recipes.map((r) => r.id));
-  let errors = validate(spec, manifest, candidates, known);
+  let errors = validate(spec, manifest, candidates, known, allowed);
   let repaired = false;
   if (errors.length && live) {
     repaired = true;
@@ -98,7 +98,7 @@ const HomePage = async ({ params }: { params: Promise<{ household: string }> }) 
       manifest, eligible: allowed, recipes, profile, household, fired: candidates, repairNotes: errors
     });
     const retryAssembled = finalize(retry.spec);
-    const retryErrors = validate(retryAssembled.spec, manifest, candidates, known);
+    const retryErrors = validate(retryAssembled.spec, manifest, candidates, known, allowed);
     if (!retryErrors.length) {
       spec = retryAssembled.spec;
       assembled = retryAssembled;

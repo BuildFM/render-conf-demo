@@ -263,9 +263,10 @@
   background: transparent;
   color: var(--text-primary);
   font-family: var(--font-mono);
-  /* Above the body floor on purpose. This is the one thing in the frame the room
-     is asked to actually read. */
-  font-size: calc(17px * var(--stage-k));
+  /* Was 17px, which ran visibly larger than the blocks list beside it and made the
+     two tabs look like two different tools. At the projection floor it matches, and
+     the drawer got narrower at the same time. */
+  font-size: calc(var(--data-size) * var(--stage-k));
   line-height: 1.55;
   tab-size: 2;
   padding: var(--space-5);
