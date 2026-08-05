@@ -471,6 +471,20 @@ repeat load. Keyed on manifest hash + household + profile + recipes + eligible
 vocabulary + what fired + model label. Only compositions that **passed validation**
 are stored; a fallback never is.
 
+**A repair now replaces the cached entry, and the rail says so.** `remember` was
+guarded by `!composeCached`, so a cache hit skipped the store. That is fine while a
+cached spec stays valid — and it stops being valid the moment the VALIDATOR changes
+rather than the manifest, because the manifest hash in the key has not moved. Twin B
+hit exactly that after `role: lead` was enforced: every load was a cache hit whose
+spec no longer validated, so every load made a live repair call and threw the result
+away. Its block count moved between reloads because repairs are nondeterministic,
+and the rail said `cache hit` the whole time.
+
+Two fixes. The store guard is `(!composeCached || repaired)` — repairing means the
+entry is stale by definition. And the rail reports `repair 3.7s` instead of
+`cache hit` when a repair happened, because a telemetry line that says "cache hit"
+while a model call is in flight is how this hid for a whole session.
+
 > **⚠ Recording: run `MISE_NO_CACHE=1`.** The key includes the manifest hash, so
 > `stage:reset` returns the file to a hash that is *already cached* — take 1
 > composes for real, take 2 shows `cache hit`. `stage:reset` warns unless the flag

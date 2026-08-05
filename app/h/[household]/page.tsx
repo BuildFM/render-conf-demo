@@ -119,8 +119,16 @@ const HomePage = async ({ params }: { params: Promise<{ household: string }> }) 
   }
 
   /* Keep only what passed. A fallback is never cached — the next load should get a
-     fresh attempt rather than being pinned to the default page for the session. */
-  if (live && !fellBack && !composeCached) {
+     fresh attempt rather than being pinned to the default page for the session.
+     *
+     * `|| repaired` is load-bearing and was missing. A cache hit skipped the store,
+     * so a cached spec that stopped validating — because the VALIDATOR changed, not
+     * the manifest — was repaired on every single load and the repair was thrown
+     * away every single time. Twin B did exactly that: it reported "cache hit" while
+     * making a live model call on each request, and its block count moved between
+     * reloads because the repair is nondeterministic. Repairing means the entry is
+     * stale by definition, so replace it. */
+  if (live && !fellBack && (!composeCached || repaired)) {
     remember(cacheKey, { spec, ms: composeMs, model: composeModelLabel });
   }
 
@@ -199,8 +207,13 @@ const HomePage = async ({ params }: { params: Promise<{ household: string }> }) 
           ["vocabulary", `${allowed.length}/${manifest.components.length}`],
           ["profile", cached ? "cached" : live ? `${profileMs}ms` : "no key"],
           /* Labelled, because an unexplained 0ms reads as a broken counter rather
-             than as the system being cheap. */
-          ["compose", !live ? "stub" : composeCached ? "cache hit" : `${composeMs}ms`],
+             than as the system being cheap. A repair is reported even when the first
+             call was a hit: saying "cache hit" while a live model call is happening
+             is how a permanently-repairing page hid in plain sight. */
+          [
+            "compose",
+            !live ? "stub" : repaired ? `repair ${composeMs}ms` : composeCached ? "cache hit" : `${composeMs}ms`
+          ],
           /* Which model, in frame. A local run and a hosted one are otherwise
              indistinguishable on screen, and the latency claim means nothing
              without it. */
