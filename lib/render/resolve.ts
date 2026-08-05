@@ -177,9 +177,16 @@ export const resolveBlock = (
       if (!r) return fail("no recipe with a fork point");
       const fork = (editorial.forks as unknown as Record<string, Fork>)[r.id];
       if (!fork) return fail(`no branches authored for ${r.id}`);
+      /* The steps BEFORE the split, so the card can show the dish being one dish
+         before it becomes two. The block claimed "splits at step 4 of 6" while
+         showing no steps at all, which left a fork with nothing visible to fork —
+         three paragraphs where a method should be. "Step 4 of 6" means four is the
+         first divergent step, so one through three are shared. */
+      const forkStep = Number(/step (\d+)/i.exec(fork.forkPoint)?.[1] ?? 0);
       return ok({
         recipe: { ...r, summary: fork.shared },
         forkPoint: fork.forkPoint,
+        sharedSteps: forkStep > 1 ? (r.steps ?? []).slice(0, forkStep - 1) : [],
         branches: fork.branches,
         treatment: block.treatment
       });

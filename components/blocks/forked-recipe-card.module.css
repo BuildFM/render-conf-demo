@@ -98,3 +98,15 @@
   background: var(--acid);
   align-self: stretch;
 }
+
+/* --- the shared method ------------------------------------------------------
+   Numbered, and it stops one step short of the fork. The last number the reader
+   sees is the step before the divide, so the rule underneath lands on the step
+   that is missing from it. */
+
+.method { padding: 0 var(--space-8) var(--space-5); }
+
+.methodLabel {
+  display: block;
+  color: var(--text-dim);
+}

@@ -184,6 +184,14 @@ recipe →", so the method belongs on the other side of that link; `collapsed` a
 today only Twin A's page shows a method**, because it is the only composition
 holding a RecipeCard at `full`. That is the composer's choice, not a bug.
 
+**`ForkedRecipeCard` shows the method up to the split.** It used to be an intro
+paragraph and two branch blurbs — it announced "splits at step 4 of 6" while
+showing no steps at all, so there was nothing visible for the fork to fork. It now
+prints the shared steps, stopping one short of the divide, so the rule underneath
+lands exactly on the step missing from the list. `resolve.ts` parses the step
+number out of `forkPoint` and slices; verified against all four forking dishes
+(039 shares 3 of 6, 038 shares 5 of 9, 033 shares 2 of 5, 031 shares 1 of 5).
+
 The list itself is `components/content/method-list.tsx`. It was inside PrimerCard,
 whose CSS claimed "the only ordered list in the system" — copying the markup would
 have made that false, so it was extracted and both use it. `steps` also exists so

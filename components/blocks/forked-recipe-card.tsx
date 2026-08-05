@@ -2,6 +2,7 @@ import type { Recipe } from "@/lib/types"
 import { DisplayHeading } from "@/components/core/display-heading"
 import { Eyebrow } from "@/components/core/eyebrow"
 import { FigureWell } from "@/components/content/figure-well"
+import { MethodList } from "@/components/content/method-list"
 import { formatYield } from "@/lib/format"
 import styles from "./forked-recipe-card.module.css"
 
@@ -11,6 +12,10 @@ type ForkedRecipeCardProps = {
   recipe: Recipe
   /** Where the method divides: "Step 6 of 9". */
   forkPoint: string
+  /** The steps before the divide. Without these the block asserted a fork and
+   *  showed nothing to fork — an intro paragraph and two blurbs. The shared method
+   *  is what makes both branches visibly the same dish up to a point. */
+  sharedSteps?: string[]
   branches: [Branch, Branch]
   treatment: "full" | "collapsed"
 }
@@ -21,6 +26,7 @@ type ForkedRecipeCardProps = {
 export const ForkedRecipeCard = ({
   recipe,
   forkPoint,
+  sharedSteps,
   branches,
   treatment
 }: ForkedRecipeCardProps) => {
@@ -71,6 +77,15 @@ export const ForkedRecipeCard = ({
           />
         ) : null}
       </div>
+
+      {sharedSteps?.length ? (
+        <div className={styles.method}>
+          <Eyebrow track="md" className={styles.methodLabel}>
+            Method, up to the split
+          </Eyebrow>
+          <MethodList steps={sharedSteps} />
+        </div>
+      ) : null}
 
       <div className={styles.forkRule}>
         <Eyebrow track="lg" className={styles.forkLabel}>
