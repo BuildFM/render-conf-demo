@@ -212,12 +212,12 @@
       "shared": "The cabbage is quartered, oiled, salted and cooked cut-face down until the flat side is genuinely black at the edges. That takes twenty minutes and no attention, and nothing before this point differs.",
       "branches": [
         {
-          "label": "Branch A · No dairy",
+          "label": "No dairy",
           "title": "Capers, lemon and the pan juices",
           "body": "Lift the wedges out. Into the hot pan go the capers and a squeeze of lemon, and thirty seconds of scraping picks up everything the cabbage left behind. Pour it back over. Sharper than the butter version, and it holds better if it has to wait."
         },
         {
-          "label": "Branch B · With dairy",
+          "label": "With dairy",
           "title": "Brown butter, capers, lemon",
           "body": "Butter into the same pan, foaming, then quiet, then nutty — about ninety seconds, and it goes from right to wrong in fifteen. Capers in at the colour change, lemon off the heat. Spoon over immediately."
         }
@@ -228,12 +228,12 @@
       "shared": "Beans, aromatics and three hours are shared by everyone at the table. Nothing before step six differs, so the pot stays one pot until the last twenty minutes.",
       "branches": [
         {
-          "label": "Branch A · No dairy",
+          "label": "No dairy",
           "title": "Olive oil and lemon",
           "body": "Lift two thirds into a second pan. Reduce hard for four minutes, then a long pour of oil off the heat — the starch already in the liquid does the emulsifying, and it will look like it has cream in it."
         },
         {
-          "label": "Branch B · With dairy",
+          "label": "With dairy",
           "title": "Butter and a parmesan rind",
           "body": "The rind goes in at step four if you know in advance; an hour is enough to matter. Otherwise butter, off the heat, one cube at a time, and do not let it boil after or it will split."
         }
@@ -244,12 +244,12 @@
       "shared": "Both birds go in skin-down under the weight and stay there for six minutes without being touched. The flip is where they part company, and by then the skin has already done what it is going to do.",
       "branches": [
         {
-          "label": "Branch A · Plain",
+          "label": "Plain",
           "title": "Salt, thyme, and the weight back on",
           "body": "Flip, weight back on, ninety seconds, out. Thyme into the fat at the flip so it fries rather than steams. This is the one to cook if you have never done it — nothing can go wrong in ninety seconds."
         },
         {
-          "label": "Branch B · Glazed",
+          "label": "Glazed",
           "title": "Honey and sherry vinegar",
           "body": "Flip, then honey and vinegar straight into the pan, where it will seize and then loosen. Baste for a minute — no longer, because the honey will catch and turn bitter faster than you expect it to."
         }
@@ -260,12 +260,12 @@
       "shared": "The beans and their liquid are already made. Greens are stripped, garlic sliced, chilli measured — everything from here is under twenty minutes and the two versions take exactly the same time.",
       "branches": [
         {
-          "label": "Branch A · No meat",
+          "label": "No meat",
           "title": "Anchovy and chilli",
           "body": "Anchovies into warm oil until they dissolve, which takes about two minutes and stops smelling of anchovy almost immediately. Garlic and chilli after. It reads as depth rather than as fish, and nobody at the table will name it."
         },
         {
-          "label": "Branch B · With pancetta",
+          "label": "With pancetta",
           "title": "Pancetta, rendered slowly",
           "body": "Diced pancetta into a cold pan, low heat, ten minutes, until the fat is out and the pieces are hard. Garlic and chilli into that fat. Everything after this step is identical to Branch A."
         }

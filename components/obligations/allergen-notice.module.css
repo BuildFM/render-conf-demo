@@ -1,22 +1,11 @@
 .notice { display: block; }
 
-/* Acid rule above and below. Never red, never a badge. */
+/* Acid rule above and below. Never red, never a badge, and no mark — the rules,
+   the kicker and the Display L statement are the whole signal. */
 .band {
   border-top: var(--border-width-strong) solid var(--border-signal);
   border-bottom: var(--border-width-strong) solid var(--border-signal);
   padding: var(--space-8) 0;
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: var(--space-10);
-  align-items: start;
-}
-
-.mark {
-  font-family: var(--font-display);
-  font-variation-settings: "wdth" var(--numeral-wdth), "wght" var(--numeral-wght);
-  font-size: var(--numeral-size);
-  line-height: var(--numeral-lh);
-  color: var(--text-signal);
 }
 
 .kicker { margin-bottom: var(--space-4); }

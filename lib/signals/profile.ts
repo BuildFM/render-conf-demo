@@ -24,7 +24,8 @@ import { hasGatewayKey } from "@/lib/env";
 
 const CACHE_DIR = path.join(process.cwd(), "lib/signals/cache");
 
-const prompt = (household: Household, events: CookEvent[], recipes: Recipe[]) => `
+/** Exported so scripts/cost.mjs can price the real prompt rather than a rebuilt one. */
+export const profilePromptFor = (household: Household, events: CookEvent[], recipes: Recipe[]) => `
 You are reading ninety days of one household's behaviour on a recipe site.
 
 WHAT THEY DECLARED AT SIGNUP — treat this as weak evidence. People describe
@@ -89,7 +90,7 @@ export const getProfile = async (
     model: PROFILE_MODEL,
     schema: profileSchema,
     temperature: 0,
-    prompt: prompt(household, events, recipes)
+    prompt: profilePromptFor(household, events, recipes)
   });
   const ms = Date.now() - started;
 

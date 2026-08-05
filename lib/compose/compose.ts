@@ -4,7 +4,9 @@ import type { Manifest, ComponentSpec } from "@/lib/manifest/load";
 import type { Recipe } from "@/lib/types";
 import type { Household, Profile } from "@/lib/signals/types";
 import type { FiredObligation } from "./gates";
-import { hasGatewayKey } from "@/lib/env";
+import { composeModel, hasComposeModel } from "./model";
+import * as cache from "./cache";
+import { generateLocalObject } from "./ollama";
 
 /**
  * CALL 2 — composition. What should this page be?
@@ -125,8 +127,10 @@ RULES
   blocks are equally important is a page with nothing to say.
 - Every block must relate to the others. Do not place a block about a dish that
   appears nowhere else on the page — an orphan line reads as debris.
-- At most ${manifest.density.maxFullImages} blocks carrying a photograph ("hero" and
-  "full" both do).
+- At most ${manifest.density.maxFullImages} blocks carrying a photograph. Only ${manifest.components
+    .filter((c) => c.carriesPhoto)
+    .map((c) => c.name)
+    .join(", ")} do, and only at "hero" or "full".
 - At most ${manifest.density.maxDisplayXL} block may take the page's giant headline.
   RecipeCard at "hero" and TechniqueThread at "full" both claim it, so they cannot
   appear on the same page. Choose which one this household opens the page for.
@@ -154,10 +158,9 @@ line, so it has to be the truest thing you can say about them.
           — a count. A query reaches that.
 `;
 
-/** The cheap, per-view call. See the note in lib/signals/profile.ts. */
-const COMPOSE_MODEL = process.env.MISE_COMPOSE_MODEL ?? "anthropic/claude-sonnet-5";
-
-const hasKey = hasGatewayKey;
+/** The cheap, per-view call. See the note in lib/signals/profile.ts. Which model,
+ *  and whether it is local, is decided in lib/compose/model.ts. */
+const hasKey = hasComposeModel;
 
 export const compose = async (args: {
   manifest: Manifest;
@@ -167,31 +170,86 @@ export const compose = async (args: {
   household: Household;
   fired: FiredObligation[];
   repairNotes?: string[];
-}): Promise<{ spec: LayoutSpec; ms: number; live: boolean }> => {
-  if (!hasKey()) return { spec: stubSpec(args.eligible, args.recipes, args.profile), ms: 0, live: false };
+}): Promise<{
+  spec: LayoutSpec;
+  ms: number;
+  live: boolean;
+  model: string;
+  cached: boolean;
+  /** Hand back to `remember()` once the layout has actually passed validation. */
+  cacheKey: string | null;
+  /** Reported by the gateway. Null on the local path and on a cache hit — the
+   *  cost script needs measured tokens, not an estimate from character counts. */
+  usage: { inputTokens: number; outputTokens: number } | null;
+}> => {
+  if (!hasKey()) {
+    return {
+      spec: stubSpec(args.eligible, args.recipes, args.profile),
+      ms: 0,
+      live: false,
+      model: "stub",
+      cached: false,
+      cacheKey: null,
+      usage: null
+    };
+  }
+
+  const { model, providerOptions, label, local, localName } = composeModel();
+
+  /* A repair is a different call with a different prompt, and caching it would
+     serve the repaired layout to the next first attempt. Repairs always run live
+     and are never stored. */
+  const repairing = Boolean(args.repairNotes?.length);
+  const k = repairing ? null : cache.key({ ...args, model: label });
+
+  if (k && cache.enabled()) {
+    const hit = cache.get(k);
+    if (hit) return { spec: hit.spec, ms: 0, live: true, model: hit.model, cached: true, cacheKey: k, usage: null };
+  }
+
+  const text =
+    prompt(args.manifest, args.eligible, args.recipes, args.profile, args.household, args.fired) +
+    (args.repairNotes?.length
+      ? `\n\nYOUR PREVIOUS ATTEMPT WAS REJECTED. Fix exactly these and return a whole new spec:\n${args.repairNotes.map((n) => `- ${n}`).join("\n")}`
+      : "");
 
   const started = Date.now();
-  const { object } = await generateObject({
-    model: COMPOSE_MODEL,
-    schema: layoutSpecSchema,
-    temperature: 0,
-    // Arrangement, not judgment: the judgment already happened in call 1, which
-    // runs nightly and keeps its reasoning budget. Measured on the compose call:
-    // 16.5s -> 4.8s, output tokens 1525 -> 290, which is what makes "fast and
-    // cheap" true when said on stage.
-    //
-    // NOT free, though. With thinking off the model needs more repair passes —
-    // it has emitted an obligation it may not place and split an assembly, both
-    // caught by validation. Keep an eye on whether the repair rate is acceptable
-    // before treating this as settled.
-    providerOptions: { anthropic: { thinking: { type: "disabled" } } },
-    prompt:
-      prompt(args.manifest, args.eligible, args.recipes, args.profile, args.household, args.fired) +
-      (args.repairNotes?.length
-        ? `\n\nYOUR PREVIOUS ATTEMPT WAS REJECTED. Fix exactly these and return a whole new spec:\n${args.repairNotes.map((n) => `- ${n}`).join("\n")}`
-        : "")
-  });
-  return { spec: object, ms: Date.now() - started, live: true };
+
+  /* Two paths, one prompt and one schema. The local one bypasses the AI SDK because
+     Ollama's OpenAI-compatible endpoint cannot turn thinking off — see
+     lib/compose/ollama.ts, where that cost an hour. */
+  let usage: { inputTokens: number; outputTokens: number } | null = null;
+  const object = local
+    ? await generateLocalObject({ model: localName, prompt: text, schema: layoutSpecSchema })
+    : await (async () => {
+        const r = await generateObject({
+          model: model!,
+          schema: layoutSpecSchema,
+          temperature: 0,
+          // Arrangement, not judgment: the judgment already happened in call 1,
+          // which runs nightly and keeps its reasoning budget. Measured on the
+          // compose call: 16.5s -> 4.8s, output tokens 1525 -> 290, which is what
+          // makes "fast and cheap" true when said on stage.
+          providerOptions,
+          prompt: text
+        });
+        usage = { inputTokens: r.usage?.inputTokens ?? 0, outputTokens: r.usage?.outputTokens ?? 0 };
+        return r.object;
+      })();
+
+  /* Deliberately NOT stored here. A layout is only worth keeping once it has passed
+     validation — caching the raw output would pin an invalid composition and make
+     every subsequent load pay for the same repair. The caller stores it, after. */
+  return { spec: object, ms: Date.now() - started, live: true, model: label, cached: false, cacheKey: k, usage };
+};
+
+/** Store a composition that validated. The repaired layout is what gets kept when a
+ *  repair happened, so the next load of the same inputs is valid immediately. */
+export const remember = (
+  cacheKey: string | null,
+  entry: { spec: LayoutSpec; ms: number; model: string }
+): void => {
+  if (cacheKey && cache.enabled()) cache.set(cacheKey, entry);
 };
 
 /** No API key: a deterministic, obviously-mechanical layout so the plumbing runs. */

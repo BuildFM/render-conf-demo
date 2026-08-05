@@ -1,0 +1,351 @@
+/* The stage view is laid out to a fixed board — the recording frame, 2560×1440 —
+   and scaled to fit whatever window it happens to be open in. Nothing here uses a
+   fluid size, because the only size that matters is the one that records.
+
+   Every font-size is multiplied by `--stage-k`, the ratio of the board to the 1080p
+   frame this was first laid out against. Legibility in a hall is about size RELATIVE
+   to the frame: the same 15px in a wider frame is smaller on the wall, so a bigger
+   board would quietly make the rail harder to read rather than easier. The composed
+   pages inside the iframes get no such correction — they are supposed to grow, and
+   that is the whole reason for the bigger board.
+
+   Type is at or above the projection floor set in tokens.css rev-02. The manifest
+   pane deliberately runs LARGER than a real editor would: it is being read from
+   row 20, not from a desk. */
+
+.fitter {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: var(--ink-0);
+}
+
+.board {
+  transform-origin: center center;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-page);
+  overflow: hidden;
+}
+
+.split {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+/* --- the manifest drawer --------------------------------------------------- */
+
+.drawer {
+  display: flex;
+  flex-direction: column;
+  border: var(--border-width) solid var(--border-default);
+  background: var(--surface-raised);
+  overflow: hidden;
+  /* Colour and border only — the system forbids transitions on transform, and a
+     width transition is the one exception worth having because the collapse is on
+     camera. Kept short enough to trim. */
+  transition: width 220ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.drawerHead {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: var(--border-width) solid var(--border-default);
+}
+
+/* Collapsed, the head has a rail's width to work in. Stacking keeps the hash whole
+   — a clipped hash reads as a broken value, and the hash is an honest artifact. */
+.drawer[data-open="false"] .drawerHead {
+  flex-wrap: wrap;
+  row-gap: var(--space-2);
+}
+.drawer[data-open="false"] .toggle {
+  margin-left: 0;
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: calc(var(--micro-size) * var(--stage-k));
+  letter-spacing: var(--micro-track);
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.hash {
+  font-family: var(--font-mono);
+  font-size: calc(var(--data-size) * var(--stage-k));
+  font-variant-numeric: tabular-nums;
+  color: var(--text-signal);
+}
+
+.toggle {
+  margin-left: auto;
+  background: none;
+  border: var(--border-width) solid var(--border-default);
+  color: var(--text-body);
+  font-family: var(--font-mono);
+  font-size: calc(var(--micro-size) * var(--stage-k));
+  letter-spacing: var(--micro-track);
+  text-transform: uppercase;
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+  transition: color var(--transition-color), border-color var(--transition-color);
+}
+.toggle:hover { color: var(--text-signal); border-color: var(--border-signal); }
+
+.sections {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  border-bottom: var(--border-width) solid var(--border-faint);
+}
+
+.sectionTab {
+  background: none;
+  border: var(--border-width) solid transparent;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: calc(var(--micro-size) * var(--stage-k));
+  letter-spacing: var(--micro-track);
+  text-transform: uppercase;
+  padding: var(--space-1) var(--space-2);
+  cursor: pointer;
+  transition: color var(--transition-color), border-color var(--transition-color);
+}
+.sectionTab:hover { color: var(--text-body); }
+.sectionTab[data-active="true"] {
+  color: var(--text-on-signal);
+  background: var(--surface-signal);
+}
+
+.editor {
+  flex: 1;
+  min-height: 0;
+  resize: none;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  /* Above the body floor on purpose. This is the one thing in the frame the room
+     is asked to actually read. */
+  font-size: calc(17px * var(--stage-k));
+  line-height: 1.55;
+  tab-size: 2;
+  padding: var(--space-5);
+  /* Wrapped, not scrolled. A horizontal scrollbar in the manifest pane means the
+     end of a long `placement` string is off-camera, and it looks like a bug. */
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.editor:focus-visible { outline: none; }
+
+.drawerFoot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-top: var(--border-width) solid var(--border-default);
+}
+
+.save {
+  align-self: flex-start;
+  background: var(--surface-signal);
+  color: var(--text-on-signal);
+  border: none;
+  font-family: var(--font-mono);
+  font-size: calc(var(--button-size-sm) * var(--stage-k));
+  letter-spacing: var(--button-track);
+  text-transform: uppercase;
+  padding: var(--space-3) var(--space-5);
+  cursor: pointer;
+}
+.save:disabled { opacity: 0.5; cursor: default; }
+
+.error {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: calc(var(--body-size) * var(--stage-k));
+  line-height: 1.5;
+  color: var(--text-signal);
+  border-left: var(--border-width-strong) solid var(--border-signal);
+  padding-left: var(--space-3);
+  white-space: pre-wrap;
+  max-height: calc(160px * var(--stage-k));
+  overflow: auto;
+}
+
+/* Collapsed state — a rail, not an absence. */
+.railed {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-content: start;
+  gap: var(--space-1);
+  padding: var(--space-5);
+}
+
+.railedKey {
+  font-family: var(--font-mono);
+  font-size: calc(var(--micro-size) * var(--stage-k));
+  letter-spacing: var(--micro-track);
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.railedValue {
+  font-family: var(--font-mono);
+  font-size: calc(var(--data-size) * var(--stage-k));
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+  margin-bottom: var(--space-3);
+}
+
+/* --- the three households -------------------------------------------------- */
+
+.panes {
+  flex: 1;
+  display: flex;
+  min-width: 0;
+  /* Panes hang from the top and keep their own heights — see the comment on
+     PANE_MAX_H. Stretching them would erase a real difference between the pages. */
+  align-items: flex-start;
+}
+
+.pane {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.paneHead {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding-bottom: var(--space-3);
+}
+
+.paneLabel {
+  font-family: var(--font-display);
+  font-size: calc(var(--section-size) * var(--stage-k));
+  font-stretch: 70%;
+  font-weight: 800;
+  letter-spacing: var(--section-track);
+  text-transform: uppercase;
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: color var(--transition-color);
+}
+/* No underline and no link colour at rest. It opens the page in a new tab when you
+   want it, but on camera it is a label — an obviously clickable heading invites the
+   room to wonder what was clicked. */
+.paneLabel:hover { color: var(--text-signal); }
+
+.paneTime {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: calc(var(--data-size) * var(--stage-k));
+  font-variant-numeric: tabular-nums;
+  color: var(--text-dim);
+}
+.paneTime[data-live="true"] { color: var(--text-signal); }
+
+.viewport {
+  position: relative;
+  overflow: hidden;
+  border: var(--border-width) solid var(--border-default);
+  background: var(--surface-page);
+}
+
+.frame {
+  border: none;
+  transform-origin: top left;
+  display: block;
+}
+
+.composing {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--ink-0) 82%, transparent);
+  font-family: var(--font-mono);
+  font-size: calc(var(--micro-size) * var(--stage-k));
+  letter-spacing: var(--micro-track-wide);
+  text-transform: uppercase;
+  color: var(--text-signal);
+}
+
+/* --- the consolidated rail -------------------------------------------------
+   The numeric half of the proof. The pages carry it visually as silhouettes;
+   this carries it in numbers, and this is the part that must read from the back
+   of the room. */
+
+.rail {
+  flex: none;
+  border-top: var(--border-width) solid var(--border-default);
+  background: var(--surface-raised);
+  padding: var(--space-3) var(--space-9) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.railHead {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding-bottom: var(--space-2);
+  margin-bottom: var(--space-1);
+  border-bottom: var(--border-width) solid var(--border-faint);
+}
+
+.railRow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-9);
+}
+
+.railHousehold {
+  font-family: var(--font-mono);
+  font-size: calc(var(--data-size) * var(--stage-k));
+  color: var(--text-body);
+  width: calc(140px * var(--stage-k));
+  flex: none;
+}
+
+.railPair {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.railKey {
+  font-family: var(--font-mono);
+  font-size: calc(var(--micro-size) * var(--stage-k));
+  letter-spacing: var(--micro-track);
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.railWas {
+  font-family: var(--font-mono);
+  font-size: calc(var(--data-size) * var(--stage-k));
+  font-variant-numeric: tabular-nums;
+  color: var(--text-dim);
+}
+
+.railValue {
+  font-family: var(--font-mono);
+  font-size: calc(var(--data-size) * var(--stage-k));
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+.railValue[data-changed="true"] { color: var(--text-signal); }

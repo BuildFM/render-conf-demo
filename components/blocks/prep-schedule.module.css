@@ -1,5 +1,22 @@
 .title { margin-bottom: var(--space-7); }
 
+/* Matches ForkedRecipeCard's head exactly — see the comment in the component.
+   Centred, not top-aligned: this title is often a single line against a 270px
+   well, and starting both at the top leaves a hole under the title rather than
+   negative space that looks chosen. */
+.head {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-9);
+  align-items: center;
+  margin-bottom: var(--space-7);
+}
+
+/* The heading's own bottom margin is the head's job once it sits in this grid. */
+.head .title { margin-bottom: 0; }
+
+.well { width: 360px; }
+
 .day {
   display: grid;
   grid-template-columns: 150px 1fr;

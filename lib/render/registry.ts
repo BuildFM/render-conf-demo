@@ -11,7 +11,6 @@ import { PantryMatch } from "@/components/blocks/pantry-match";
 import { TonightShortlist } from "@/components/blocks/tonight-shortlist";
 import { MakeAheadCallout } from "@/components/blocks/make-ahead-callout";
 import { SubstitutionTable } from "@/components/blocks/substitution-table";
-import { StoryIntro } from "@/components/blocks/story-intro";
 import { TechniqueNote } from "@/components/blocks/technique-note";
 import { LeftoversNote } from "@/components/blocks/leftovers-note";
 import { AllergenNotice } from "@/components/obligations/allergen-notice";
@@ -43,7 +42,6 @@ export const registry: Record<string, any> = {
   TonightShortlist,
   MakeAheadCallout,
   SubstitutionTable,
-  StoryIntro,
   TechniqueNote,
   LeftoversNote,
   AllergenNotice

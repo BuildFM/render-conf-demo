@@ -21,7 +21,7 @@ const ROOT = process.cwd();
 const read = (p) => JSON.parse(readFileSync(path.join(ROOT, p), "utf8"));
 
 const { loadManifest } = await import("../lib/manifest/load.ts");
-const { computeFacts, eligible, obligationCandidates, placeObligations, completeAssemblies } =
+const { computeFacts, eligible, obligationCandidates, placeObligations, completeAssemblies, enforceAdjacency } =
   await import("../lib/compose/gates.ts");
 const { compose } = await import("../lib/compose/compose.ts");
 const { validate } = await import("../lib/compose/validate.ts");
@@ -73,9 +73,9 @@ for (const h of households) {
 
   const candidates = obligationCandidates(manifest, facts, recipes, h);
   const t = Date.now();
-  let spec;
+  let spec, modelLabel;
   try {
-    ({ spec } = await compose({ manifest, eligible: allowed, recipes, profile, household: h, fired: candidates }));
+    ({ spec, model: modelLabel } = await compose({ manifest, eligible: allowed, recipes, profile, household: h, fired: candidates }));
   } catch (e) {
     // The gateway times out occasionally. One household failing should not take
     // the run down — the point of the harness is to see the other three.
@@ -90,12 +90,14 @@ for (const h of households) {
       return {
         component,
         treatment: cs.treatments.includes(near.treatment) ? near.treatment : cs.treatments[0],
-        recipeIds: near.recipeIds.slice(0, 1),
+        recipeIds: near.recipeIds,
         axes: [],
         emphasis: []
       };
     });
-    return { ...s, blocks: done.blocks };
+    const ordered = enforceAdjacency(done.blocks, manifest);
+    if (ordered.moved.length) console.log(`   ${dim("fixed")}    ${dim(ordered.moved.join("; "))}`);
+    return { ...s, blocks: ordered.blocks };
   };
   spec = finalize(spec);
   const errors = validate(spec, manifest, candidates, known);
@@ -109,7 +111,9 @@ for (const h of households) {
   const onPage = new Set(spec.blocks.flatMap((b) => b.recipeIds ?? []));
   const fired = placeObligations(candidates, onPage);
 
-  console.log(`   ${dim("chose")}    ${bold(spec.dominant ?? "(no dominant named)")}  ${dim(`${ms}ms`)}`);
+  console.log(
+    `   ${dim("chose")}    ${bold(spec.dominant ?? "(no dominant named)")}  ${dim(`${ms}ms`)}  ${dim(modelLabel ?? "")}`
+  );
   spec.blocks.forEach((b, i) => {
     const r = resolveBlock(b, {
       recipes: byId, profile, householdSize: h.declared.size, cookDates, ingredients, pantry: h.pantry

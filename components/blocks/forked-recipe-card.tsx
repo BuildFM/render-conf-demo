@@ -1,6 +1,7 @@
 import type { Recipe } from "@/lib/types"
 import { DisplayHeading } from "@/components/core/display-heading"
 import { Eyebrow } from "@/components/core/eyebrow"
+import { FigureWell } from "@/components/content/figure-well"
 import { formatYield } from "@/lib/format"
 import styles from "./forked-recipe-card.module.css"
 
@@ -42,19 +43,33 @@ export const ForkedRecipeCard = ({
 
   return (
     <article className={styles.card}>
+      {/* The dish, before it divides. The photograph belongs above the fork rule,
+          never beside a branch — one image next to Branch A would read as Branch A's
+          outcome, and the whole point is that both branches are the same dish. */}
       <div className={styles.head}>
-        <div className={styles.headRow}>
-          <Eyebrow track="md">
-            {recipe.technique[0]} · {formatYield(recipe.yield)} · One pot
-          </Eyebrow>
-          <Eyebrow tone="dim" track="sm">
-            Forks at {forkPoint.toLowerCase()}
-          </Eyebrow>
+        <div>
+          <div className={styles.headRow}>
+            <Eyebrow track="md">
+              {recipe.technique[0]} · {formatYield(recipe.yield)} · One pot
+            </Eyebrow>
+            <Eyebrow tone="dim" track="sm">
+              Forks at {forkPoint.toLowerCase()}
+            </Eyebrow>
+          </div>
+          <DisplayHeading size="m" as="h3" className={styles.title}>
+            {recipe.title}
+          </DisplayHeading>
+          {recipe.summary ? <p className={styles.shared}>{recipe.summary}</p> : null}
         </div>
-        <DisplayHeading size="m" as="h3" className={styles.title}>
-          {recipe.title}
-        </DisplayHeading>
-        {recipe.summary ? <p className={styles.shared}>{recipe.summary}</p> : null}
+        {recipe.image ? (
+          <FigureWell
+            src={recipe.image.src}
+            alt={recipe.image.alt}
+            tag={`Fig. ${recipe.id}`}
+            shape="landscape"
+            className={styles.well}
+          />
+        ) : null}
       </div>
 
       <div className={styles.forkRule}>

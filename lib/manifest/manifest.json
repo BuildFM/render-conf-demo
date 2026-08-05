@@ -87,7 +87,8 @@
       "slots": {
         "requires": "recipe: exactly 1 recipeId. Use \"hero\" for the one dish this page is about — it takes the whole top of the page and claims the page's single Display XL, so a page with a hero may not also run TechniqueThread at full."
       },
-      "role": "support"
+      "role": "support",
+      "carriesPhoto": true
     },
     {
       "name": "ForkedRecipeCard",
@@ -119,7 +120,8 @@
       "slots": {
         "requires": "recipe: exactly 1 recipeId, and it must be one that forks."
       },
-      "role": "lead"
+      "role": "lead",
+      "carriesPhoto": true
     },
     {
       "name": "WhyThisWorks",
@@ -229,7 +231,8 @@
       "slots": {
         "requires": "days: at least 2 recipeIds that have make-ahead steps."
       },
-      "role": "lead"
+      "role": "lead",
+      "carriesPhoto": true
     },
     {
       "name": "ShoppingList",
@@ -383,22 +386,6 @@
       ],
       "slots": {
         "requires": "rows: exactly 1 recipeId — the dish with the gap."
-      },
-      "role": "support"
-    },
-    {
-      "name": "StoryIntro",
-      "intent": "Editorial framing before a dish.",
-      "requires": [],
-      "adjacency": {
-        "maxPerPage": 1
-      },
-      "treatments": [
-        "full",
-        "collapsed"
-      ],
-      "slots": {
-        "requires": "body: no recipeIds needed."
       },
       "role": "support"
     },

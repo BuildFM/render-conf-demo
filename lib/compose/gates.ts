@@ -228,5 +228,134 @@ export const completeAssemblies = <T extends { component: string }>(
     out.splice(Math.min(anchorIdx, out.length), 0, ...unit);
   }
 
+  /* Completion adds blocks, and the manifest caps them. A four-block page that
+     picks up a fifth from PlanTheWeek is invalid on a rule the model never broke —
+     it named four. Trim from the end, skipping the lead and never breaking an
+     assembly open, rather than spending a model call to re-choose. */
+  const memberOf = new Map<string, string>();
+  for (const a of manifest.assemblies) for (const m of a.members) memberOf.set(m, a.name);
+
+  while (out.length > manifest.density.maxBlocks) {
+    let cut = -1;
+    for (let i = out.length - 1; i > 0; i--) {
+      if (!memberOf.has(out[i].component)) { cut = i; break; }
+    }
+    if (cut < 0) break; // everything left is a lead or inside an assembly
+    completed.push(`density: dropped ${out[cut].component}, ${manifest.density.maxBlocks} blocks max`);
+    out.splice(cut, 1);
+  }
+
   return { blocks: out, completed };
+};
+
+/**
+ * Is the block at `i` sitting after something it is allowed to follow?
+ *
+ * Adjacency is declared against UNITS, not against members. An assembly moves as
+ * one thing, so a block that must follow PrepSchedule is satisfied by following the
+ * PlanTheWeek assembly that PrepSchedule leads — otherwise the manifest contradicts
+ * itself, and it did: MakeAheadCallout must directly follow PrepSchedule, and
+ * PrepSchedule is never allowed to be the block directly before anything, because
+ * ShoppingList is glued to it. Nothing could satisfy the rule and the page fell back
+ * roughly one run in three.
+ *
+ * Shared by the enforcer and the validator so they cannot disagree — when they did,
+ * the enforcer moved a block the validator then rejected, forever.
+ */
+export const satisfiesMustFollow = (
+  blocks: { component: string }[],
+  i: number,
+  manifest: Manifest
+): boolean => {
+  const must = manifest.components.find((c) => c.name === blocks[i].component)?.adjacency.mustFollow ?? [];
+  if (!must.length) return true;
+  if (i === 0) return false;
+
+  const memberOf = new Map<string, string>();
+  for (const a of manifest.assemblies) for (const m of a.members) memberOf.set(m, a.name);
+
+  /* The preceding unit: the block at i-1, plus any contiguous run before it that
+     belongs to the same assembly. */
+  const unit = [blocks[i - 1].component];
+  const assembly = memberOf.get(blocks[i - 1].component);
+  if (assembly) {
+    for (let j = i - 2; j >= 0 && memberOf.get(blocks[j].component) === assembly; j--) {
+      unit.push(blocks[j].component);
+    }
+  }
+
+  return unit.some((c) => must.includes(c));
+};
+
+/**
+ * Put blocks that declare a `mustFollow` next to something they are allowed to
+ * follow — or take them off the page.
+ *
+ * Same argument as assemblies, and found the same way. Twin B failed about one run
+ * in three, always identically: the model picked MakeAheadCallout, which must
+ * directly follow a recipe or a schedule, and then placed it after ShoppingList.
+ * PrepSchedule was already on the page. The composition was not wrong about what
+ * belonged there, only about where — and where was never the model's decision to
+ * make, because the manifest already states it.
+ *
+ * A repair pass for this costs a second model call to fix an ordering the design
+ * system can fix arithmetically, and it fails often enough to fall back to the
+ * default page on camera. So: move it, and if there is nothing on the page it may
+ * follow, drop it rather than render a block the manifest forbids.
+ *
+ * Runs AFTER completeAssemblies — completion changes positions, and an adjacency
+ * checked before it can be false afterwards.
+ */
+export const enforceAdjacency = <T extends { component: string }>(
+  blocks: T[],
+  manifest: Manifest
+): { blocks: T[]; moved: string[] } => {
+  const out = [...blocks];
+  const moved: string[] = [];
+  const memberOf = new Map<string, string>();
+  for (const a of manifest.assemblies) for (const m of a.members) memberOf.set(m, a.name);
+
+  /* An insertion point must never land inside an assembly — that would split a unit
+     the manifest says moves whole. Slide past any run of members of the same one. */
+  const clear = (at: number): number => {
+    let i = at;
+    while (i > 0 && i < out.length) {
+      const a = memberOf.get(out[i].component);
+      if (a && memberOf.get(out[i - 1].component) === a) i++;
+      else break;
+    }
+    return i;
+  };
+
+  for (let pass = 0; pass < out.length; pass++) {
+    let changed = false;
+
+    for (let i = 0; i < out.length; i++) {
+      const spec = manifest.components.find((c) => c.name === out[i].component);
+      const must = spec?.adjacency.mustFollow ?? [];
+      if (!must.length) continue;
+      if (satisfiesMustFollow(out, i, manifest)) continue;
+
+      /* Moving an assembly member would split its assembly. Leave it; validation
+         reports it and the fallback catches it. This has not come up. */
+      if (memberOf.has(out[i].component)) continue;
+
+      const anchor = out.findIndex((b) => must.includes(b.component));
+      const [block] = out.splice(i, 1);
+
+      if (anchor < 0) {
+        moved.push(`${block.component}: dropped, nothing on the page it may follow`);
+      } else {
+        const at = clear(out.findIndex((b) => must.includes(b.component)) + 1);
+        out.splice(at, 0, block);
+        moved.push(`${block.component}: moved after ${out[at - 1].component}`);
+      }
+      changed = true;
+      break;
+    }
+
+    if (!changed) break;
+  }
+
+  return { blocks: out, moved };
 };

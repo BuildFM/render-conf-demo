@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "stage:reset": "node scripts/stage-reset.mjs",
+    "stage:after": "node scripts/stage-reset.mjs --after",
+    "stage:status": "node scripts/stage-reset.mjs --status",
+    "bake-off": "tsx --env-file=.env.local scripts/bake-off.mjs"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^4.0.29",

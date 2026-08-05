@@ -1,0 +1,16 @@
+"obligations": [
+    {
+      "name": "AllergenNotice",
+      "intent": "Declaring an allergen present in a dish on this page.",
+      "requiredWhen": {
+        "fact": "state.allergenMatches",
+        "op": ">=",
+        "value": 1
+      },
+      "locked": {
+        "treatment": "full",
+        "placement": "immediately before the first block mentioning that recipe",
+        "exemptFromDensity": true
+      }
+    }
+  ]

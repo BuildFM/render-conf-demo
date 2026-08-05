@@ -13,10 +13,13 @@ type TelemetryRailProps = {
  * Allowed to look like an instrument, because it is one.
  */
 export const TelemetryRail = ({ items, warnings = [] }: TelemetryRailProps) => (
-  <aside className={styles.rail} aria-label="Composition telemetry">
+  <aside className={styles.rail} aria-label="Composition telemetry" data-telemetry>
     <dl className={styles.row}>
       {items.map(([k, v]) => (
-        <div key={k} className={styles.pair}>
+        /* data-* so the stage view can read these straight off the same-origin
+           iframe rather than running the pipeline a second time to learn what it
+           already rendered. Keeps the composed pages free of client JS. */
+        <div key={k} className={styles.pair} data-k={k} data-v={v}>
           <dt className={styles.key}>{k}</dt>
           <dd className={styles.value}>{v}</dd>
         </div>

@@ -33,6 +33,10 @@ const componentSpec = z.object({
   }),
   /** Can this block be what a page is ABOUT, or only support one? */
   role: z.enum(["lead", "support"]).default("support"),
+  /** Does this block put a photograph on the page at "hero" or "full"? The density
+   *  budget is spent in photographs, and counting every large block as one was a
+   *  proxy that over-counted: TechniqueThread at full is large and carries none. */
+  carriesPhoto: z.boolean().default(false),
   treatments: z.array(z.enum(["hero", "full", "collapsed", "oneline"])),
   slots: z.record(z.string(), z.string()).default({})
 });
@@ -49,7 +53,7 @@ const obligationSpec = z.object({
   })
 });
 
-const manifestSchema = z.object({
+export const manifestSchema = z.object({
   version: z.string(),
   invariants: z.array(z.string()),
   density: z.object({ maxBlocks: z.number(), maxFullImages: z.number(), maxDisplayXL: z.number().default(1) }),

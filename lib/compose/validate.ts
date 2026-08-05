@@ -1,6 +1,7 @@
 import type { Manifest } from "@/lib/manifest/load";
 import type { LayoutSpec } from "./compose";
 import type { FiredObligation } from "./gates";
+import { satisfiesMustFollow } from "./gates";
 
 /**
  * The semantic pass. Schema validity is free from generateObject; this is
@@ -37,11 +38,12 @@ export const validate = (
     for (const n of c.adjacency.neverWith ?? []) {
       if (present.has(n)) errors.push(`${b.component} may never appear with ${n}.`);
     }
-    if (c.adjacency.mustFollow?.length) {
-      const prev = spec.blocks[i - 1]?.component;
-      if (!prev || !c.adjacency.mustFollow.includes(prev)) {
-        errors.push(`${b.component} must directly follow ${c.adjacency.mustFollow.join(" or ")}.`);
-      }
+    /* Adjacency is against units, not members — see satisfiesMustFollow. The
+       validator and the enforcer share the predicate deliberately: when they held
+       separate copies of the rule they disagreed, and the enforcer spent four
+       passes moving a block the validator kept rejecting. */
+    if (c.adjacency.mustFollow?.length && !satisfiesMustFollow(spec.blocks, i, manifest)) {
+      errors.push(`${b.component} must directly follow ${c.adjacency.mustFollow.join(" or ")}.`);
     }
   });
 
@@ -70,7 +72,12 @@ export const validate = (
   if (spec.blocks.length > manifest.density.maxBlocks) {
     errors.push(`${spec.blocks.length} blocks; max is ${manifest.density.maxBlocks}.`);
   }
-  const withPhotos = spec.blocks.filter((b) => b.treatment === "full" || b.treatment === "hero").length;
+  /* Counted from the manifest rather than from treatment alone. Before three
+     components could carry an image, "large" was a usable proxy for "photographic";
+     it is not one now, and it never was for TechniqueThread. */
+  const withPhotos = spec.blocks.filter(
+    (b) => specs.get(b.component)?.carriesPhoto && (b.treatment === "full" || b.treatment === "hero")
+  ).length;
   if (withPhotos > manifest.density.maxFullImages) {
     errors.push(`${withPhotos} blocks carrying a photograph; max is ${manifest.density.maxFullImages}.`);
   }

@@ -3,8 +3,8 @@ import path from "node:path";
 import { notFound } from "next/navigation";
 
 import { loadManifest, checkDrift } from "@/lib/manifest/load";
-import { computeFacts, eligible, obligationCandidates, placeObligations, completeAssemblies } from "@/lib/compose/gates";
-import { compose } from "@/lib/compose/compose";
+import { computeFacts, eligible, obligationCandidates, placeObligations, completeAssemblies, enforceAdjacency } from "@/lib/compose/gates";
+import { compose, remember } from "@/lib/compose/compose";
 import { defaultPageSpec } from "@/lib/compose/default-page";
 import { validate } from "@/lib/compose/validate";
 import { resolveBlock } from "@/lib/render/resolve";
@@ -59,12 +59,13 @@ const HomePage = async ({ params }: { params: Promise<{ household: string }> }) 
   const allowed = eligible(manifest, facts);
 
   /* 05 — compose */
-  let { spec, ms: composeMs, live } = await compose({
+  let { spec, ms: composeMs, live, model: composeModelLabel, cached: composeCached, cacheKey } = await compose({
     manifest, eligible: allowed, recipes, profile, household, fired: candidates
   });
 
-  /* 05b — assemblies are completed in code, not requested of the model. Applied to
-     every composition including the repair, or the retry silently skips it. */
+  /* 05b — assemblies are completed and adjacencies enforced in code, not requested
+     of the model. Applied to every composition including the repair, or the retry
+     silently skips it. */
   const finalize = (s: typeof spec) => {
     const done = completeAssemblies(s.blocks, manifest, (component, near) => {
       const cs = manifest.components.find((c) => c.name === component);
@@ -72,12 +73,16 @@ const HomePage = async ({ params }: { params: Promise<{ household: string }> }) 
       return {
         component,
         treatment: cs.treatments.includes(near.treatment) ? near.treatment : cs.treatments[0],
-        recipeIds: near.recipeIds.slice(0, 1),
+        /* All of the anchor's recipes, not the first. A completed ShoppingList
+           built from one recipe fails resolution — it needs two or more planned
+           dishes — and the assembly it was meant to finish renders with a hole. */
+        recipeIds: near.recipeIds,
         axes: [],
         emphasis: []
       };
     });
-    return { spec: { ...s, blocks: done.blocks }, completed: done.completed };
+    const ordered = enforceAdjacency(done.blocks, manifest);
+    return { spec: { ...s, blocks: ordered.blocks }, completed: [...done.completed, ...ordered.moved] };
   };
 
   let assembled = finalize(spec);
@@ -111,6 +116,12 @@ const HomePage = async ({ params }: { params: Promise<{ household: string }> }) 
   if (errors.length) {
     fellBack = true;
     spec = defaultPageSpec();
+  }
+
+  /* Keep only what passed. A fallback is never cached — the next load should get a
+     fresh attempt rather than being pinned to the default page for the session. */
+  if (live && !fellBack && !composeCached) {
+    remember(cacheKey, { spec, ms: composeMs, model: composeModelLabel });
   }
 
   /* 08 — resolve slots: ids in, values out. The model never supplied a fact. */
@@ -178,7 +189,13 @@ const HomePage = async ({ params }: { params: Promise<{ household: string }> }) 
           ["obligations", String(fired.length)],
           ["vocabulary", `${allowed.length}/${manifest.components.length}`],
           ["profile", cached ? "cached" : live ? `${profileMs}ms` : "no key"],
-          ["compose", live ? `${composeMs}ms` : "stub"],
+          /* Labelled, because an unexplained 0ms reads as a broken counter rather
+             than as the system being cheap. */
+          ["compose", !live ? "stub" : composeCached ? "cache hit" : `${composeMs}ms`],
+          /* Which model, in frame. A local run and a hosted one are otherwise
+             indistinguishable on screen, and the latency claim means nothing
+             without it. */
+          ["model", composeModelLabel],
           ["repaired", repaired ? "yes" : "no"],
           ["fallback", fellBack ? "DEFAULT PAGE" : "no"],
           ["assemblies", assembled.completed.length ? assembled.completed.join("; ") : "intact"],

@@ -1,6 +1,16 @@
 .card { border: var(--border-width) solid var(--border-default); }
 
-.head { padding: var(--space-8); }
+/* Text left, dish right. `auto` rather than a fixed second column so the card is
+   unchanged when the recipe has no image — one rule, both cases. */
+.head {
+  padding: var(--space-8);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-9);
+  align-items: center;
+}
+
+.well { width: 360px; }
 
 .headRow {
   display: flex;

@@ -255,12 +255,23 @@ export const resolveBlock = (
           tasks: [{ text: `Finish ${r.title.toLowerCase()}.`, recipeTitle: r.title, sharedBase: false }]
         }))
       ];
-      return ok({ title: `${shared.title}\nfeeds the week`, days, treatment: block.treatment });
+      return ok({
+        title: `${shared.title}\nfeeds the week`,
+        days,
+        /* The shared base is `aheads[0]` — the same dish the title names and the
+           only day carrying an acid rule. Any other image would contradict the
+           block. */
+        image: shared.image ? { ...shared.image, tag: `Fig. ${shared.id}` } : undefined,
+        treatment: block.treatment
+      });
     }
 
-    case "StoryIntro":
-      return fail("no editorial authored");
-
+    /* StoryIntro was here. Cut from the manifest on 5 Aug: no editorial was ever
+       authored so it could never render, and with `requires: []` it was offered to
+       every household — the most tempting block on the menu and the only one that
+       always failed. Three local model families led Twin A's page with it, three
+       times each. The component and its /kit specimen remain; it is out of the
+       vocabulary, not out of the design system. */
     case "SeasonalNote": {
       const month = new Date().toISOString().slice(5, 7);
       const text = (editorial.seasonal as unknown as Record<string, string>)[month];
