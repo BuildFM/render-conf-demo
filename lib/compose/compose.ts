@@ -24,7 +24,10 @@ export const layoutSpecSchema = z.object({
      useful. It has to commit to what the page is about before it fills the page. */
   dominant: z
     .string()
-    .describe("The component name this page is ABOUT — the one that embodies the brief. Must be blocks[0]."),
+    .describe(
+      "The COMPONENT NAME of the lead block — e.g. \"PrepSchedule\". Exactly as spelled in " +
+        "the LEAD list. Not a recipe title, not a description. It must equal blocks[0].component."
+    ),
   blocks: z.array(
     z.object({
       component: z.string(),
@@ -43,7 +46,7 @@ export const layoutSpecSchema = z.object({
 export type LayoutSpec = z.infer<typeof layoutSpecSchema>;
 
 const describe = (c: ComponentSpec) =>
-  `${c.name} — ${c.intent} Treatments: ${c.treatments.join("/")}. Max ${c.adjacency.maxPerPage} per page.` +
+  `${c.name} [${c.role}] — ${c.intent} Treatments: ${c.treatments.join("/")}. Max ${c.adjacency.maxPerPage} per page.` +
   (c.slots.requires ? ` NEEDS ${c.slots.requires}` : "") +
   (c.adjacency.neverWith?.length ? ` Never with: ${c.adjacency.neverWith.join(", ")}.` : "") +
   (c.adjacency.mustFollow?.length ? ` Must follow: ${c.adjacency.mustFollow.join(" or ")}.` : "");
@@ -74,7 +77,12 @@ components themselves were decided in advance by a person.
 
 THE VOCABULARY YOU MAY USE — already filtered to what this household qualifies for.
 Anything not on this list does not exist for this page.
-${eligible.map(describe).join("\n")}
+
+LEAD — can be what a page is about. blocks[0] is one of these.
+${eligible.filter((c) => c.role === "lead").map(describe).join("\n") || "(none)"}
+
+SUPPORT — useful beside a lead, never the reason for the page.
+${eligible.filter((c) => c.role !== "lead").map(describe).join("\n")}
 
 ALREADY PLACED BY THE APPLICATION — DO NOT INCLUDE THESE IN YOUR OUTPUT
 These are obligations. They are rendered automatically for any recipe you place.
@@ -101,11 +109,12 @@ Rhythm: ${profile.signals.rhythm ?? "none detected"}
 Declared at signup (weak evidence): ${JSON.stringify(household.declared)}
 
 OUTPUT ORDER — do this in this order, it matters
-1. Read the brief at the top. Decide which single component most directly embodies
-   it. Put that name in "dominant".
-2. That component is blocks[0], at the most prominent treatment it supports.
-3. Add two or three supporting blocks. If a block does not relate to the dominant
-   one, leave it out — three blocks that agree beat four that do not.
+1. Pick the LEAD. It is blocks[0] and it goes in "dominant", at the most prominent
+   treatment it supports. If only one lead is listed, that is the answer — the
+   filtering already decided, and it decided from ninety days of behaviour.
+2. Add two or three SUPPORT blocks that are about the same thing as the lead.
+3. If a support block does not relate to the lead, leave it out. Three blocks that
+   agree beat four that do not.
 
 RULES
 - At most ${manifest.density.maxBlocks} blocks. Fewer is better. This is a composed

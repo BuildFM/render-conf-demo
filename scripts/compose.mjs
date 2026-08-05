@@ -73,7 +73,15 @@ for (const h of households) {
 
   const candidates = obligationCandidates(manifest, facts, recipes, h);
   const t = Date.now();
-  let { spec } = await compose({ manifest, eligible: allowed, recipes, profile, household: h, fired: candidates });
+  let spec;
+  try {
+    ({ spec } = await compose({ manifest, eligible: allowed, recipes, profile, household: h, fired: candidates }));
+  } catch (e) {
+    // The gateway times out occasionally. One household failing should not take
+    // the run down — the point of the harness is to see the other three.
+    console.log(`   ${bad("failed")}   ${String(e.message ?? e).split("\n")[0].slice(0, 90)}\n`);
+    continue;
+  }
 
   const finalize = (s) => {
     const done = completeAssemblies(s.blocks, manifest, (component, near) => {

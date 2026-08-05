@@ -17,7 +17,8 @@ export const computeFacts = (
   profile: Profile,
   household: Household,
   now: { timeOfDay: "morning" | "afternoon" | "evening" },
-  ingredients: Map<string, { name: string }[]> = new Map()
+  ingredients: Map<string, { name: string }[]> = new Map(),
+  events: { type: string }[] = []
 ): Facts => {
   const pantry = household.pantry.map((p) => p.toLowerCase());
   const pantryGaps = recipes.reduce((n, r) => {
@@ -56,14 +57,13 @@ export const computeFacts = (
     "user.cookedOfComparable": cookedIds.size,
     "user.abandonedOrRepeated": profile.signals.abandonedRecipeIds.length + profile.signals.repeatRecipeIds.length,
     "user.makeAheadPattern": profile.signals.makeAheadPattern,
-    "user.expandsTechnique": profile.signals.expandsTechnique,
+    "user.expandsTechnique": events.some((e) => e.type === "expanded"),
     "user.repeats": profile.signals.repeatRecipeIds.length,
-    // Discriminating facts. A precondition that is true for every household is
-    // decoration — it lets the model pick from the whole vocabulary and it picks
-    // generically. These are the ones that actually differ between people.
+    // Discriminating facts. A precondition true for every household is decoration:
+    // it hands the model the whole vocabulary and it chooses generically.
     "user.cooksForkingDishes": recipes.filter((r) => r.forkPoint && cookedIds.has(r.id)).length,
     "user.abandonsOnListLength": profile.signals.abandonThreshold !== null,
-    "user.hasRhythm": Boolean(profile.signals.rhythm && /sunday|weekend|batch|week/i.test(profile.signals.rhythm)),
+    "user.hasRhythm": profile.signals.repeatRecipeIds.length >= 2 && profile.signals.makeAheadPattern,
 
     // state — session and account, not history. Where cart and auth would live.
     "state.timeOfDay": now.timeOfDay,

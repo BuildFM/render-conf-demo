@@ -57,6 +57,15 @@ export const validate = (
     );
   }
 
+  // A support block may open a page only at "hero" — the treatment that makes it the
+  // subject rather than an item. That is how the hand-authored default page leads
+  // with a dish while a composed page leads with what the household is about.
+  const first = spec.blocks[0];
+  const firstSpec = specs.get(first?.component ?? "");
+  if (firstSpec && firstSpec.role !== "lead" && first?.treatment !== "hero") {
+    errors.push(`${firstSpec.name} is a support block and cannot lead a page unless at "hero".`);
+  }
+
   // Density.
   if (spec.blocks.length > manifest.density.maxBlocks) {
     errors.push(`${spec.blocks.length} blocks; max is ${manifest.density.maxBlocks}.`);

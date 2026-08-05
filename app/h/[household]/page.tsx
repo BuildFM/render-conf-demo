@@ -49,7 +49,7 @@ const HomePage = async ({ params }: { params: Promise<{ household: string }> }) 
   const now = { timeOfDay: "evening" as const };
 
   /* facts, computed from content + profile + state */
-  const facts = computeFacts(recipes, profile, household, now, ingredients);
+  const facts = computeFacts(recipes, profile, household, now, ingredients, events);
 
   /* 03 — obligation conditions are evaluated in code, before the model is consulted.
      Instances attach after composition, to the dishes actually on the page. */

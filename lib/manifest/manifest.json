@@ -22,6 +22,11 @@
           "fact": "user.techniqueRepeats",
           "op": ">=",
           "value": 3
+        },
+        {
+          "fact": "user.expandsTechnique",
+          "op": "==",
+          "value": true
         }
       ],
       "adjacency": {
@@ -36,7 +41,8 @@
       ],
       "slots": {
         "requires": "entries: at least 3 recipeIds, all sharing one technique tag, each cooked on a separate occasion. Also set techniqueTag."
-      }
+      },
+      "role": "lead"
     },
     {
       "name": "ComparisonTable",
@@ -62,7 +68,8 @@
       ],
       "slots": {
         "requires": "rows: 3 to 5 recipeIds. axes: 2 to 4, chosen for this household, never a filter UI's columns. Also set emphasis."
-      }
+      },
+      "role": "support"
     },
     {
       "name": "RecipeCard",
@@ -79,7 +86,8 @@
       ],
       "slots": {
         "requires": "recipe: exactly 1 recipeId. Use \"hero\" for the one dish this page is about — it takes the whole top of the page and claims the page's single Display XL, so a page with a hero may not also run TechniqueThread at full."
-      }
+      },
+      "role": "support"
     },
     {
       "name": "ForkedRecipeCard",
@@ -110,7 +118,8 @@
       ],
       "slots": {
         "requires": "recipe: exactly 1 recipeId, and it must be one that forks."
-      }
+      },
+      "role": "lead"
     },
     {
       "name": "WhyThisWorks",
@@ -135,7 +144,8 @@
       ],
       "slots": {
         "requires": "recipes: at least 3 recipeIds sharing one technique tag. Also set techniqueTag."
-      }
+      },
+      "role": "support"
     },
     {
       "name": "SkillPrimer",
@@ -164,7 +174,8 @@
       ],
       "slots": {
         "requires": "techniqueTag: exactly one technique tag the user has attempted."
-      }
+      },
+      "role": "support"
     },
     {
       "name": "TroubleshootingList",
@@ -190,7 +201,8 @@
       ],
       "slots": {
         "requires": "techniqueTag: exactly one technique tag."
-      }
+      },
+      "role": "support"
     },
     {
       "name": "PrepSchedule",
@@ -202,7 +214,7 @@
           "value": 2
         },
         {
-          "fact": "user.hasRhythm",
+          "fact": "user.abandonsOnListLength",
           "op": "==",
           "value": true
         }
@@ -216,7 +228,8 @@
       ],
       "slots": {
         "requires": "days: at least 2 recipeIds that have make-ahead steps."
-      }
+      },
+      "role": "lead"
     },
     {
       "name": "ShoppingList",
@@ -245,7 +258,8 @@
       ],
       "slots": {
         "requires": "sections: at least 2 recipeIds you are planning together."
-      }
+      },
+      "role": "support"
     },
     {
       "name": "PantryMatch",
@@ -260,6 +274,11 @@
           "fact": "user.abandonsOnListLength",
           "op": "==",
           "value": true
+        },
+        {
+          "fact": "user.hasRhythm",
+          "op": "==",
+          "value": false
         }
       ],
       "adjacency": {
@@ -274,7 +293,8 @@
       ],
       "slots": {
         "requires": "matches: 2 to 4 recipeIds, or leave empty to rank the whole corpus."
-      }
+      },
+      "role": "lead"
     },
     {
       "name": "TonightShortlist",
@@ -309,7 +329,8 @@
       ],
       "slots": {
         "requires": "recipes: 2 to 4 recipeIds."
-      }
+      },
+      "role": "support"
     },
     {
       "name": "MakeAheadCallout",
@@ -329,7 +350,8 @@
       "adjacency": {
         "mustFollow": [
           "RecipeCard",
-          "ForkedRecipeCard"
+          "ForkedRecipeCard",
+          "PrepSchedule"
         ],
         "maxPerPage": 2
       },
@@ -339,7 +361,8 @@
       ],
       "slots": {
         "requires": "step: exactly 1 recipeId that has a make-ahead step."
-      }
+      },
+      "role": "support"
     },
     {
       "name": "SubstitutionTable",
@@ -360,7 +383,8 @@
       ],
       "slots": {
         "requires": "rows: exactly 1 recipeId — the dish with the gap."
-      }
+      },
+      "role": "support"
     },
     {
       "name": "StoryIntro",
@@ -375,7 +399,8 @@
       ],
       "slots": {
         "requires": "body: no recipeIds needed."
-      }
+      },
+      "role": "support"
     },
     {
       "name": "TechniqueNote",
@@ -396,7 +421,8 @@
       ],
       "slots": {
         "requires": "techniqueTag: exactly one technique tag."
-      }
+      },
+      "role": "support"
     },
     {
       "name": "LeftoversNote",
@@ -416,7 +442,8 @@
       ],
       "slots": {
         "requires": "recipe: exactly 1 recipeId yielding more than the household size."
-      }
+      },
+      "role": "support"
     }
   ],
   "obligations": [
@@ -450,5 +477,6 @@
         "ShoppingList"
       ]
     }
-  ]
+  ],
+  "_role": "Some blocks can be what a page is ABOUT; the rest can only support one. A comparison table is useful on a page about choosing and is never the reason for the page. blocks[0] must be a lead, or a support block at \"hero\" — which is the treatment that makes a block the subject."
 }

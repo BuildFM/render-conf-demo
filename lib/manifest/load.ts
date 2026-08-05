@@ -31,6 +31,8 @@ const componentSpec = z.object({
     neverWith: z.array(z.string()).optional(),
     maxPerPage: z.number()
   }),
+  /** Can this block be what a page is ABOUT, or only support one? */
+  role: z.enum(["lead", "support"]).default("support"),
   treatments: z.array(z.enum(["hero", "full", "collapsed", "oneline"])),
   slots: z.record(z.string(), z.string()).default({})
 });
