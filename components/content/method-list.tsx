@@ -2,6 +2,10 @@ import styles from "./method-list.module.css"
 
 type MethodListProps = {
   steps: string[]
+  /** The number the first step carries. A forked recipe's branches both start at
+   *  the fork, so two lists on the same card can legitimately open on "4" — the
+   *  numbers belong to the method, not to the list drawing them. */
+  start?: number
   className?: string
 }
 
@@ -17,12 +21,12 @@ type MethodListProps = {
  * reports. When a log row says someone stopped at step 3, this is the step 3 it
  * means.
  */
-export const MethodList = ({ steps, className }: MethodListProps) => (
+export const MethodList = ({ steps, start = 1, className }: MethodListProps) => (
   <ol className={[styles.steps, className].filter(Boolean).join(" ")}>
     {steps.map((step, i) => (
       <li key={step} className={styles.step}>
         <span className={styles.stepNo} aria-hidden="true">
-          {i + 1}
+          {start + i}
         </span>
         <span className={styles.stepText}>{step}</span>
       </li>

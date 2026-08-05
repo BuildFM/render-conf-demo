@@ -184,13 +184,28 @@ recipe →", so the method belongs on the other side of that link; `collapsed` a
 today only Twin A's page shows a method**, because it is the only composition
 holding a RecipeCard at `full`. That is the composer's choice, not a bug.
 
-**`ForkedRecipeCard` shows the method up to the split.** It used to be an intro
-paragraph and two branch blurbs — it announced "splits at step 4 of 6" while
-showing no steps at all, so there was nothing visible for the fork to fork. It now
-prints the shared steps, stopping one short of the divide, so the rule underneath
-lands exactly on the step missing from the list. `resolve.ts` parses the step
-number out of `forkPoint` and slices; verified against all four forking dishes
-(039 shares 3 of 6, 038 shares 5 of 9, 033 shares 2 of 5, 031 shares 1 of 5).
+**`ForkedRecipeCard` renders a fork as THREE parts, not two.** It used to be an
+intro paragraph and two branch blurbs — it announced "splits at step 4 of 6" while
+showing no steps at all, so the fork had nothing visible to fork, and a reader
+could not tell whether a branch was one step or three.
+
+| Part | 039 | 031 |
+|---|---|---|
+| shared head | 1–3 | 1 |
+| branch steps, both numbered from the fork | 4–6 / 4–6 | 2 / 2 |
+| shared tail, when the method **rejoins** | — | 3–5 |
+
+Each branch in `editorial.json` now carries its own `steps`, and both branches of a
+dish must be the same length or the numbering after them disagrees — asserted where
+they are authored, along with head + branch + tail == the method. Branch steps
+replace the branch prose rather than joining it; the prose is where the steps came
+from, so printing both said everything twice. `MethodList` takes a `start` so two
+lists on one card can legitimately both open on "4".
+
+**`031` is the sharpest version of the argument** and could not be expressed at all
+before: it diverges for exactly one step — anchovies or pancetta — and the other
+four are identical. Nothing currently composes it, so it is unrendered; verified
+through `resolveBlock` directly.
 
 The list itself is `components/content/method-list.tsx`. It was inside PrimerCard,
 whose CSS claimed "the only ordered list in the system" — copying the markup would

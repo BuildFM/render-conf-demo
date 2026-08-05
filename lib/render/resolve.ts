@@ -17,10 +17,11 @@ import editorial from "@/lib/content/editorial.json";
 type Ed = typeof editorial;
 const techniques = editorial.techniques as unknown as Record<string, Ed["techniques"]["weighted-sear"]>;
 
+type Branch = { label: string; title: string; body: string; steps?: string[] };
 type Fork = {
   forkPoint: string;
   shared: string;
-  branches: [{ label: string; title: string; body: string }, { label: string; title: string; body: string }];
+  branches: [Branch, Branch];
 };
 
 export type Ingredient = { name: string; qty: string; section: string };
@@ -183,10 +184,20 @@ export const resolveBlock = (
          three paragraphs where a method should be. "Step 4 of 6" means four is the
          first divergent step, so one through three are shared. */
       const forkStep = Number(/step (\d+)/i.exec(fork.forkPoint)?.[1] ?? 0);
+      const all = r.steps ?? [];
+      /* A fork is three parts, not two. The head is shared, each branch owns the
+         same number of steps from the fork onward, and whatever is left is shared
+         again — 031 diverges for exactly one step and then rejoins, which the card
+         could not say at all while the branches were loose prose. Numbering only
+         lines up if both branches are the same length; asserted where they are
+         authored. */
+      const branchLength = fork.branches[0].steps?.length ?? 0;
       return ok({
         recipe: { ...r, summary: fork.shared },
         forkPoint: fork.forkPoint,
-        sharedSteps: forkStep > 1 ? (r.steps ?? []).slice(0, forkStep - 1) : [],
+        forkStep,
+        sharedSteps: forkStep > 1 ? all.slice(0, forkStep - 1) : [],
+        tailSteps: branchLength ? all.slice(forkStep - 1 + branchLength) : [],
         branches: fork.branches,
         treatment: block.treatment
       });

@@ -6,7 +6,7 @@ import { MethodList } from "@/components/content/method-list"
 import { formatYield } from "@/lib/format"
 import styles from "./forked-recipe-card.module.css"
 
-type Branch = { label: string; title: string; body: string }
+type Branch = { label: string; title: string; body: string; steps?: string[] }
 
 type ForkedRecipeCardProps = {
   recipe: Recipe
@@ -16,6 +16,13 @@ type ForkedRecipeCardProps = {
    *  showed nothing to fork — an intro paragraph and two blurbs. The shared method
    *  is what makes both branches visibly the same dish up to a point. */
   sharedSteps?: string[]
+  /** Which step is the first divergent one, so both branches number from it. */
+  forkStep?: number
+  /** Steps after the branches, when the method REJOINS. `031` diverges for exactly
+   *  one step and is identical afterwards, which is the sharpest version of the
+   *  point this block exists to make — and it could not be said at all while the
+   *  branches were loose prose. */
+  tailSteps?: string[]
   branches: [Branch, Branch]
   treatment: "full" | "collapsed"
 }
@@ -27,6 +34,8 @@ export const ForkedRecipeCard = ({
   recipe,
   forkPoint,
   sharedSteps,
+  forkStep,
+  tailSteps,
   branches,
   treatment
 }: ForkedRecipeCardProps) => {
@@ -103,10 +112,35 @@ export const ForkedRecipeCard = ({
               Option {i === 0 ? "A" : "B"} · {branch.label}
             </Eyebrow>
             <h4 className={styles.branchTitle}>{branch.title}</h4>
-            <p className={styles.branchBody}>{branch.body}</p>
+            {/* Steps replace the prose rather than joining it: the branch bodies
+                are where these steps came from, so printing both says everything
+                twice. Prose remains the fallback for a branch nobody has broken
+                into steps yet. */}
+            {branch.steps?.length ? (
+              <MethodList steps={branch.steps} start={forkStep ?? 1} />
+            ) : (
+              <p className={styles.branchBody}>{branch.body}</p>
+            )}
           </div>
         ))}
       </div>
+
+      {/* Where the two paths become one dish again. Only `031` has this, and it is
+          the strongest thing on the card when it does: one step differs and the
+          other four are identical, which is the argument in miniature. */}
+      {tailSteps?.length ? (
+        <>
+          <div className={styles.forkRule}>
+            <Eyebrow track="lg" className={styles.forkLabel}>
+              Rejoins here
+            </Eyebrow>
+            <div className={styles.rule} aria-hidden="true" />
+          </div>
+          <div className={styles.method}>
+            <MethodList steps={tailSteps} start={(forkStep ?? 1) + (branches[0].steps?.length ?? 0)} />
+          </div>
+        </>
+      ) : null}
     </article>
   )
 }
