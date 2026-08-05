@@ -117,15 +117,22 @@ dish, because it is not the thing saying anything about a dish.
 Four pages plus the stage view. Compositions land valid on the first call, no
 repairs, no fallbacks, 3.5–6s each.
 
-| Page | Lead block | Then |
+| Page | Lead block — stable | Support blocks — vary run to run |
 |---|---|---|
-| `/` default | RecipeCard @ hero | shortlist, index |
-| `/h/h-learner` | **TechniqueThread** | Troubleshooting, TechniqueNote |
-| `/h/h-twin-a` | **ForkedRecipeCard** | Shortlist, Comparison |
-| `/h/h-twin-b` | **PrepSchedule** | ShoppingList, RecipeCard, MakeAheadCallout |
+| `/` default | RecipeCard @ hero | shortlist, index (hand-authored, never varies) |
+| `/h/h-learner` | **TechniqueThread** | TechniqueNote, TroubleshootingList |
+| `/h/h-twin-a` | **ForkedRecipeCard** + allergen notice | RecipeCard, ComparisonTable, sometimes a second fork |
+| `/h/h-twin-b` | **PrepSchedule** | ShoppingList, ComparisonTable, RecipeCard |
 
-The learner page has **no recipe on it at all**. The twins declare byte-identical
-profiles and share no lead block. Those two facts are most of the demo.
+**The lead is stable and the support blocks are not.** One eligible lead per
+household is the design; which supports join it is the model's choice and moves
+between runs. Do not treat a changed support list as a regression — check the lead,
+and check the three facts below.
+
+The three facts the demo actually rests on, worth re-checking after any composition
+change: the learner page has **no recipe on it at all**; the twins declare
+byte-identical profiles *and pantries* and share no lead block; and the allergen
+notice fires on Twin A.
 
 **Profiles are frozen** in `lib/signals/cache/` and committed. In the real system
 this is a nightly batch job, so committing yesterday's run is honest — and it stops
@@ -569,6 +576,25 @@ the design system doing the work, and it is the thesis with a number attached.
   pressure on 18GB — not isolated.
 - **Two components are built but out of the vocabulary**: `SeasonalNote`,
   `FromYourHistory`. Both produce orphans on a four-block page.
+
+## Where 5 Aug left it
+
+Seven commits, `cc80d64`..`b891138`. The working tree is clean and the dev server
+runs on 3717. What moved, in the order it would matter to someone picking this up:
+
+1. **`/stage` shows the other cause.** A `PAGES | DATA` switch (also ⌘D) swaps the
+   three panes to the households' data. The drawer is 660px, opens on `blocks`, and
+   the vocabulary reads as a list rather than as JSON.
+2. **The premise is written down and load-bearing** — Mise teaches people to cook,
+   ships a guided cook mode, and that is why the event log looks like it does.
+3. **Recipes have steps and pages render them.** `RecipeCard @ full` prints a
+   numbered method; `ForkedRecipeCard` prints head → branches → rejoin.
+4. **Two model-authored holes closed.** The profile pass no longer invents step
+   detail, and comparison axes are an enum rather than free text.
+5. **Two silent-failure classes closed.** An empty profile can no longer cache, and
+   a repaired composition now replaces its stale cache entry.
+
+**The next thing is recording** — see below. Nothing above is unfinished.
 
 ## If continuing the talk track
 
