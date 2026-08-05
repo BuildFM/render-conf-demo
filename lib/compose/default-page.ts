@@ -30,7 +30,7 @@ export const defaultPageSpec = (): LayoutSpec & { blocks: DefaultBlock[] } => ({
   blocks: [
     // Leads with the dish, not with an editorial aside. A one-line seasonal note
     // opening the page reads as a stray sentence; it closes the page instead.
-    { component: "RecipeCard", treatment: "full", recipeIds: ["041"], section: "This week", axes: [], emphasis: [] },
+    { component: "RecipeCard", treatment: "hero", recipeIds: ["041"], axes: [], emphasis: [] },
     {
       component: "TonightShortlist",
       treatment: "collapsed",

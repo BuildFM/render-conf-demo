@@ -71,3 +71,44 @@
 }
 
 .arrow { color: var(--text-signal); }
+
+/* HERO — the front-page treatment. The dish gets the whole top of the page:
+   Display XL headline, the body at a comfortable measure, and the image well at
+   the design's 440px. Matches the home page comp's hero, and it is the only
+   treatment that carries a call to action. */
+.hero {
+  display: grid;
+  grid-template-columns: 1.05fr 440px;
+  gap: var(--space-11);
+  align-items: center;
+  padding-block: var(--space-12) var(--space-11);
+}
+
+.heroBody {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.heroKicker { margin-bottom: var(--space-6); }
+.heroAccent { color: var(--text-signal); }
+
+.heroSummary {
+  composes: body from "../type.module.css";
+  max-width: var(--measure-body);
+  margin: var(--space-7) 0 0;
+}
+
+.heroStats {
+  margin-top: var(--space-7);
+  padding-top: var(--space-4);
+  border-top: var(--border-width) solid var(--border-default);
+  align-self: stretch;
+}
+
+.heroCta { margin-top: var(--space-8); }
+
+.heroWell {
+  aspect-ratio: 440 / 520;
+  width: 100%;
+}

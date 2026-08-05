@@ -22,7 +22,7 @@ export const layoutSpecSchema = z.object({
   blocks: z.array(
     z.object({
       component: z.string(),
-      treatment: z.enum(["full", "collapsed", "oneline"]),
+      treatment: z.enum(["hero", "full", "collapsed", "oneline"]),
       recipeIds: z.array(z.string()).default([]),
       techniqueTag: z.string().optional(),
       axes: z.array(z.string()).default([]).describe("ComparisonTable only. Chosen for this household."),
@@ -86,8 +86,12 @@ Rhythm: ${profile.signals.rhythm ?? "none detected"}
 Declared at signup (weak evidence): ${JSON.stringify(household.declared)}
 
 RULES
-- At most ${manifest.density.maxBlocks} blocks, and at most ${manifest.density.maxFullImages} at "full".
-  Above that a page stops being composed and starts being a dump.
+- At most ${manifest.density.maxBlocks} blocks, and at most ${manifest.density.maxFullImages}
+  carrying a photograph ("hero" and "full" both do). Above that a page stops being
+  composed and starts being a dump.
+- At most ${manifest.density.maxDisplayXL} block may take the page's giant headline.
+  RecipeCard at "hero" and TechniqueThread at "full" both claim it, so they cannot
+  appear on the same page. Choose which one this household opens the page for.
 - Only use a treatment the component actually supports.
 - Order is meaning. What comes first is what this household opens the page for.
 - Absence is a decision. A recipe site's home page with no recipe above the fold is

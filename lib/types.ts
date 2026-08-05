@@ -1,7 +1,7 @@
 /* The only place these shapes are declared. Import from here — a component that
    restates `Recipe` is the single most likely source of drift in this codebase. */
 
-export type Treatment = "full" | "collapsed" | "oneline"
+export type Treatment = "hero" | "full" | "collapsed" | "oneline"
 
 export type Recipe = {
   /** Zero-padded numeral, as in the catalogue: "041". Used as the figure tab

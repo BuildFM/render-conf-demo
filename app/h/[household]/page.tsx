@@ -63,19 +63,25 @@ const HomePage = async ({ params }: { params: Promise<{ household: string }> }) 
     manifest, eligible: allowed, recipes, profile, household, fired: candidates
   });
 
-  /* 05b — assemblies are completed in code, not requested of the model. */
-  const assembled = completeAssemblies(spec.blocks, manifest, (component, near) => {
-    const spec2 = manifest.components.find((c) => c.name === component);
-    if (!spec2 || !allowed.some((c) => c.name === component)) return null;
-    return {
-      component,
-      treatment: spec2.treatments.includes(near.treatment) ? near.treatment : spec2.treatments[0],
-      recipeIds: near.recipeIds.slice(0, 1),
-      axes: [],
-      emphasis: []
-    };
-  });
-  spec = { ...spec, blocks: assembled.blocks };
+  /* 05b — assemblies are completed in code, not requested of the model. Applied to
+     every composition including the repair, or the retry silently skips it. */
+  const finalize = (s: typeof spec) => {
+    const done = completeAssemblies(s.blocks, manifest, (component, near) => {
+      const cs = manifest.components.find((c) => c.name === component);
+      if (!cs || !allowed.some((c) => c.name === component)) return null;
+      return {
+        component,
+        treatment: cs.treatments.includes(near.treatment) ? near.treatment : cs.treatments[0],
+        recipeIds: near.recipeIds.slice(0, 1),
+        axes: [],
+        emphasis: []
+      };
+    });
+    return { spec: { ...s, blocks: done.blocks }, completed: done.completed };
+  };
+
+  let assembled = finalize(spec);
+  spec = assembled.spec;
 
   /* 06 / 07 — validate, then one repair, then fall back */
   const known = new Set(recipes.map((r) => r.id));
@@ -86,9 +92,11 @@ const HomePage = async ({ params }: { params: Promise<{ household: string }> }) 
     const retry = await compose({
       manifest, eligible: allowed, recipes, profile, household, fired: candidates, repairNotes: errors
     });
-    const retryErrors = validate(retry.spec, manifest, candidates, known);
+    const retryAssembled = finalize(retry.spec);
+    const retryErrors = validate(retryAssembled.spec, manifest, candidates, known);
     if (!retryErrors.length) {
-      spec = retry.spec;
+      spec = retryAssembled.spec;
+      assembled = retryAssembled;
       composeMs += retry.ms;
       errors = [];
     } else {

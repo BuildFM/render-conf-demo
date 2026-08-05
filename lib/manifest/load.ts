@@ -31,7 +31,7 @@ const componentSpec = z.object({
     neverWith: z.array(z.string()).optional(),
     maxPerPage: z.number()
   }),
-  treatments: z.array(z.enum(["full", "collapsed", "oneline"])),
+  treatments: z.array(z.enum(["hero", "full", "collapsed", "oneline"])),
   slots: z.record(z.string(), z.string()).default({})
 });
 
@@ -50,7 +50,7 @@ const obligationSpec = z.object({
 const manifestSchema = z.object({
   version: z.string(),
   invariants: z.array(z.string()),
-  density: z.object({ maxBlocks: z.number(), maxFullImages: z.number() }),
+  density: z.object({ maxBlocks: z.number(), maxFullImages: z.number(), maxDisplayXL: z.number().default(1) }),
   components: z.array(componentSpec),
   obligations: z.array(obligationSpec),
   /** ASSEMBLY — placed as one block, never reordered internally. */

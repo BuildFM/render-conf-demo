@@ -11,7 +11,7 @@ export const BLOCK_MANIFEST = {
   // P0
   TechniqueThread: ["full", "collapsed"],
   ComparisonTable: ["full", "collapsed"],
-  RecipeCard: ["full", "collapsed", "oneline"],
+  RecipeCard: ["hero", "full", "collapsed", "oneline"],
   ForkedRecipeCard: ["full", "collapsed"],
   WhyThisWorks: ["full", "collapsed"],
   SkillPrimer: ["full", "collapsed"],

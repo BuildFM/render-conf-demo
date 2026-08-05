@@ -170,6 +170,19 @@ export const completeAssemblies = <T extends { component: string }>(
   let out = [...blocks];
   const completed: string[] = [];
 
+  /* Completing an assembly can violate an adjacency rule that the model's own
+     output did not. PlanTheWeek pulls in ShoppingList; ImprovisePath pulls in
+     PantryMatch; the manifest forbids those two together. Auto-completion has to
+     check what it is about to create, or the fix becomes the bug. */
+  const conflicts = (candidate: string, present: string[]) => {
+    const spec = manifest.components.find((c) => c.name === candidate);
+    const banned = new Set(spec?.adjacency.neverWith ?? []);
+    if (present.some((p) => banned.has(p))) return true;
+    return present.some((p) =>
+      (manifest.components.find((c) => c.name === p)?.adjacency.neverWith ?? []).includes(candidate)
+    );
+  };
+
   for (const a of manifest.assemblies) {
     const present = a.members.filter((m) => out.some((b) => b.component === m));
     if (present.length === 0 || present.length === a.members.length) {
@@ -186,6 +199,11 @@ export const completeAssemblies = <T extends { component: string }>(
       if (existing) {
         unit.push(existing);
         continue;
+      }
+      if (conflicts(m, out.map((b) => b.component))) {
+        out = out.filter((b) => !a.members.includes(b.component));
+        completed.push(`${a.name}: dropped, ${m} conflicts with a block already placed`);
+        break;
       }
       const built = make(m, anchor);
       if (!built) {

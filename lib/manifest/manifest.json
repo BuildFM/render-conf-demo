@@ -10,7 +10,8 @@
   ],
   "density": {
     "maxBlocks": 7,
-    "maxFullImages": 2
+    "maxFullImages": 2,
+    "maxDisplayXL": 1
   },
   "components": [
     {
@@ -71,12 +72,13 @@
         "maxPerPage": 4
       },
       "treatments": [
+        "hero",
         "full",
         "collapsed",
         "oneline"
       ],
       "slots": {
-        "requires": "recipe: exactly 1 recipeId."
+        "requires": "recipe: exactly 1 recipeId. Use \"hero\" for the one dish this page is about — it takes the whole top of the page and claims the page's single Display XL, so a page with a hero may not also run TechniqueThread at full."
       }
     },
     {

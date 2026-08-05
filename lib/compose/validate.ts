@@ -54,9 +54,23 @@ export const validate = (
   if (spec.blocks.length > manifest.density.maxBlocks) {
     errors.push(`${spec.blocks.length} blocks; max is ${manifest.density.maxBlocks}.`);
   }
-  const fulls = spec.blocks.filter((b) => b.treatment === "full").length;
-  if (fulls > manifest.density.maxFullImages) {
-    errors.push(`${fulls} blocks at "full"; max is ${manifest.density.maxFullImages}.`);
+  const withPhotos = spec.blocks.filter((b) => b.treatment === "full" || b.treatment === "hero").length;
+  if (withPhotos > manifest.density.maxFullImages) {
+    errors.push(`${withPhotos} blocks carrying a photograph; max is ${manifest.density.maxFullImages}.`);
+  }
+
+  // One Display XL per page. RecipeCard at "hero" and TechniqueThread at "full"
+  // both claim it, and two giant headlines on one page is not a composition, it is
+  // two pages stacked.
+  const xl = spec.blocks.filter(
+    (b) =>
+      (b.component === "RecipeCard" && b.treatment === "hero") ||
+      (b.component === "TechniqueThread" && b.treatment === "full")
+  );
+  if (xl.length > manifest.density.maxDisplayXL) {
+    errors.push(
+      `${xl.map((b) => `${b.component}@${b.treatment}`).join(" and ")} both claim the page's Display XL; only ${manifest.density.maxDisplayXL} may.`
+    );
   }
 
   // OBLIGATIONS — the model must not place one. They are instantiated by the app
