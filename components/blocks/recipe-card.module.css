@@ -112,3 +112,19 @@
   aspect-ratio: 440 / 520;
   width: 100%;
 }
+
+/* --- the method, at "full" ------------------------------------------------- */
+
+.methodLabel {
+  display: block;
+  margin-top: var(--space-6);
+  color: var(--text-dim);
+}
+
+/* Dim and small: it names a product feature, and the steps above it are the thing
+   worth reading. */
+.methodNote {
+  composes: micro from "../type.module.css";
+  margin: var(--space-4) 0 0;
+  color: var(--text-dim);
+}

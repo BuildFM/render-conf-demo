@@ -3,6 +3,7 @@ import { Button } from "@/components/core/button"
 import { DisplayHeading } from "@/components/core/display-heading"
 import { Eyebrow } from "@/components/core/eyebrow"
 import { FigureWell } from "@/components/content/figure-well"
+import { MethodList } from "@/components/content/method-list"
 import { StatRow } from "@/components/content/stat-row"
 import { formatMinutes } from "@/lib/format"
 import styles from "./recipe-card.module.css"
@@ -111,6 +112,28 @@ export const RecipeCard = ({ recipe, treatment }: RecipeCardProps) => {
             { label: "Total", value: total }
           ]}
         />
+        {/* The method, at "full" only.
+            "full" is the treatment that means depth, and until now nothing on any
+            composed page showed a method — which left the site's whole premise
+            unbacked. Mise's product is teaching people to cook: it walks you
+            through one numbered step at a time. A demo that says so and never
+            shows a single step is asking to be taken on trust.
+            Not at "hero": that is the front-page statement and it already ends on
+            "Read the recipe →", so the method belongs on the other side of that
+            link. Not at "collapsed" or "oneline", which are a row and a line. */}
+        {recipe.steps?.length ? (
+          <>
+            <Eyebrow track="md" className={styles.methodLabel}>
+              Method
+            </Eyebrow>
+            <MethodList steps={recipe.steps} />
+            {/* Says the premise out loud, on the page, where the room can see the
+                feature the whole event log is a record of. */}
+            <p className={styles.methodNote}>
+              {recipe.steps.length} steps · guided mode takes them one at a time
+            </p>
+          </>
+        ) : null}
       </div>
     </article>
   )

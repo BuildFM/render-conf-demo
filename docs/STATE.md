@@ -172,8 +172,22 @@ a wish list", and that gap is the whole argument for the inference call.
 
 ### Recipes have steps, because the model was inventing them
 
-`recipes.json` now carries `steps[]` for all twelve. Not rendered by any block — it
-exists so `abandoned atStep 3` can be resolved to a real instruction.
+`recipes.json` carries `steps[]` for all twelve, and **`RecipeCard` at `full`
+renders them** — a numbered method under a `METHOD` label, with the line "5 steps ·
+guided mode takes them one at a time" underneath. Nothing on any composed page had
+ever shown a method, which left the site's premise unbacked: a demo that says the
+product is a guided walk-through and never shows a step is asking to be believed.
+
+Only at `full`. `hero` is the front-page statement and already ends on "Read the
+recipe →", so the method belongs on the other side of that link; `collapsed` and
+`oneline` are a row and a line. **A consequence worth knowing before narrating:
+today only Twin A's page shows a method**, because it is the only composition
+holding a RecipeCard at `full`. That is the composer's choice, not a bug.
+
+The list itself is `components/content/method-list.tsx`. It was inside PrimerCard,
+whose CSS claimed "the only ordered list in the system" — copying the markup would
+have made that false, so it was extracted and both use it. `steps` also exists so
+`abandoned atStep 3` resolves to a real instruction.
 
 **Before this, the profile pass was told someone quit at step three with no way to
 learn what step three was, and it filled the gap in.** The learner's characterization

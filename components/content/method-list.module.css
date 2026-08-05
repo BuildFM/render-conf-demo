@@ -1,0 +1,32 @@
+/* The only ordered list in the system. Acid numeral at row scale, never bullets.
+   Moved here from primer-card so RecipeCard and SkillPrimer draw a method the same
+   way rather than two ways that happen to match. */
+
+.steps {
+  list-style: none;
+  margin: var(--space-5) 0 0;
+  padding: var(--space-4) 0 0;
+  border-top: var(--border-width) solid var(--border-default);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.step {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: var(--space-4);
+  align-items: baseline;
+}
+
+.stepNo {
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" var(--row-wdth), "wght" var(--row-wght);
+  font-size: var(--row-size);
+  color: var(--text-signal);
+}
+
+.stepText {
+  composes: body from "../type.module.css";
+  color: var(--text-body);
+}

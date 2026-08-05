@@ -1,4 +1,5 @@
 import type { ReactNode } from "react"
+import { MethodList } from "./method-list"
 import styles from "./primer-card.module.css"
 
 type PrimerCardProps = {
@@ -39,18 +40,7 @@ export const PrimerCard = ({
         <h3 className={styles.title}>{title}</h3>
         {body ? <p className={styles.body}>{body}</p> : null}
 
-        {steps?.length ? (
-          <ol className={styles.steps}>
-            {steps.map((step, i) => (
-              <li key={step} className={styles.step}>
-                <span className={styles.stepNo} aria-hidden="true">
-                  {i + 1}
-                </span>
-                <span className={styles.stepText}>{step}</span>
-              </li>
-            ))}
-          </ol>
-        ) : null}
+        {steps?.length ? <MethodList steps={steps} /> : null}
 
         {meta ? <div className={styles.meta}>{meta}</div> : null}
       </div>
