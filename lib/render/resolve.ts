@@ -165,7 +165,7 @@ export const resolveBlock = (
         return "—";
       };
       return ok({
-        title: "Compared for your kitchen",
+        title: "Compared side by side",
         axes: block.axes,
         rows: rs.map((r) => ({ recipe: r, values: block.axes.map((a) => value(r, a)), emphasis: block.emphasis })),
         treatment: block.treatment

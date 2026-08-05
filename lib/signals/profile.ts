@@ -26,15 +26,31 @@ const CACHE_DIR = path.join(process.cwd(), "lib/signals/cache");
 
 /** Exported so scripts/cost.mjs can price the real prompt rather than a rebuilt one. */
 export const profilePromptFor = (household: Household, events: CookEvent[], recipes: Recipe[]) => `
-You are reading ninety days of one household's behaviour on a recipe site.
+WHAT MISE IS
+A recipe site whose actual product is teaching people to cook. It ships a guided
+cook mode — the reader works through a numbered method one step at a time, on
+screen, while cooking — and technique material attached to every dish, which they
+can open or ignore. Reading a recipe here is not a page view; it is a walk-through
+with a beginning, a middle and an end.
+
+That is why this log exists and why it has the shape it has. The site knows which
+step was on screen when someone stopped, because putting one step on screen IS the
+product. It knows which technique notes were opened, because opening them is the
+thing it is trying to get people to do. None of it is inferred, bought or tracked
+across the web: it is a site watching people use the feature it is built around.
+
+You are reading ninety days of one household's behaviour on that site.
 
 WHAT THEY DECLARED AT SIGNUP — treat this as weak evidence. People describe
 themselves aspirationally, and two households can declare identically and behave
 nothing alike.
 ${JSON.stringify(household.declared)}
 
-THE RECIPES THEY COULD HAVE COOKED
-${recipes.map((r) => `${r.id} ${r.title} — technique: ${r.technique.join("/")}; ${r.ingredientCount} ingredients; allergens: ${r.allergens.join("/") || "none"}; ${r.makeAhead ? "has a make-ahead step" : "no make-ahead step"}${r.forkPoint ? "; forks partway" : ""}`).join("\n")}
+THE RECIPES THEY COULD HAVE COOKED, with the method the guided mode walks them
+through. The step numbers below are the SAME numbers the log reports — when a row
+says someone quit at step 3, step 3 is printed here and you can say what it was.
+${recipes.map((r) => `${r.id} ${r.title} — technique: ${r.technique.join("/")}; ${r.ingredientCount} ingredients; allergens: ${r.allergens.join("/") || "none"}; ${r.makeAhead ? "has a make-ahead step" : "no make-ahead step"}${r.forkPoint ? "; forks partway" : ""}
+${(r.steps ?? []).map((s, i) => `     ${i + 1}. ${s}`).join("\n")}`).join("\n")}
 
 THE LOG — ${events.length} events, oldest first
 ${events.map((e) => `${e.at.slice(0, 10)} ${e.type.padEnd(9)} ${e.recipeId}${e.atStep !== undefined ? ` at step ${e.atStep}` : ""}${e.component ? ` ${e.component}` : ""}`).join("\n")}
@@ -50,8 +66,20 @@ Three things worth watching for, because counting misses all of them:
 - An avoidance may have a condition attached. Someone who abandons a dish
   containing an ingredient, but repeatedly cooks a different dish containing the
   same ingredient, is not avoiding the ingredient.
-- Where in a recipe someone quits matters. Quitting at step zero is a reaction to
-  the list; quitting at step four is a reaction to the cooking.
+- Where in a recipe someone quits matters, and you can now read what they quit
+  in the middle of. Quitting at step one is a reaction to the list or the shopping;
+  quitting halfway is a reaction to the cooking itself. Name the step by what it
+  ASKS OF THEM, using the text above.
+- "saved" is the one action here that cost them something deliberate. A dish saved
+  and never cooked is not a failure of the dish — it is the distance between who
+  someone means to be and what they did on a Tuesday, and that distance is usually
+  the most useful thing in the log.
+
+DO NOT INVENT DETAIL. Every concrete claim you make — a step, a time, an
+ingredient, a count — must be readable off the lists above. If you want to say
+what someone quit in the middle of, quote the step. If the log does not support a
+detail, leave the detail out; a plainer true sentence beats a vivid invented one,
+and this text is shown to an audience beside the data it came from.
 
 Write the salient inference as something they would recognise about themselves and
 would not have thought to say. Never a count.
@@ -86,17 +114,42 @@ export const getProfile = async (
   if (!hasKey()) return { profile: derivedFallback(events), cached: false, ms: 0 };
 
   const started = Date.now();
-  const { object } = await generateObject({
-    model: PROFILE_MODEL,
-    schema: profileSchema,
-    temperature: 0,
-    prompt: profilePromptFor(household, events, recipes)
-  });
+  const prompt = profilePromptFor(household, events, recipes);
+
+  /* One retry, off temperature 0, and a check the schema cannot make.
+     A generation came back structurally valid and semantically empty — no salient
+     inference and no cooked recipes against a log with four completions. Because
+     it parsed, it cached, and every page built from it silently lost its
+     vocabulary. The schema can insist a string is non-empty; only this can insist
+     the answer is about the log it was given. Retrying at temperature 0 would
+     reproduce the same output, so the second attempt is nudged. */
+  let object: Profile | null = null;
+  for (const temperature of [0, 0.4]) {
+    const attempt = await generateObject({ model: PROFILE_MODEL, schema: profileSchema, temperature, prompt });
+    if (agreesWithLog(attempt.object, events)) {
+      object = attempt.object;
+      break;
+    }
+    console.warn(`profile for ${household.id} disagreed with its own log at temperature ${temperature}`);
+  }
+  if (!object) throw new Error(`profile for ${household.id} came back empty twice — refusing to cache it`);
+
   const ms = Date.now() - started;
 
   await mkdir(CACHE_DIR, { recursive: true });
   await writeFile(file, JSON.stringify(object, null, 2));
   return { profile: object, cached: false, ms };
+};
+
+/** Cheap contradictions between a profile and the log it was derived from. Not a
+ *  quality judgment — just "did it read the thing at all". */
+const agreesWithLog = (p: Profile, events: CookEvent[]): boolean => {
+  const cooked = new Set(events.filter((e) => e.type === "completed").map((e) => e.recipeId));
+  const abandoned = new Set(events.filter((e) => e.type === "abandoned").map((e) => e.recipeId));
+  if (cooked.size > 0 && p.signals.cookedRecipeIds.length === 0) return false;
+  if (abandoned.size > 0 && p.signals.abandonedRecipeIds.length === 0) return false;
+  /* Ids it reports as cooked that were never completed — invention, not omission. */
+  return p.signals.cookedRecipeIds.every((id) => cooked.has(id));
 };
 
 /**

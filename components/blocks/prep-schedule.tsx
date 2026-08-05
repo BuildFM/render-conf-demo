@@ -77,7 +77,7 @@ export const PrepSchedule = ({ title, days, image, treatment }: PrepScheduleProp
             <h3 className={styles.dayName}>{day.day}</h3>
             {hasSharedBase(day) ? (
               <Eyebrow track="sm" className={styles.dayNote}>
-                Shared base
+                Used again later this week
               </Eyebrow>
             ) : null}
           </div>

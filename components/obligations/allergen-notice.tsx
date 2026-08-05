@@ -22,8 +22,12 @@ type AllergenNoticeProps = {
 export const AllergenNotice = ({ allergen, recipeTitle, detail }: AllergenNoticeProps) => (
   <section className={styles.notice} aria-label={`Allergen notice: ${allergen}`}>
     <div className={styles.band}>
+      {/* "Recorded for this household" until 5 Aug. It described the provenance of
+          the fact and never named the thing it was warning about — on a block whose
+          whole job is to be understood in one glance, from the back of a room, by
+          someone who has been looking at it for two seconds. The word is "allergy". */}
       <Eyebrow track="lg" className={styles.kicker}>
-        Recorded for this household · {allergen}
+        Allergy warning · {allergen}
       </Eyebrow>
       <DisplayHeading size="l" as="h2" className={styles.statement}>
         {recipeTitle} contains {allergen.toLowerCase()}

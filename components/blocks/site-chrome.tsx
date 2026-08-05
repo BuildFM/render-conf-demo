@@ -9,9 +9,9 @@ type SiteChromeProps = {
 }
 
 const NAV = [
-  { label: "Fire", href: "/fire" },
+  { label: "Home", href: "/" },
   { label: "Prep", href: "/prep" },
-  { label: "Larder", href: "/larder" },
+  { label: "Pantry", href: "/larder" },
   { label: "Technique", href: "/technique" },
   { label: "Index", href: "/index" }
 ]
@@ -19,7 +19,7 @@ const NAV = [
 /** Invariant. Identical position on every composition, always — it is the fixed
  *  point that makes the rest of the page legible as varying. Takes no treatment
  *  and the model is never asked about it. */
-export const SiteChrome = ({ active = "Fire", stamp, recipeCount = 41 }: SiteChromeProps) => (
+export const SiteChrome = ({ active = "Home", stamp, recipeCount = 41 }: SiteChromeProps) => (
   <Masthead
     items={NAV.map((item) => ({ ...item, active: item.label === active }))}
     stamp={stamp}

@@ -21,6 +21,15 @@ export type Recipe = {
   /** One or two sentences. RecipeCard "full" sets it at body scale. Added to the
    *  handoff type — see README §Deviations. */
   summary?: string
+  /** The numbered method, as the guided cook mode shows it — one step on screen at
+   *  a time. Not rendered by any block; it exists because the site's product IS the
+   *  guided walk-through, which is what makes `abandoned atStep 3` an ordinary thing
+   *  to know rather than surveillance. Before this existed the profile pass was told
+   *  someone quit at step three with no way to learn what step three was, and it
+   *  filled the gap in — "in the middle of the sear itself" was invented. */
+  steps?: string[]
+  /** Names a step number — "At the flip, step 3 of 5" — so it must agree with
+   *  `steps.length`. Asserted when the steps were authored. */
   forkPoint?: string
   makeAhead?: string
   season?: string

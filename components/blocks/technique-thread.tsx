@@ -34,7 +34,7 @@ export const TechniqueThread = ({ title, entries, untried, treatment }: Techniqu
           <span className={styles.arrow} aria-hidden="true">
             →
           </span>
-          <span>Not yet tried: {untried}</span>
+          <span>You haven&apos;t tried this yet: {untried}</span>
         </p>
       </section>
     )
@@ -43,7 +43,7 @@ export const TechniqueThread = ({ title, entries, untried, treatment }: Techniqu
   return (
     <section className={styles.full}>
       <Eyebrow track="lg" className={styles.kicker}>
-        Your thread{technique ? ` · ${technique}` : ""} · {entries.length} attempts
+        Every time you&apos;ve tried{technique ? ` ${technique}` : " this"} · {entries.length} attempts
       </Eyebrow>
 
       <DisplayHeading size="xl" as="h2">
@@ -66,7 +66,7 @@ export const TechniqueThread = ({ title, entries, untried, treatment }: Techniqu
       </div>
 
       <div className={styles.untried}>
-        <Eyebrow track="md">Not yet tried</Eyebrow>
+        <Eyebrow track="md">You haven&apos;t tried this yet</Eyebrow>
         <DisplayHeading size="l" as="p">
           {untried}
         </DisplayHeading>

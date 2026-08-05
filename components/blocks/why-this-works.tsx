@@ -25,7 +25,7 @@ export const WhyThisWorks = ({
   if (treatment === "collapsed") {
     return (
       <section className={styles.collapsed}>
-        <Eyebrow track="md">Why these work</Eyebrow>
+        <Eyebrow track="md">What these dishes have in common</Eyebrow>
         <h2 className={styles.collapsedPrinciple}>{principle}</h2>
         <p className={styles.collapsedList}>{recipes.map((r) => r.title).join(" · ")}</p>
       </section>
@@ -36,7 +36,7 @@ export const WhyThisWorks = ({
     <section className={styles.full}>
       <div>
         <Eyebrow track="lg" className={styles.kicker}>
-          Why these {recipes.length} work
+          What these {recipes.length} dishes have in common
         </Eyebrow>
         <DisplayHeading size="l" as="h2" balance className={styles.principle}>
           {principle}

@@ -1,0 +1,40 @@
+{
+  "characterization": "This household cooks almost every evening and returns to the same ten dishes rather than hunting for new ones — quail, cabbage, the long bean pot, the brothy beans, focaccia, pressed pork. They never once opened the technique material attached to any of it; they use the guided steps as a checklist, not a lesson. The only two dishes they walk away from, cacio e pepe and anchovy butter, they walk away from at step one, before any cooking has happened — and both are dishes where dairy is the whole substance. Meanwhile they cook the brown-butter cabbage and the anchovy green sauce over and over, so neither dairy nor anchovy is the objection by itself.",
+  "salientInference": "Across ninety days you quit at step one when dairy is the dish, but cook it gladly when it's spooned over at the end.",
+  "signals": {
+    "cookedRecipeIds": [
+      "033",
+      "039",
+      "038",
+      "031",
+      "041",
+      "034",
+      "036",
+      "035",
+      "037",
+      "032"
+    ],
+    "repeatRecipeIds": [
+      "033",
+      "039",
+      "038",
+      "031",
+      "041",
+      "034",
+      "036",
+      "035",
+      "037"
+    ],
+    "abandonedRecipeIds": [
+      "030",
+      "040"
+    ],
+    "neverOpens": [
+      "technique notes"
+    ],
+    "makeAheadPattern": true,
+    "expandsTechnique": false,
+    "abandonThreshold": null,
+    "rhythm": "Cooks most evenings; the long bean pot is followed within a day or two by the brothy beans that use its liquid"
+  }
+}

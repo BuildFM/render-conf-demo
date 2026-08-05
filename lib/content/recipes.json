@@ -11,12 +11,19 @@
     "activeTime": 35,
     "totalTime": 1560,
     "ingredientCount": 7,
-    "summary": "Flattened and pressed, the bird cooks in a single plane — thigh and breast finish in the same minute instead of arguing about it.",
+    "summary": "Flattened and pressed, the bird cooks in a single plane \u2014 thigh and breast finish in the same minute instead of arguing about it.",
     "makeAhead": "Dry-brine uncovered on the top shelf, twenty-four hours ahead. This is the whole difference between good skin and shattering skin.",
     "image": {
       "src": "/images/recipes/041-chicken-under-brick.jpg",
       "alt": "Chicken under a brick, charred lemon, herb sauce"
-    }
+    },
+    "steps": [
+      "Take the bird out of the fridge an hour before. Cold meat browns unevenly.",
+      "Flatten it \u2014 backbone out, breastbone cracked, the whole thing pressed to one plane.",
+      "Skin down in a hot dry pan, weight on top. Four minutes without touching it.",
+      "Lift the weight, turn it, and give it eight minutes on the other side.",
+      "Rest it fifteen minutes before it meets a knife."
+    ]
   },
   {
     "id": "040",
@@ -32,11 +39,18 @@
     "activeTime": 20,
     "totalTime": 20,
     "ingredientCount": 4,
-    "summary": "Four ingredients, and three of them are technique. The sauce is starch, fat and agitation — if it breaks, it broke because the pan was too hot, not because you were short of cheese.",
+    "summary": "Four ingredients, and three of them are technique. The sauce is starch, fat and agitation \u2014 if it breaks, it broke because the pan was too hot, not because you were short of cheese.",
     "image": {
       "src": "/images/recipes/040-cacio-e-pepe.jpg",
       "alt": "Cacio e pepe, pepper-flecked, in a warm bowl"
-    }
+    },
+    "steps": [
+      "Grate the pecorino to a powder on the finest holes. Anything coarser will not melt.",
+      "Toast the pepper in a dry pan until it smells of more than heat.",
+      "Boil the pasta in half the water you would normally use.",
+      "Off the heat, work the cheese and a ladle of that water into a paste.",
+      "Add the pasta and keep it moving until it turns glossy."
+    ]
   },
   {
     "id": "039",
@@ -57,7 +71,15 @@
     "image": {
       "src": "/images/recipes/039-charred-cabbage.jpg",
       "alt": "Charred cabbage wedges, blackened cut faces, brown butter"
-    }
+    },
+    "steps": [
+      "Quarter the cabbage through the root so the wedges hold together.",
+      "Oil and salt the cut faces.",
+      "Cut face down in a heavy pan. Twenty minutes, no attention.",
+      "Butter into the same pan \u2014 foaming, then quiet, then nutty.",
+      "Capers in at the colour change, lemon off the heat.",
+      "Spoon over immediately."
+    ]
   },
   {
     "id": "038",
@@ -70,13 +92,24 @@
     "activeTime": 15,
     "totalTime": 180,
     "ingredientCount": 6,
-    "summary": "Three hours of nothing happening, and then everything has happened. Keep the liquid — it is the reason to make this rather than open a tin.",
+    "summary": "Three hours of nothing happening, and then everything has happened. Keep the liquid \u2014 it is the reason to make this rather than open a tin.",
     "makeAhead": "The whole pot, up to four days ahead. It is better on day two and best on day three.",
     "forkPoint": "At step 6 of 9, when the pot divides",
     "image": {
       "src": "/images/recipes/038-white-beans.jpg",
       "alt": "White beans in their liquid, olive oil, rosemary"
-    }
+    },
+    "steps": [
+      "Soak overnight, or don't \u2014 it costs an hour either way.",
+      "Cover with cold water by two fingers.",
+      "Bring it up slowly. A hard boil breaks the skins.",
+      "Garlic, rosemary and oil in once it is barely trembling.",
+      "Ninety minutes, lid ajar, checking the water twice.",
+      "The pot divides here \u2014 half stays whole, half goes on to be broken down.",
+      "Salt only now. Earlier and the skins stay tight.",
+      "Another thirty minutes for the half you want creamy.",
+      "Cool it in its own liquid. It is better on day two."
+    ]
   },
   {
     "id": "037",
@@ -97,7 +130,14 @@
     "image": {
       "src": "/images/recipes/037-green-sauce.jpg",
       "alt": "Coarse green herb sauce, oil separating at the edge"
-    }
+    },
+    "steps": [
+      "Pick the parsley leaves. Stalks make it bitter and grassy.",
+      "Chop by hand. A processor bruises it into paste.",
+      "Anchovy and garlic to a rough paste with the flat of the knife.",
+      "Loosen with oil, a spoon at a time, until it falls off the spoon.",
+      "Vinegar last, and taste before you add the second spoonful."
+    ]
   },
   {
     "id": "036",
@@ -117,7 +157,15 @@
     "image": {
       "src": "/images/recipes/036-focaccia.jpg",
       "alt": "Dimpled focaccia, olive oil pooling, coarse salt"
-    }
+    },
+    "steps": [
+      "Mix flour, water, yeast and salt until there is no dry flour left.",
+      "Four folds in the bowl, twenty minutes apart.",
+      "Straight into the fridge. It wants twenty-four hours and tolerates seventy-two.",
+      "Out onto an oiled tray, and leave it alone until it relaxes to the corners.",
+      "Dimple it hard, all the way down, and flood the dips with oil.",
+      "Hot oven until the top is one colour and the bottom is louder than the top."
+    ]
   },
   {
     "id": "035",
@@ -131,12 +179,19 @@
     "activeTime": 20,
     "totalTime": 70,
     "ingredientCount": 4,
-    "summary": "Boiled soft, crushed flat, then roasted hard. Smashing is not a flourish — it is how you turn one surface into nine.",
+    "summary": "Boiled soft, crushed flat, then roasted hard. Smashing is not a flourish \u2014 it is how you turn one surface into nine.",
     "makeAhead": "Boil and smash them, then refrigerate on the tray. They roast from cold without complaint.",
     "image": {
       "src": "/images/recipes/035-smashed-potatoes.jpg",
       "alt": "Craggy smashed potatoes, deeply browned edges"
-    }
+    },
+    "steps": [
+      "Boil them whole until a knife meets no resistance.",
+      "Drain and let the steam leave. Wet potatoes never crisp.",
+      "Smash each one flat with the base of a glass.",
+      "Onto a hot oiled tray, cut side down, and leave them.",
+      "Turn once, when the edges have gone lacy."
+    ]
   },
   {
     "id": "034",
@@ -155,7 +210,15 @@
     "image": {
       "src": "/images/recipes/034-pressed-pork-belly.jpg",
       "alt": "Pressed pork belly, lacquered top, sharp square edges"
-    }
+    },
+    "steps": [
+      "Braise the belly in stock and aromatics until a skewer goes through unhindered.",
+      "Lift it out flat, between two trays, with a weight on top.",
+      "Overnight in the fridge under that weight.",
+      "Cut into planks the width of two fingers.",
+      "Skin down in a dry pan, weighted, until it stops sounding wet.",
+      "Eight minutes from the fridge is enough."
+    ]
   },
   {
     "id": "033",
@@ -168,12 +231,19 @@
     "activeTime": 25,
     "totalTime": 40,
     "ingredientCount": 6,
-    "summary": "Small birds, high heat, and a weight — the whole cook is over in nine minutes, which means every one of them counts.",
+    "summary": "Small birds, high heat, and a weight \u2014 the whole cook is over in nine minutes, which means every one of them counts.",
     "forkPoint": "At the flip, step 3 of 5",
     "image": {
       "src": "/images/recipes/033-flattened-quail.jpg",
       "alt": "Two flattened quail, one glazed, one plain, in a black pan"
-    }
+    },
+    "steps": [
+      "Spatchcock both birds and dry the skin properly.",
+      "Skin down under a weight. Six minutes, untouched.",
+      "The flip. Everything before this was the same bird.",
+      "Three minutes on the second side, basting if you went the glazed way.",
+      "Rest on a warm plate, never a cold one."
+    ]
   },
   {
     "id": "032",
@@ -191,7 +261,13 @@
     "image": {
       "src": "/images/recipes/032-cabbage-weighted.jpg",
       "alt": "Cabbage steaks pressed flat in a pan under a weight"
-    }
+    },
+    "steps": [
+      "Cut the cabbage into thick rounds and keep the core in.",
+      "Oil, salt, and a hot heavy pan.",
+      "Weight on top. Eight minutes, one side only.",
+      "Lemon at the end, off the heat."
+    ]
   },
   {
     "id": "031",
@@ -209,7 +285,14 @@
     "image": {
       "src": "/images/recipes/031-beans-and-greens.jpg",
       "alt": "Brothy beans with wilted greens, oil on the surface"
-    }
+    },
+    "steps": [
+      "Warm oil and garlic until the garlic is blond, not brown.",
+      "Pancetta in, and let it render before anything else joins it.",
+      "Beans and their liquid, plus enough stock to make it a soup.",
+      "Greens in at the end, in handfuls, until they collapse.",
+      "Chilli and oil on top, at the table."
+    ]
   },
   {
     "id": "030",
@@ -230,6 +313,12 @@
     "image": {
       "src": "/images/recipes/030-anchovy-butter.jpg",
       "alt": "A roll of anchovy butter, cut into coins"
-    }
+    },
+    "steps": [
+      "Leave the butter out until it gives to a thumb.",
+      "Mash the anchovies to nothing with the flat of a knife.",
+      "Work them into the butter with the lemon zest.",
+      "Roll it in paper and chill it back to firm."
+    ]
   }
 ]

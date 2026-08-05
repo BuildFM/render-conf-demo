@@ -53,7 +53,7 @@ export const ForkedRecipeCard = ({
               {recipe.technique[0]} · {formatYield(recipe.yield)} · One pot
             </Eyebrow>
             <Eyebrow tone="dim" track="sm">
-              Forks at {forkPoint.toLowerCase()}
+              Splits at {forkPoint.toLowerCase()}
             </Eyebrow>
           </div>
           <DisplayHeading size="m" as="h3" className={styles.title}>
@@ -74,7 +74,9 @@ export const ForkedRecipeCard = ({
 
       <div className={styles.forkRule}>
         <Eyebrow track="lg" className={styles.forkLabel}>
-          Fork · {forkPoint}
+          {/* The step number is already on the dim eyebrow above. This label sits ON
+              the divider, so it says where you are, not what you were told. */}
+          Splits here
         </Eyebrow>
         <div className={styles.rule} aria-hidden="true" />
       </div>
@@ -83,7 +85,7 @@ export const ForkedRecipeCard = ({
         {branches.map((branch, i) => (
           <div key={branch.label} className={i === 0 ? styles.branchLeft : styles.branch}>
             <Eyebrow track="md" className={styles.branchLabel}>
-              Branch {i === 0 ? "A" : "B"} · {branch.label}
+              Option {i === 0 ? "A" : "B"} · {branch.label}
             </Eyebrow>
             <h4 className={styles.branchTitle}>{branch.title}</h4>
             <p className={styles.branchBody}>{branch.body}</p>

@@ -35,7 +35,7 @@ export const PantryMatch = ({ have, missing, matches, treatment }: PantryMatchPr
     <section>
       <div className={styles.pantry}>
         <div>
-          <div className={styles.haveHead}>In the house · {have.length}</div>
+          <div className={styles.haveHead}>What you have · {have.length}</div>
           <p className={styles.haveList}>{have.join(" · ")}</p>
         </div>
         <div>
@@ -61,7 +61,7 @@ export const PantryMatch = ({ have, missing, matches, treatment }: PantryMatchPr
               Missing
             </th>
             <th scope="col" className={styles.thRight}>
-              Shortfall
+              Still need
             </th>
           </tr>
         </thead>

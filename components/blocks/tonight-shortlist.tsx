@@ -38,7 +38,7 @@ export const TonightShortlist = ({
     <section>
       <SectionHead
         title={title}
-        meta={`${recipes.length} on the shortlist`}
+        meta={`${recipes.length} to choose from`}
         className={styles.head}
       />
       {recipes.map((recipe) => (

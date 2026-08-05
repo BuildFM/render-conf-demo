@@ -13,17 +13,20 @@
    pane deliberately runs LARGER than a real editor would: it is being read from
    row 20, not from a desk. */
 
+/* No grid centring here — see the comment on the fit effect. A transformed box
+   still occupies its untransformed size in layout, so centring it against the
+   viewport is arithmetic the component has to do itself. */
 .fitter {
+  position: relative;
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  display: grid;
-  place-items: center;
   background: var(--ink-0);
 }
 
 .board {
-  transform-origin: center center;
+  position: absolute;
+  transform-origin: 0 0;
   display: flex;
   flex-direction: column;
   background: var(--surface-page);
@@ -98,9 +101,22 @@
 }
 .toggle:hover { color: var(--text-signal); border-color: var(--border-signal); }
 
+.version {
+  font-family: var(--font-mono);
+  font-size: calc(var(--data-size) * var(--stage-k));
+  font-variant-numeric: tabular-nums;
+  color: var(--text-dim);
+}
+
+/* One row, and it must stay one row. Six derived tabs wrapped to a second line,
+   which on camera read as a layout accident rather than as a set of choices —
+   and cost the editor a line of vertical budget it wanted. Four declared tabs
+   fit with room to spare; `nowrap` is there so a fifth fails loudly at build
+   time instead of quietly wrapping on the projector. */
 .sections {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  align-items: center;
   gap: var(--space-2);
   padding: var(--space-3) var(--space-5);
   border-bottom: var(--border-width) solid var(--border-faint);
@@ -114,7 +130,8 @@
   font-size: calc(var(--micro-size) * var(--stage-k));
   letter-spacing: var(--micro-track);
   text-transform: uppercase;
-  padding: var(--space-1) var(--space-2);
+  white-space: nowrap;
+  padding: var(--space-2) var(--space-3);
   cursor: pointer;
   transition: color var(--transition-color), border-color var(--transition-color);
 }
@@ -122,6 +139,119 @@
 .sectionTab[data-active="true"] {
   color: var(--text-on-signal);
   background: var(--surface-signal);
+}
+
+/* Right-aligned and outlined rather than filled: it switches how one tab is drawn,
+   it does not select a tab, and it must not look like it does. */
+.rawToggle {
+  margin-left: auto;
+  background: none;
+  border: var(--border-width) solid var(--border-faint);
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: calc(var(--micro-size) * var(--stage-k));
+  letter-spacing: var(--micro-track);
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding: var(--space-1) var(--space-3);
+  cursor: pointer;
+  transition: color var(--transition-color), border-color var(--transition-color);
+}
+.rawToggle:hover { color: var(--text-body); border-color: var(--border-default); }
+.rawToggle[data-active="true"] { color: var(--text-signal); border-color: var(--border-signal); }
+
+/* --- the vocabulary, read --------------------------------------------------
+   Fifteen components is 350 of the manifest's 470 lines. As raw JSON in an 820px
+   pane it is a wall — and a wall the room cannot read is the same as no cause on
+   screen at all, which is the failure the whole split screen exists to fix.
+   Rendered, the four leads separate from the eleven supports at a glance, and
+   every row carries its permission. */
+
+.blocks {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  /* Tight enough that thirteen of the fifteen are in frame at once. The count is
+     part of what the room is being shown — a vocabulary someone sat down and
+     bounded — and it does not read as bounded if you only ever see eight of it. */
+  gap: var(--space-2);
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+}
+
+.blockHead {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.blockName {
+  font-family: var(--font-mono);
+  font-size: calc(var(--data-size) * var(--stage-k));
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+
+/* `lead` is the one distinction in this list that changes what a page can be, so
+   it is the one that gets colour. Support is stated, not emphasised. */
+.blockRole {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: calc(var(--micro-size) * var(--stage-k));
+  letter-spacing: var(--micro-track);
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.blockRole[data-lead="true"] { color: var(--text-signal); }
+
+.blockNeeds {
+  font-family: var(--font-mono);
+  font-size: calc(var(--body-size) * var(--stage-k));
+  line-height: 1.3;
+  color: var(--text-body);
+}
+
+.blockAdjacency {
+  font-family: var(--font-mono);
+  font-size: calc(var(--body-size) * var(--stage-k));
+  line-height: 1.3;
+  color: var(--text-dim);
+}
+
+/* A tab can hold more than one section — `limits` holds `density` and
+   `invariants` — and each splices back on its own byte offsets, so each gets its
+   own editor. With one section the group is invisible and the layout is exactly
+   what it was. */
+.editors {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.editorGroup {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.editorGroup + .editorGroup {
+  border-top: var(--border-width) solid var(--border-faint);
+}
+
+.editorLabel {
+  font-family: var(--font-mono);
+  font-size: calc(var(--micro-size) * var(--stage-k));
+  letter-spacing: var(--micro-track);
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding: var(--space-4) var(--space-5) 0;
 }
 
 .editor {
@@ -210,6 +340,51 @@
 
 /* --- the three households -------------------------------------------------- */
 
+/* The panes and the switch that says what they are showing. */
+.panesCol {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.panesBar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+/* Two states of one thing, not two buttons. Drawn as a single bordered unit so it
+   reads as a switch — which of these am I looking at — rather than as a pair of
+   actions. The shortcut is printed on the face of it: the room sees the key that
+   gets pressed on camera, and so do I. */
+.switch {
+  margin-left: auto;
+  display: flex;
+  border: var(--border-width) solid var(--border-default);
+}
+
+.switchOption {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: calc(var(--micro-size) * var(--stage-k));
+  letter-spacing: var(--micro-track);
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  transition: color var(--transition-color), background-color var(--transition-color);
+}
+.switchOption:hover { color: var(--text-body); }
+.switchOption[data-active="true"] {
+  color: var(--text-on-signal);
+  background: var(--surface-signal);
+  cursor: default;
+}
+
 .panes {
   flex: 1;
   display: flex;
@@ -268,6 +443,111 @@
   border: none;
   transform-origin: top left;
   display: block;
+}
+
+/* --- the person, in the pane's place ---------------------------------------
+   Three groups, in the order the argument runs: what they declared (identical
+   across the twins), what they did (wildly different), and the six lines the
+   model actually gets. Reading down one column is one person; reading across a
+   row is the point. */
+
+.data {
+  border: var(--border-width) solid var(--border-default);
+  background: var(--surface-raised);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  /* The panel does not scroll as a whole. The two comparable groups stay pinned —
+     they are the ones being read ACROSS the three columns — and only the prose
+     underneath gives way. A panel that scrolled entirely would put the twins'
+     identical declared block off screen at the moment it is being pointed at. */
+  overflow: hidden;
+}
+
+.dataGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 0;
+}
+/* The verbatim group takes what is left and scrolls inside itself. */
+.dataGroup:last-child { flex: 1; }
+
+.dataHead {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding-bottom: var(--space-2);
+  margin-bottom: var(--space-2);
+  border-bottom: var(--border-width) solid var(--border-faint);
+}
+
+.dataTitle {
+  font-family: var(--font-mono);
+  font-size: calc(var(--micro-size) * var(--stage-k));
+  letter-spacing: var(--micro-track);
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+.dataNote {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: calc(var(--micro-size) * var(--stage-k));
+  letter-spacing: var(--micro-track);
+  text-transform: uppercase;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.dataRow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: calc(var(--body-size) * var(--stage-k));
+  line-height: 1.45;
+}
+
+.dataKey { color: var(--text-dim); }
+
+.dataValue {
+  margin-left: auto;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* The threshold from the manifest, beside the value it is tested against — the
+   third term in condition → fact → block. Acid only when it passed: a column of
+   ticks would flatten the one thing worth seeing, which is where they differ. */
+.dataTest {
+  flex: none;
+  width: calc(56px * var(--stage-k));
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+}
+.dataTest[data-pass="true"] { color: var(--text-signal); }
+
+.dataSent {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: calc(var(--body-size) * var(--stage-k));
+  line-height: 1.45;
+  color: var(--text-body);
+  white-space: pre-wrap;
+  word-break: break-word;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.dataLoading {
+  font-family: var(--font-mono);
+  font-size: calc(var(--micro-size) * var(--stage-k));
+  letter-spacing: var(--micro-track-wide);
+  text-transform: uppercase;
+  color: var(--text-signal);
 }
 
 .composing {

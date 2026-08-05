@@ -36,7 +36,15 @@ export const layoutSpecSchema = z.object({
       treatment: z.enum(["hero", "full", "collapsed", "oneline"]),
       recipeIds: z.array(z.string()).default([]),
       techniqueTag: z.string().optional(),
-      axes: z.array(z.string()).default([]).describe("ComparisonTable only. Chosen for this household."),
+      axes: z
+        .array(z.string())
+        .default([])
+        .describe(
+          "ComparisonTable only. 2–4 COLUMN HEADINGS chosen for this household. Each names " +
+            'what its column measures, in one to three words — "Active time", "Total time", ' +
+            '"Where it splits", "Hands off". Sentence case. Never a sentence, never a phrase ' +
+            'about the dishes, never a comment on the comparison itself.'
+        ),
       emphasis: z.array(z.number()).default([]).describe("ComparisonTable only: which value per row carries the answer.")
     })
   ),
@@ -52,6 +60,26 @@ const describe = (c: ComponentSpec) =>
   (c.slots.requires ? ` NEEDS ${c.slots.requires}` : "") +
   (c.adjacency.neverWith?.length ? ` Never with: ${c.adjacency.neverWith.join(", ")}.` : "") +
   (c.adjacency.mustFollow?.length ? ` Must follow: ${c.adjacency.mustFollow.join(" or ")}.` : "");
+
+/**
+ * Everything the model is told about one person, and nothing else.
+ *
+ * Extracted from the prompt template so `/api/context` can put it on screen —
+ * the stage view shows these exact bytes, because a panel that paraphrased what
+ * was sent would be a claim about the system rather than the system. Six lines is
+ * also the honest headline: the model gets a characterization, three id lists, a
+ * rhythm and the signup form. It never receives the facts that gated the
+ * vocabulary — those are evaluated in code and decide what it is allowed to see.
+ */
+export const householdContext = (profile: Profile, household: Household) =>
+  [
+    profile.characterization,
+    `Cooked: ${profile.signals.cookedRecipeIds.join(", ") || "nothing"}`,
+    `Repeats: ${profile.signals.repeatRecipeIds.join(", ") || "none"}`,
+    `Abandoned: ${profile.signals.abandonedRecipeIds.join(", ") || "none"}`,
+    `Rhythm: ${profile.signals.rhythm ?? "none detected"}`,
+    `Declared at signup (weak evidence): ${JSON.stringify(household.declared)}`
+  ].join("\n");
 
 const prompt = (
   manifest: Manifest,
@@ -103,12 +131,7 @@ techniqueTag, pass exactly one of them, never a joined string.
 ${recipes.map((r) => `${r.id} ${r.title} — techniques: ${r.technique.join(", ")}; serves ${r.yield}; ${r.activeTime} min active, ${r.totalTime} total; ${r.ingredientCount} ingredients; allergens ${r.allergens.join("/") || "none"}${r.makeAhead ? "; HAS A MAKE-AHEAD STEP" : ""}${r.forkPoint ? `; SPLITS PARTWAY (${r.forkPoint}) so one pot serves two constraints` : ""}`).join("\n")}
 
 THIS HOUSEHOLD
-${profile.characterization}
-Cooked: ${profile.signals.cookedRecipeIds.join(", ") || "nothing"}
-Repeats: ${profile.signals.repeatRecipeIds.join(", ") || "none"}
-Abandoned: ${profile.signals.abandonedRecipeIds.join(", ") || "none"}
-Rhythm: ${profile.signals.rhythm ?? "none detected"}
-Declared at signup (weak evidence): ${JSON.stringify(household.declared)}
+${householdContext(profile, household)}
 
 OUTPUT ORDER — do this in this order, it matters
 1. Pick the LEAD. It is blocks[0] and it goes in "dominant", at the most prominent
@@ -135,6 +158,13 @@ RULES
   RecipeCard at "hero" and TechniqueThread at "full" both claim it, so they cannot
   appear on the same page. Choose which one this household opens the page for.
 - Only use a treatment the component actually supports.
+- ComparisonTable's "axes" are COLUMN HEADINGS, and they are the only words on the
+  finished page you write. Every other label is authored. So they have to sound like
+  the rest of the page: one to three words naming what the column measures, the way a
+  recipe site heads a column. "Active time". "Total time". "Where it splits".
+  "Hands off". Not "The split itself", not "How they differ", not anything that
+  describes the comparison rather than heading a column — a heading a reader has to
+  decode is a heading that failed.
 - Order is meaning. What comes first is what this household opens the page for.
 - Absence is a decision. A recipe site's home page with no recipe above the fold is
   a legitimate composition if this household's history argues for it.

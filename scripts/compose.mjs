@@ -122,6 +122,11 @@ for (const h of households) {
     const why = r.ok ? "" : dim(` — ${r.reason}`);
     const ids = (b.recipeIds ?? []).join(",");
     console.log(`     ${i === 0 ? acid("▸") : " "} ${mark} ${b.component}${dim("@" + b.treatment)}${ids ? dim(" [" + ids + "]") : ""}${why}`);
+    /* The axes are the ONLY words the model writes that land on the finished page —
+       every other label is authored. The harness could not see them, so a column
+       head reading "The split itself" survived until someone looked at a browser.
+       Anything the model authors has to be visible here. */
+    if (b.axes?.length) console.log(`         ${dim("axes")} ${b.axes.join(dim(" · "))}`);
   });
   if (fired.length) console.log(`   ${dim("obliged")}  ${fired.map((f) => `${f.name} → ${f.props.recipeTitle}`).join(", ")}`);
   console.log(`   ${dim("valid")}    ${errors.length ? bad(errors.length + " error(s)") : ok("yes")}`);

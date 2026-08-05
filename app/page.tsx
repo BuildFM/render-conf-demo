@@ -71,6 +71,7 @@ const DefaultHome = async () => {
           ["manifest", manifest.hash],
           ["page", "default — no household"],
           ["blocks", `${resolved.filter((r) => r.ok).length}/${spec.blocks.length}`],
+          ["density", `${spec.blocks.length}/${manifest.density.maxBlocks}`],
           ["model", "none"]
         ]}
         warnings={[

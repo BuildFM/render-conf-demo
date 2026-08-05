@@ -55,11 +55,120 @@ const DRAWER_RAIL_W = 200;
  *  be showing the room a page the product does not have. */
 const PANE_VIEWPORT = 1280;
 /** Ceiling, not a fixed height — a pane is only as tall as its page. Budgeted so
- *  the consolidated rail is never pushed out of the frame. */
-const PANE_MAX_H = 1120;
+ *  the consolidated rail is never pushed out of the frame. Came down from 1120 to
+ *  pay for the pages/data switch above the panes; the tallest page is well under
+ *  this, so nothing actually clipped. */
+const PANE_MAX_H = 1060;
+/** The switch row above the panes. */
+const PANES_BAR_H = 56;
 
 type Household = { id: string; label: string };
 type Telemetry = Record<string, string>;
+
+/**
+ * The drawer's tabs, declared rather than derived from the file's top-level keys.
+ *
+ * Deriving them was honest but it put the JSON's own names on a projector, and two
+ * of them are words the talk never teaches. `invariants` in particular reads as
+ * "variation" at a glance — I misread my own tab. Beat 3 spends five minutes
+ * teaching `obligation` and `assembly`, so those two keep their names and the demo
+ * pays the vocabulary off; the two nobody was taught get replaced.
+ *
+ * `version` is gone from the row. It is one line, it never changes on stage, and it
+ * belongs beside the hash in the header where it reads as provenance.
+ *
+ * A tab is not one key. `limits` holds `density` and `invariants` — both are "what
+ * the model may not do", and separating a ceiling from a rule was a distinction the
+ * file made and the room does not.
+ */
+type Tab = { id: string; label: string; keys: string[]; view?: "blocks" };
+
+const TABS: Tab[] = [
+  { id: "blocks", label: "blocks", keys: ["components"], view: "blocks" },
+  { id: "obligations", label: "obligations", keys: ["obligations"] },
+  { id: "assemblies", label: "assemblies", keys: ["assemblies"] },
+  { id: "limits", label: "limits", keys: ["density", "invariants"] }
+];
+
+const tabFor = (key: string) => TABS.find((t) => t.id === key || t.keys.includes(key)) ?? TABS[0];
+
+/* --- reading a component out of the vocabulary ------------------------------
+   `components` is 350 of the manifest's 470 lines. Selecting it dropped a wall of
+   JSON into an 820px pane — unreadable at projection distance, and unreadable is
+   the same as absent when the whole point is that the room can see the cause.
+   The list below is rendered FROM that JSON, never instead of it: `raw` is one
+   click away and the editor underneath is unchanged. */
+
+type Require = { fact: string; op: string; value: unknown };
+type Component = {
+  name: string;
+  role?: string;
+  requires?: Require[];
+  adjacency?: { neverWith?: string[]; mustFollow?: string[]; maxPerPage?: number };
+  carriesPhoto?: boolean;
+};
+
+/** `user.techniqueRepeats` → `technique repeats`. The namespace prefix is dropped:
+ *  which side a fact comes from is an implementation detail of the resolver, not
+ *  something the room is being asked to hold. */
+const humanize = (fact: string) =>
+  fact
+    .replace(/^[a-z]+\./, "")
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .toLowerCase();
+
+const OPS: Record<string, string> = { ">=": "≥", "<=": "≤", ">": ">", "<": "<" };
+
+const conditionOf = (r: Require): string => {
+  const fact = humanize(r.fact);
+  if (r.op === "==") {
+    if (r.value === true) return fact;
+    if (r.value === false) return fact.startsWith("has ") ? `no ${fact.slice(4)}` : `not ${fact}`;
+    return `${fact} = ${String(r.value)}`;
+  }
+  return `${fact} ${OPS[r.op] ?? r.op} ${String(r.value)}`;
+};
+
+/** `maxPerPage` is deliberately not here. Every component declares one, so it adds
+ *  a line to all fifteen rows and distinguishes none of them. `mustFollow` and
+ *  `neverWith` appear on six, and those six are the ones where the vocabulary is
+ *  saying something about how blocks sit together. */
+const adjacencyOf = (c: Component): string => {
+  const parts: string[] = [];
+  if (c.adjacency?.mustFollow?.length) parts.push(`follows ${c.adjacency.mustFollow.join(" / ")}`);
+  if (c.adjacency?.neverWith?.length) parts.push(`never with ${c.adjacency.neverWith.join(" / ")}`);
+  return parts.join(" · ");
+};
+
+/* --- the other cause ---------------------------------------------------------
+   The manifest is the cause all three pages SHARE. The person is the cause that
+   DIFFERS, and it was off screen — so the room had to take on trust that the input
+   varied at all, which is precisely what a sceptic in the audience would not do.
+   ⌘D swaps the three panes from the pages to the data that made them: same three
+   columns, input instead of output, manifest still in frame.
+
+   The two halves are not decoration. `gates` are evaluated in code and never
+   reach the model; they decide what it is ALLOWED to use. `sent` is the six lines
+   it actually receives; they decide how the allowed blocks are ARRANGED. A
+   personalization engine has one of these. */
+
+type HouseholdContext = {
+  id: string;
+  label: string;
+  declared: { key: string; value: string }[];
+  gates: { label: string; value: string; test: string | null; pass: boolean | null }[];
+  vocabulary: { allowed: number; total: number };
+  sent: string;
+};
+
+/** The slice arrives as `"components": [ … ]` — an object body, not an object. */
+const parseSection = <T,>(text: string, key: string): T | null => {
+  try {
+    return (JSON.parse(`{${text}}`) as Record<string, T>)[key] ?? null;
+  } catch {
+    return null;
+  }
+};
 
 type PaneState = {
   status: "idle" | "composing" | "ready";
@@ -73,8 +182,10 @@ type PaneState = {
 const blank = (): PaneState => ({ status: "idle", elapsed: 0, telemetry: {}, previous: {}, contentH: 0 });
 
 /** Which numbers earn a line on the consolidated rail. The per-page rails keep the
- *  rest; at projection distance five values is the ceiling. */
-const RAIL_KEYS = ["blocks", "obligations", "vocabulary", "compose"] as const;
+ *  rest; at projection distance five values is the ceiling, and this is now five.
+ *  `density` is here because editing `maxBlocks` moved nothing in frame without it
+ *  — the second number moves on save whether or not the cap changes the page. */
+const RAIL_KEYS = ["blocks", "density", "obligations", "vocabulary", "compose"] as const;
 
 export const StageView = ({
   households,
@@ -89,14 +200,16 @@ export const StageView = ({
 }) => {
   const [raw, setRaw] = useState(initialRaw);
   const [hash, setHash] = useState(initialHash);
-  const [section, setSection] = useState(initialSection);
-  const [text, setText] = useState("");
-  const [sectionKeys, setSectionKeys] = useState<string[]>([]);
+  const [tabId, setTabId] = useState(() => tabFor(initialSection).id);
+  const [texts, setTexts] = useState<Record<string, string>>({});
+  const [rawMode, setRawMode] = useState(false);
   const [open, setOpen] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [dirty, setDirty] = useState(false);
+  const [dirty, setDirty] = useState<Record<string, boolean>>({});
   const [gen, setGen] = useState(0);
+  const [showData, setShowData] = useState(false);
+  const [contexts, setContexts] = useState<HouseholdContext[]>([]);
   const [panes, setPanes] = useState<Record<string, PaneState>>(
     () => Object.fromEntries(households.map((h) => [h.id, blank()]))
   );
@@ -104,21 +217,27 @@ export const StageView = ({
   const frames = useRef<Record<string, HTMLIFrameElement | null>>({});
   const started = useRef<Record<string, number>>({});
 
-  /* The slice of the manifest currently in the textarea. Fetched rather than
-     computed here so the scanner stays on the server, in one place. */
-  const loadSection = useCallback(async (key: string) => {
-    const res = await fetch(`/api/manifest/section?key=${encodeURIComponent(key)}`, { cache: "no-store" });
-    const data = (await res.json()) as { text: string; keys: string[]; raw: string; hash: string };
-    setText(data.text);
-    setSectionKeys(data.keys);
-    setRaw(data.raw);
-    setHash(data.hash);
-    setDirty(false);
+  /* The slices of the manifest this tab holds. Fetched rather than computed here so
+     the scanner stays on the server, in one place. */
+  const loadTab = useCallback(async (id: string) => {
+    const tab = TABS.find((t) => t.id === id) ?? TABS[0];
+    const loaded = await Promise.all(
+      tab.keys.map(async (key) => {
+        const res = await fetch(`/api/manifest/section?key=${encodeURIComponent(key)}`, { cache: "no-store" });
+        const data = (await res.json()) as { text: string; raw: string; hash: string };
+        return [key, data] as const;
+      })
+    );
+    setTexts(Object.fromEntries(loaded.map(([key, d]) => [key, d.text])));
+    setRaw(loaded[loaded.length - 1][1].raw);
+    setHash(loaded[loaded.length - 1][1].hash);
+    setDirty({});
+    setError(null);
   }, []);
 
   useEffect(() => {
-    void loadSection(section);
-  }, [section, loadSection]);
+    void loadTab(tabId);
+  }, [tabId, loadTab]);
 
   /* Elapsed-time counters. Real numbers, ticking in frame — §14 wants honest
      artifacts, and a live counter is the most honest one available. */
@@ -155,28 +274,65 @@ export const StageView = ({
   }, []);
 
   const save = useCallback(async () => {
+    /* Nothing edited still writes and still recomposes. It is a no-op against the
+       file — the same bytes go back, so the hash does not move — but it is the only
+       way to re-trigger three compositions without touching the manifest, and on
+       camera a take sometimes needs exactly that. */
+    const edited = Object.keys(dirty).filter((k) => dirty[k]);
+    const pending = edited.length ? edited : (TABS.find((t) => t.id === tabId) ?? TABS[0]).keys;
+
     setSaving(true);
     setError(null);
-    const res = await fetch("/api/manifest/section", {
-      method: "PUT",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ key: section, text })
-    });
-    const data = (await res.json()) as { ok: boolean; error?: string; hash?: string; raw?: string };
-    setSaving(false);
 
-    if (!data.ok) {
-      setError(data.error ?? "rejected");
-      return;
+    /* Sequential, not parallel: each PUT reads the file, splices one section and
+       writes the whole thing back. Two concurrent writes would race and the later
+       one would land on top of a file it never read. */
+    let hashOut = hash;
+    let rawOut = raw;
+    for (const key of pending) {
+      const res = await fetch("/api/manifest/section", {
+        method: "PUT",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ key, text: texts[key] })
+      });
+      const data = (await res.json()) as { ok: boolean; error?: string; hash?: string; raw?: string };
+      if (!data.ok) {
+        setSaving(false);
+        setError(data.error ?? "rejected");
+        return;
+      }
+      hashOut = data.hash!;
+      rawOut = data.raw!;
     }
-    setError(null);
-    setDirty(false);
-    setHash(data.hash!);
-    setRaw(data.raw!);
-    recompose();
-  }, [section, text, recompose]);
 
-  /* ⌘S saves. ⌘\ collapses. Both scripted before recording — no cursor hunting. */
+    setSaving(false);
+    setError(null);
+    setDirty({});
+    setHash(hashOut);
+    setRaw(rawOut);
+    recompose();
+  }, [dirty, texts, hash, raw, tabId, recompose]);
+
+  /* Fetched once, on the first ⌘D. Doing it on mount would run three profile loads
+     and a facts pass before the pages have composed, for a panel that may never be
+     opened — and the composition is what the clock in frame is timing. */
+  const loadContexts = useCallback(async () => {
+    const res = await fetch("/api/context", { cache: "no-store" });
+    const data = (await res.json()) as { households: HouseholdContext[] };
+    setContexts(data.households);
+  }, []);
+
+  /* The fetch used to live inside the setShowData updater, which is a side effect in
+     a place React is allowed to call twice. Out here it runs once, and the button
+     and the shortcut go through the same path. */
+  const toggleData = useCallback(() => {
+    if (contexts.length === 0) void loadContexts();
+    setShowData((d) => !d);
+  }, [contexts.length, loadContexts]);
+
+  /* ⌘S saves. ⌘\ collapses. ⌘D shows the data. All scripted before recording — no
+     cursor hunting. Every one of them also has a button: a shortcut nobody can see
+     is a feature nobody knows is there, which is how this one shipped invisible. */
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "s") {
@@ -187,20 +343,54 @@ export const StageView = ({
         e.preventDefault();
         setOpen((o) => !o);
       }
+      if ((e.metaKey || e.ctrlKey) && e.key === "d") {
+        e.preventDefault();
+        toggleData();
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [save]);
+  }, [save, toggleData]);
 
   /* Scale the fixed board into whatever window it is being viewed in. Recording
-     happens at 1:1; this only makes it workable on a laptop. */
-  const [fit, setFit] = useState(1);
+     happens at 1:1; this only makes it workable on a laptop.
+     *
+     * The offset is computed here rather than left to `place-items: center`, and
+     * that is not a preference. `transform` does not change layout, so the board's
+     * layout box stays 2560×1440 however small it is drawn — and a centred item
+     * that overflows its grid area gets clamped to the start edge, so the box ran
+     * 0→2560 and scaling about its own centre parked it at 560px on a 1440 window.
+     * Two fifths of the board was off-screen under `overflow: hidden` on every
+     * display narrower than 2560 CSS px, which is every display except the one it
+     * was built on. Origin at the top left and an explicit offset makes the maths
+     * the same at every size. */
+  const [fitted, setFitted] = useState({ scale: 1, left: 0, top: 0 });
   useEffect(() => {
-    const measure = () => setFit(Math.min(window.innerWidth / BOARD_W, window.innerHeight / BOARD_H, 1));
+    const measure = () => {
+      const scale = Math.min(window.innerWidth / BOARD_W, window.innerHeight / BOARD_H, 1);
+      setFitted({
+        scale,
+        left: Math.round((window.innerWidth - BOARD_W * scale) / 2),
+        top: Math.round((window.innerHeight - BOARD_H * scale) / 2)
+      });
+    };
     measure();
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
   }, []);
+
+  const tab = TABS.find((t) => t.id === tabId) ?? TABS[0];
+  const anyDirty = Object.values(dirty).some(Boolean);
+  /* Provenance, in the header rather than on a tab of its own. */
+  const version = (() => {
+    try {
+      return (JSON.parse(raw) as { version?: string }).version ?? "";
+    } catch {
+      return "";
+    }
+  })();
+  const components = tab.view === "blocks" ? parseSection<Component[]>(texts.components ?? "", "components") : null;
+  const showBlocks = tab.view === "blocks" && !rawMode && components !== null;
 
   const drawerW = open ? DRAWER_OPEN_W : DRAWER_RAIL_W;
   const paneW = (BOARD_W - PAD * 2 - GAP - drawerW - PANE_GAP * 2) / 3;
@@ -240,13 +430,24 @@ export const StageView = ({
     <div className={styles.fitter}>
       <div
         className={styles.board}
-        style={{ width: BOARD_W, height: BOARD_H, transform: `scale(${fit})`, ["--stage-k" as string]: K }}
+        style={{
+          width: BOARD_W,
+          height: BOARD_H,
+          left: fitted.left,
+          top: fitted.top,
+          transform: `scale(${fitted.scale})`,
+          ["--stage-k" as string]: K
+        }}
       >
         <div className={styles.split} style={{ padding: PAD, gap: GAP }}>
           {/* ---- the cause -------------------------------------------------- */}
           <aside className={styles.drawer} style={{ width: drawerW }} data-open={open}>
             <header className={styles.drawerHead}>
               <span className={styles.label}>manifest</span>
+              {/* Open only. Collapsed, the head has a 200px rail to wrap in, and a
+                  version that never changes was taking a whole line off the one
+                  panel that has to be read from the back of the room. */}
+              {open && version && <span className={styles.version}>v{version}</span>}
               <span className={styles.hash}>{hash}</span>
               <button className={styles.toggle} onClick={() => setOpen((o) => !o)} type="button">
                 {open ? "hide ⌘\\" : "edit ⌘\\"}
@@ -255,35 +456,97 @@ export const StageView = ({
 
             {open ? (
               <>
+                {/* One row, never two. Four tabs is what the width holds at a size the
+                    room can read; wrapping to a second line read as a layout accident
+                    on camera and cost a line of vertical budget the editor wanted. */}
                 <nav className={styles.sections}>
-                  {sectionKeys
-                    .filter((k) => !k.startsWith("_"))
-                    .map((k) => (
-                      <button
-                        key={k}
-                        type="button"
-                        className={styles.sectionTab}
-                        data-active={k === section}
-                        onClick={() => setSection(k)}
-                      >
-                        {k}
-                      </button>
-                    ))}
+                  {TABS.map((t) => (
+                    <button
+                      key={t.id}
+                      type="button"
+                      className={styles.sectionTab}
+                      data-active={t.id === tabId}
+                      onClick={() => {
+                        setTabId(t.id);
+                        setRawMode(false);
+                      }}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
+                  {tab.view === "blocks" && (
+                    <button
+                      type="button"
+                      className={styles.rawToggle}
+                      data-active={rawMode}
+                      onClick={() => setRawMode((r) => !r)}
+                    >
+                      {rawMode ? "list" : "raw"}
+                    </button>
+                  )}
                 </nav>
 
-                <textarea
-                  className={styles.editor}
-                  spellCheck={false}
-                  value={text}
-                  onChange={(e) => {
-                    setText(e.target.value);
-                    setDirty(true);
-                  }}
-                />
+                {showBlocks ? (
+                  /* The vocabulary, read. Fifteen names, what each one is allowed to
+                     be, and the condition that has to hold before the model may even
+                     see it — which is the `permission` half of beat 3, on screen,
+                     rather than four hundred lines of it. */
+                  <div className={styles.blocks}>
+                    {components!.map((c) => (
+                      <div key={c.name} className={styles.block}>
+                        <div className={styles.blockHead}>
+                          <span className={styles.blockName}>{c.name}</span>
+                          <span className={styles.blockRole} data-lead={c.role === "lead"}>
+                            {c.role ?? ""}
+                          </span>
+                        </div>
+                        <div className={styles.blockNeeds}>
+                          {c.requires?.length
+                            ? c.requires.map(conditionOf).join(" · ")
+                            : "no conditions — always eligible"}
+                        </div>
+                        {adjacencyOf(c) && <div className={styles.blockAdjacency}>{adjacencyOf(c)}</div>}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  /* Raw, and still the thing that gets typed into. A tab can hold more
+                     than one section — `limits` holds two — so each gets its own
+                     editor and its own splice. */
+                  <div className={styles.editors}>
+                    {tab.keys.map((key) => (
+                      /* Sized by line count rather than split evenly. `density` is
+                         four lines and `invariants` is eight; halving the pane gave
+                         the short one a field of black and made the long one scroll. */
+                      <div
+                        key={key}
+                        className={styles.editorGroup}
+                        style={{ flexGrow: (texts[key] ?? "").split("\n").length }}
+                      >
+                        {tab.keys.length > 1 && <span className={styles.editorLabel}>{key}</span>}
+                        <textarea
+                          className={styles.editor}
+                          spellCheck={false}
+                          value={texts[key] ?? ""}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setTexts((prev) => ({ ...prev, [key]: value }));
+                            setDirty((prev) => ({ ...prev, [key]: true }));
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
 
                 <footer className={styles.drawerFoot}>
-                  <button className={styles.save} type="button" onClick={() => void save()} disabled={saving}>
-                    {saving ? "writing…" : dirty ? "save ⌘S" : "saved"}
+                  <button
+                    className={styles.save}
+                    type="button"
+                    onClick={() => void save()}
+                    disabled={saving}
+                  >
+                    {saving ? "writing…" : anyDirty ? "save ⌘S" : "saved"}
                   </button>
                   {error && <pre className={styles.error}>{error}</pre>}
                 </footer>
@@ -293,9 +556,11 @@ export const StageView = ({
                  caused the change while the change is happening. */
               <div className={styles.railed}>
                 <span className={styles.railedKey}>section</span>
-                <span className={styles.railedValue}>{section}</span>
+                <span className={styles.railedValue}>{tab.label}</span>
                 <span className={styles.railedKey}>entries</span>
-                <span className={styles.railedValue}>{(text.match(/"name":/g) ?? []).length || "—"}</span>
+                <span className={styles.railedValue}>
+                  {tab.keys.reduce((n, k) => n + ((texts[k] ?? "").match(/"name":/g) ?? []).length, 0) || "—"}
+                </span>
                 <span className={styles.railedKey}>bytes</span>
                 <span className={styles.railedValue}>{raw.length}</span>
               </div>
@@ -303,7 +568,36 @@ export const StageView = ({
           </aside>
 
           {/* ---- the effect --------------------------------------------------- */}
-          <section className={styles.panes} style={{ gap: PANE_GAP }}>
+          <div className={styles.panesCol}>
+            {/* What the three columns are showing. Two causes make these pages: the
+                manifest, on the left, which all three share — and the person, which
+                is what differs. This switches the columns between the second cause
+                and its result. */}
+            <div className={styles.panesBar} style={{ height: PANES_BAR_H }}>
+              <span className={styles.label}>
+                {showData ? "the people — what each page was made from" : "the pages"}
+              </span>
+              <div className={styles.switch}>
+                <button
+                  type="button"
+                  className={styles.switchOption}
+                  data-active={!showData}
+                  onClick={() => showData && toggleData()}
+                >
+                  pages
+                </button>
+                <button
+                  type="button"
+                  className={styles.switchOption}
+                  data-active={showData}
+                  onClick={() => !showData && toggleData()}
+                >
+                  data ⌘D
+                </button>
+              </div>
+            </div>
+
+            <section className={styles.panes} style={{ gap: PANE_GAP }}>
             {households.map((h) => {
               const p = panes[h.id];
               /* A pane is as tall as its page, capped. Composed pages differ in
@@ -328,7 +622,67 @@ export const StageView = ({
                       {p.status === "idle" ? "—" : `${(p.elapsed / 1000).toFixed(1)}s`}
                     </span>
                   </header>
-                  <div className={styles.viewport} style={{ width: paneW, height: viewportH }}>
+                  {showData ? (
+                    /* Same column, same width, input instead of output. The iframes
+                       are left mounted underneath — unmounting them would throw away
+                       three live compositions and the next ⌘D would cost four
+                       seconds and a model call each to get back. */
+                    <div className={styles.data} style={{ width: paneW, height: PANE_MAX_H }}>
+                      {(() => {
+                        const c = contexts.find((x) => x.id === h.id);
+                        if (!c) return <div className={styles.dataLoading}>reading…</div>;
+                        return (
+                          <>
+                            <div className={styles.dataGroup}>
+                              <div className={styles.dataHead}>
+                                <span className={styles.dataTitle}>What they told us</span>
+                                <span className={styles.dataNote}>at signup</span>
+                              </div>
+                              {c.declared.map((d) => (
+                                <div key={d.key} className={styles.dataRow}>
+                                  <span className={styles.dataKey}>{d.key}</span>
+                                  <span className={styles.dataValue}>{d.value}</span>
+                                </div>
+                              ))}
+                            </div>
+
+                            <div className={styles.dataGroup}>
+                              <div className={styles.dataHead}>
+                                <span className={styles.dataTitle}>What they did</span>
+                                {/* Where the number in the rail comes from. */}
+                                <span className={styles.dataNote}>
+                                  → vocabulary {c.vocabulary.allowed}/{c.vocabulary.total}
+                                </span>
+                              </div>
+                              {c.gates.map((g) => (
+                                <div key={g.label} className={styles.dataRow}>
+                                  <span className={styles.dataKey}>{g.label}</span>
+                                  <span className={styles.dataValue}>{g.value}</span>
+                                  {g.test && (
+                                    <span className={styles.dataTest} data-pass={g.pass}>
+                                      {g.test}
+                                    </span>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+
+                            <div className={styles.dataGroup}>
+                              <div className={styles.dataHead}>
+                                <span className={styles.dataTitle}>What the model is told</span>
+                                <span className={styles.dataNote}>verbatim</span>
+                              </div>
+                              <pre className={styles.dataSent}>{c.sent}</pre>
+                            </div>
+                          </>
+                        );
+                      })()}
+                    </div>
+                  ) : null}
+                  <div
+                    className={styles.viewport}
+                    style={{ width: paneW, height: viewportH, display: showData ? "none" : undefined }}
+                  >
                     <iframe
                       ref={(el) => {
                         frames.current[h.id] = el;
@@ -349,7 +703,8 @@ export const StageView = ({
                 </article>
               );
             })}
-          </section>
+            </section>
+          </div>
         </div>
 
         {/* ---- the consolidated rail ----------------------------------------

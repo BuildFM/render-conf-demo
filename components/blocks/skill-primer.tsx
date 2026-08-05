@@ -47,7 +47,7 @@ export const SkillPrimer = ({
   return (
     <PrimerCard
       numeral={numeral}
-      kicker="Primer"
+      kicker="How to do it"
       eyebrow={technique}
       title={title}
       body={body}

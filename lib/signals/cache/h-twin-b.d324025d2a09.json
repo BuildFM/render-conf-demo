@@ -1,6 +1,6 @@
 {
-  "characterization": "They cook four dishes over and over and have added nothing new in three months. Everything they finish is something they had already made before; every recipe they open cold, they close before doing anything. The dishes they abandon are not unfamiliar in method — they braise beans weekly and press cabbage under a weight, then walk away from beans-and-greens and chicken under a brick. Weekend is bread and a long pot of beans; midweek is a four-ingredient side reheated alongside.",
-  "salientInference": "Every dish you've dropped in ninety days you dropped at the ingredient list, not the technique — you already cook those techniques weekly.",
+  "characterization": "For three months this household has cooked the same four dishes on a loop: the cold-proof focaccia, the long-cooked white beans, smashed potatoes and weighted cabbage. Nothing else ever gets past the ingredient list — every opened-and-closed recipe was shut at step 0, before a single instruction was attempted. The four things they abandon (chicken under a brick, pressed pork belly, beans and greens with pancetta, green sauce with anchovy) are the four that ask them to buy meat or fish, and the two dairy dishes they never opened at all. They have never once opened the technique material, which is not a skill problem: they cook weighted cabbage happily, which is the same weighted-pan move as the chicken and the pork they keep walking away from.",
+  "salientInference": "Across the last ninety days you closed every meat-or-fish recipe at the ingredient list — yet you cook that same weighted-pan technique meatless.",
   "signals": {
     "cookedRecipeIds": [
       "036",
@@ -21,14 +21,13 @@
       "037"
     ],
     "neverOpens": [
-      "Cacio e pepe, properly",
-      "Charred cabbage, brown butter",
-      "Anchovy butter, for everything",
-      "Flattened quail, two ways"
+      "technique notes",
+      "save/bookmark",
+      "dairy-containing recipes (030, 039, 040)"
     ],
     "makeAheadPattern": true,
     "expandsTechnique": false,
     "abandonThreshold": 7,
-    "rhythm": "Weekend bread-and-beans production, midweek four-ingredient sides alongside leftovers"
+    "rhythm": "Weekend pot-and-oven work — beans, focaccia, potatoes — with a fast single-pan dish midweek"
   }
 }

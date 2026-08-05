@@ -1,0 +1,23 @@
+{
+  "characterization": "They look at everything and cook a narrow slice of it. Over ninety days they finished four dishes, and every one of them was a weighted-sear: the chicken under a brick, the weighted cabbage, the flattened quail, the pressed pork belly — which they came back to twice in the case of the chicken. The things they deliberately saved (cacio e pepe, focaccia, the green sauce, the beans, the potatoes) were never cooked once, even though several are shorter and simpler than the pork belly they did finish. Their single abandon was at 'Skin down in a hot dry pan, weight on top. Four minutes without touching it' — the first time they tried a weight; the second and third times they opened the technique note first and got to the end.",
+  "salientInference": "Across ninety days, every dish you finished asked you to weight it and leave it alone; the ones you save ask for constant attention.",
+  "signals": {
+    "cookedRecipeIds": [
+      "041",
+      "032",
+      "033",
+      "034"
+    ],
+    "repeatRecipeIds": [
+      "041"
+    ],
+    "abandonedRecipeIds": [
+      "041"
+    ],
+    "neverOpens": [],
+    "makeAheadPattern": false,
+    "expandsTechnique": true,
+    "abandonThreshold": null,
+    "rhythm": "Browses every three or four days; actually cooks about once a fortnight, and only after opening the technique note"
+  }
+}

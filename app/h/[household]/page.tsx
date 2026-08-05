@@ -186,6 +186,15 @@ const HomePage = async ({ params }: { params: Promise<{ household: string }> }) 
           ["manifest", manifest.hash],
           ["household", household.label],
           ["blocks", `${resolved.filter((r) => r.ok).length}/${spec.blocks.length}`],
+          /* Chosen against the budget, and a different question from `blocks` above
+             — that one is rendered-against-chosen and catches a block that was named
+             but could not be built. Without this pair the manifest's density section
+             has no readout anywhere: edit `maxBlocks` and nothing in frame moves,
+             which reads as the manifest being ignored. It is not — but it binds far
+             less often than it looks like it should, because the composition prompt
+             asks for three or four blocks in its own words. Raising the cap frees
+             the model rather than instructing it; lowering it bites immediately. */
+          ["density", `${spec.blocks.length}/${manifest.density.maxBlocks}`],
           ["obligations", String(fired.length)],
           ["vocabulary", `${allowed.length}/${manifest.components.length}`],
           ["profile", cached ? "cached" : live ? `${profileMs}ms` : "no key"],

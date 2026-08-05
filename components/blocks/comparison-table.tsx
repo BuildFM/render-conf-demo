@@ -27,7 +27,7 @@ export const ComparisonTable = ({ title, axes, rows, treatment }: ComparisonTabl
           {axisNote(shownAxes)}
         </Eyebrow>
       ) : (
-        <SectionHead title={title} meta="Axes chosen for your kitchen" metaTone="signal" />
+        <SectionHead title={title} meta="Columns chosen for you" metaTone="signal" />
       )}
 
       <table className={collapsed ? styles.tableCollapsed : styles.table}>

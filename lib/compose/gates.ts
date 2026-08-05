@@ -18,7 +18,9 @@ export const computeFacts = (
   household: Household,
   now: { timeOfDay: "morning" | "afternoon" | "evening" },
   ingredients: Map<string, { name: string }[]> = new Map(),
-  events: { type: string }[] = []
+  /* Structural rather than the CookEvent import: this only ever reads two fields,
+     and a narrower shape keeps the compose gates independent of the signals layer. */
+  events: { type: string; recipeId?: string }[] = []
 ): Facts => {
   const pantry = household.pantry.map((p) => p.toLowerCase());
   const pantryGaps = recipes.reduce((n, r) => {
@@ -58,6 +60,14 @@ export const computeFacts = (
     "user.abandonedOrRepeated": profile.signals.abandonedRecipeIds.length + profile.signals.repeatRecipeIds.length,
     "user.makeAheadPattern": profile.signals.makeAheadPattern,
     "user.expandsTechnique": events.some((e) => e.type === "expanded"),
+    /* Intention on the record, contradicted by behaviour. Every other signal here
+       is one thing — this one is the gap between two, which is why a query reaches
+       "your saved recipes" and cannot reach "your saved recipes are a wish list". */
+    "user.savedNeverCooked": (() => {
+      const cooked = new Set(events.filter((e) => e.type === "completed").map((e) => e.recipeId));
+      const saved = new Set(events.filter((e) => e.type === "saved").map((e) => e.recipeId));
+      return [...saved].filter((id) => !cooked.has(id)).length;
+    })(),
     "user.repeats": profile.signals.repeatRecipeIds.length,
     // Discriminating facts. A precondition true for every household is decoration:
     // it hands the model the whole vocabulary and it chooses generically.
@@ -81,7 +91,11 @@ const DIETARY_TO_ALLERGEN: Record<string, string[]> = {
   vegetarian: []
 };
 
-const test = (p: Predicate, facts: Facts): boolean => {
+/** Exported so the stage view can show WHY a component was eligible using the same
+ *  predicate that decided it. A second copy of this for display would eventually
+ *  disagree with this one, and the display would be the lie — see the note on
+ *  `satisfiesMustFollow`, which is the same lesson learned the hard way. */
+export const test = (p: Predicate, facts: Facts): boolean => {
   const actual = facts[p.fact];
   if (actual === undefined) return false;
   switch (p.op) {
