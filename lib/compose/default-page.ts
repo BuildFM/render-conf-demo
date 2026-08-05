@@ -27,31 +27,12 @@ export type DefaultBlock = LayoutSpec["blocks"][number] & { section?: string };
  * miniature and it happened by accident.
  */
 export const defaultPageSpec = (): LayoutSpec & { blocks: DefaultBlock[] } => ({
+  dominant: "RecipeCard",
   blocks: [
-    // Leads with the dish, not with an editorial aside. A one-line seasonal note
-    // opening the page reads as a stray sentence; it closes the page instead.
     { component: "RecipeCard", treatment: "hero", recipeIds: ["041"], axes: [], emphasis: [] },
-    {
-      component: "TonightShortlist",
-      treatment: "collapsed",
-      recipeIds: ["040", "039", "037"],
-      axes: [],
-      emphasis: []
-    },
-    {
-      component: "WhyThisWorks",
-      treatment: "collapsed",
-      recipeIds: ["041", "039", "035"],
-      techniqueTag: "browning",
-      axes: [],
-      emphasis: []
-    },
-    // Three collapsed cards read as an index when they sit under one heading and
-    // as leftovers when they do not.
+    { component: "TonightShortlist", treatment: "collapsed", recipeIds: ["040", "039", "037"], axes: [], emphasis: [] },
     { component: "RecipeCard", treatment: "collapsed", recipeIds: ["038"], section: "The index", axes: [], emphasis: [] },
-    { component: "RecipeCard", treatment: "collapsed", recipeIds: ["036"], axes: [], emphasis: [] },
-    { component: "RecipeCard", treatment: "collapsed", recipeIds: ["034"], axes: [], emphasis: [] },
-    { component: "SeasonalNote", treatment: "oneline", recipeIds: [], axes: [], emphasis: [] }
+    { component: "RecipeCard", treatment: "collapsed", recipeIds: ["036"], axes: [], emphasis: [] }
   ],
   rationale: "This is the best home page we can make for everyone."
 });

@@ -19,6 +19,12 @@ import { hasGatewayKey } from "@/lib/env";
  */
 
 export const layoutSpecSchema = z.object({
+  /* Naming the dominant block is a separate decision from listing the blocks, and
+     making it separate is what stops the model reaching for whatever is generically
+     useful. It has to commit to what the page is about before it fills the page. */
+  dominant: z
+    .string()
+    .describe("The component name this page is ABOUT — the one that embodies the brief. Must be blocks[0]."),
   blocks: z.array(
     z.object({
       component: z.string(),
@@ -52,6 +58,16 @@ const prompt = (
 ) => `
 Compose one home page for one household, out of a fixed vocabulary.
 
+THE ONE THING THIS PAGE IS ABOUT
+  "${profile.salientInference}"
+
+That sentence is the brief. It was inferred from ninety days of this household's
+behaviour and it is the reason this page is different from anybody else's. Your
+first job is to pick the ONE block that most directly embodies it — if the sentence
+is about dishes that branch, that is a fork card, not a shortlist; if it is about a
+weekly rhythm, that is a schedule, not a browse. Give that block the most prominent
+treatment it supports and put it first. Everything else on the page supports it.
+
 You are choosing WHICH blocks appear, IN WHAT ORDER, AT WHAT DEPTH, and which
 recipes go in them. You are not designing anything: type, colour, spacing and the
 components themselves were decided in advance by a person.
@@ -74,21 +90,34 @@ ${manifest.invariants.map((i) => `- ${i}`).join("\n")}
 
 THE CONTENT — "techniques" is a list of individual tags. When a block takes a
 techniqueTag, pass exactly one of them, never a joined string.
-${recipes.map((r) => `${r.id} ${r.title} — techniques: ${r.technique.join(", ")}; serves ${r.yield}; ${r.activeTime} min active, ${r.totalTime} total; ${r.ingredientCount} ingredients; allergens ${r.allergens.join("/") || "none"}${r.makeAhead ? "; make-ahead" : ""}${r.forkPoint ? "; forks" : ""}`).join("\n")}
+${recipes.map((r) => `${r.id} ${r.title} — techniques: ${r.technique.join(", ")}; serves ${r.yield}; ${r.activeTime} min active, ${r.totalTime} total; ${r.ingredientCount} ingredients; allergens ${r.allergens.join("/") || "none"}${r.makeAhead ? "; HAS A MAKE-AHEAD STEP" : ""}${r.forkPoint ? `; SPLITS PARTWAY (${r.forkPoint}) so one pot serves two constraints` : ""}`).join("\n")}
 
 THIS HOUSEHOLD
 ${profile.characterization}
-What matters most: ${profile.salientInference}
 Cooked: ${profile.signals.cookedRecipeIds.join(", ") || "nothing"}
 Repeats: ${profile.signals.repeatRecipeIds.join(", ") || "none"}
 Abandoned: ${profile.signals.abandonedRecipeIds.join(", ") || "none"}
 Rhythm: ${profile.signals.rhythm ?? "none detected"}
 Declared at signup (weak evidence): ${JSON.stringify(household.declared)}
 
+OUTPUT ORDER — do this in this order, it matters
+1. Read the brief at the top. Decide which single component most directly embodies
+   it. Put that name in "dominant".
+2. That component is blocks[0], at the most prominent treatment it supports.
+3. Add two or three supporting blocks. If a block does not relate to the dominant
+   one, leave it out — three blocks that agree beat four that do not.
+
 RULES
-- At most ${manifest.density.maxBlocks} blocks, and at most ${manifest.density.maxFullImages}
-  carrying a photograph ("hero" and "full" both do). Above that a page stops being
-  composed and starts being a dump.
+- At most ${manifest.density.maxBlocks} blocks. Fewer is better. This is a composed
+  page, not a directory — every block has to be about the same thing.
+- ONE BLOCK DECIDES THE SHAPE OF THE PAGE. Choose it first: the thing this
+  household opens the site for. Give it the most prominent treatment it supports,
+  put it first, and let the remaining two or three support it. A page where four
+  blocks are equally important is a page with nothing to say.
+- Every block must relate to the others. Do not place a block about a dish that
+  appears nowhere else on the page — an orphan line reads as debris.
+- At most ${manifest.density.maxFullImages} blocks carrying a photograph ("hero" and
+  "full" both do).
 - At most ${manifest.density.maxDisplayXL} block may take the page's giant headline.
   RecipeCard at "hero" and TechniqueThread at "full" both claim it, so they cannot
   appear on the same page. Choose which one this household opens the page for.
@@ -97,10 +126,23 @@ RULES
 - Absence is a decision. A recipe site's home page with no recipe above the fold is
   a legitimate composition if this household's history argues for it.
 
-RATIONALE
-One sentence shown on the page. It must state an inference about them, not a count,
-and it must reference the history — "across the last ninety days", "the four dishes
-you keep returning to". Under 25 words.
+RATIONALE — the single most important thing you write
+Say the brief at the top of this prompt again, in your own words, addressed TO this
+person as "you". Same idea, tighter. Do not introduce a different observation — the
+page and the sentence have to be about the same thing or neither lands.
+UNDER 12 WORDS. It is the page explaining itself in the time it takes to read one
+line, so it has to be the truest thing you can say about them.
+
+  Good:  "You don't avoid dairy. You avoid dairy you can't set aside."
+  Good:  "Everything you keep has a step you can do on Sunday."
+  Good:  "Six attempts at one idea, and never once a cold pan."
+
+  Bad:   "Chicken under a brick is opened constantly but rarely cooked, while
+          charred cabbage and beans are what they actually make."
+          — third person, a readout about a user rather than a product speaking
+            to a person, and twice as long as it needs to be.
+  Bad:   "You have opened eleven recipes with a make-ahead step."
+          — a count. A query reaches that.
 `;
 
 /** The cheap, per-view call. See the note in lib/signals/profile.ts. */
@@ -145,6 +187,7 @@ export const compose = async (args: {
 
 /** No API key: a deterministic, obviously-mechanical layout so the plumbing runs. */
 const stubSpec = (eligible: ComponentSpec[], recipes: Recipe[], profile: Profile): LayoutSpec => ({
+  dominant: eligible[0]?.name ?? "RecipeCard",
   blocks: eligible.slice(0, 4).map((c, i) => ({
     component: c.name,
     treatment: c.treatments.includes("full") ? ("full" as const) : c.treatments[0],

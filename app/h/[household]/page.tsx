@@ -123,6 +123,8 @@ const HomePage = async ({ params }: { params: Promise<{ household: string }> }) 
   const onPage = new Set(spec.blocks.flatMap((b) => b.recipeIds));
   const fired = placeObligations(candidates, onPage);
 
+  const placedObligations = new Set<string>();
+
   const resolved = spec.blocks.map((b) =>
     resolveBlock(b, {
       recipes: byId, profile, householdSize: household.declared.size,
@@ -137,15 +139,29 @@ const HomePage = async ({ params }: { params: Promise<{ household: string }> }) 
       <SiteChrome />
 
       <main className="canvas" style={{ paddingBlock: "56px", display: "flex", flexDirection: "column", gap: "56px" }}>
-        {fired.map((f, i) => {
-          const Obligation = registry[f.name];
-          return <Obligation key={`o${i}`} {...(f.props as Record<string, never>)} />;
-        })}
-
+        {/* Obligations sit immediately before the first block that mentions their
+            recipe — which is what the manifest has always said and what the renderer
+            was ignoring by dumping them all at the top. An allergen notice above a
+            dish is information; the same notice at the top of a page about something
+            else is an alarm. */}
         {resolved.map((r, i) => {
           if (!r.ok) return null;
           const Block = registry[r.component];
-          return Block ? <Block key={i} {...r.props} /> : null;
+          if (!Block) return null;
+          const ids = spec.blocks[i].recipeIds ?? [];
+          const attached = fired.filter(
+            (f) => ids.includes(f.props.recipeId as string) && !placedObligations.has(f.props.recipeId as string)
+          );
+          attached.forEach((f) => placedObligations.add(f.props.recipeId as string));
+          return (
+            <div key={i} style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+              {attached.map((f, j) => {
+                const Obligation = registry[f.name];
+                return <Obligation key={`o${j}`} {...(f.props as Record<string, never>)} />;
+              })}
+              <Block {...r.props} />
+            </div>
+          );
         })}
       </main>
 

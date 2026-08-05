@@ -50,6 +50,13 @@ export const validate = (
     if (n > max) errors.push(`${name} appears ${n} times; max is ${max}.`);
   }
 
+  // The dominant block has to actually be dominant, or naming it is theatre.
+  if (spec.dominant && spec.blocks[0]?.component !== spec.dominant) {
+    errors.push(
+      `Page is about ${spec.dominant} but blocks[0] is ${spec.blocks[0]?.component ?? "nothing"}. The dominant block comes first.`
+    );
+  }
+
   // Density.
   if (spec.blocks.length > manifest.density.maxBlocks) {
     errors.push(`${spec.blocks.length} blocks; max is ${manifest.density.maxBlocks}.`);

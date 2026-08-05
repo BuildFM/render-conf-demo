@@ -14,8 +14,6 @@ import { SubstitutionTable } from "@/components/blocks/substitution-table";
 import { StoryIntro } from "@/components/blocks/story-intro";
 import { TechniqueNote } from "@/components/blocks/technique-note";
 import { LeftoversNote } from "@/components/blocks/leftovers-note";
-import { FromYourHistory } from "@/components/blocks/from-your-history";
-import { SeasonalNote } from "@/components/blocks/seasonal-note";
 import { AllergenNotice } from "@/components/obligations/allergen-notice";
 
 /**
@@ -25,7 +23,10 @@ import { AllergenNotice } from "@/components/obligations/allergen-notice";
  * composition that crashes.
  *
  * Not registered on purpose: SiteChrome (invariant, rendered by the layout, never
- * composed) and ScalingControl (a control, not a block).
+ * composed), ScalingControl (a control, not a block), and SeasonalNote and
+ * FromYourHistory — both built, both good, and both removed from the vocabulary
+ * because on a four-block page they produce orphans: a line about a dish that
+ * appears nowhere else on the page.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const registry: Record<string, any> = {
@@ -45,8 +46,6 @@ export const registry: Record<string, any> = {
   StoryIntro,
   TechniqueNote,
   LeftoversNote,
-  FromYourHistory,
-  SeasonalNote,
   AllergenNotice
 };
 

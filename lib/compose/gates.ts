@@ -58,6 +58,12 @@ export const computeFacts = (
     "user.makeAheadPattern": profile.signals.makeAheadPattern,
     "user.expandsTechnique": profile.signals.expandsTechnique,
     "user.repeats": profile.signals.repeatRecipeIds.length,
+    // Discriminating facts. A precondition that is true for every household is
+    // decoration — it lets the model pick from the whole vocabulary and it picks
+    // generically. These are the ones that actually differ between people.
+    "user.cooksForkingDishes": recipes.filter((r) => r.forkPoint && cookedIds.has(r.id)).length,
+    "user.abandonsOnListLength": profile.signals.abandonThreshold !== null,
+    "user.hasRhythm": Boolean(profile.signals.rhythm && /sunday|weekend|batch|week/i.test(profile.signals.rhythm)),
 
     // state — session and account, not history. Where cart and auth would live.
     "state.timeOfDay": now.timeOfDay,

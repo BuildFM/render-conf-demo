@@ -9,14 +9,14 @@
     "Type scale, colour and spacing are fixed. The model selects and orders blocks. It never styles them."
   ],
   "density": {
-    "maxBlocks": 7,
+    "maxBlocks": 4,
     "maxFullImages": 2,
     "maxDisplayXL": 1
   },
   "components": [
     {
       "name": "TechniqueThread",
-      "intent": "Every attempt at one technique, in order, with what changed each time and the one variable not yet tried. For someone who repeats dishes to learn rather than to eat.",
+      "intent": "Every attempt at one technique, in order, with what changed each time and the one variable not yet tried. For someone learning a move rather than collecting dishes. When this is on a page it IS the page — it takes the Display XL and everything else is support.",
       "requires": [
         {
           "fact": "user.techniqueRepeats",
@@ -94,6 +94,11 @@
           "fact": "state.dietarySplit",
           "op": "==",
           "value": true
+        },
+        {
+          "fact": "user.cooksForkingDishes",
+          "op": ">=",
+          "value": 2
         }
       ],
       "adjacency": {
@@ -115,14 +120,18 @@
           "fact": "content.sharedTechnique",
           "op": ">=",
           "value": 3
+        },
+        {
+          "fact": "user.expandsTechnique",
+          "op": "==",
+          "value": true
         }
       ],
       "adjacency": {
         "maxPerPage": 1
       },
       "treatments": [
-        "full",
-        "collapsed"
+        "full"
       ],
       "slots": {
         "requires": "recipes: at least 3 recipeIds sharing one technique tag. Also set techniqueTag."
@@ -136,6 +145,11 @@
           "fact": "user.techniqueAttempts",
           "op": ">=",
           "value": 2
+        },
+        {
+          "fact": "user.expandsTechnique",
+          "op": "==",
+          "value": true
         }
       ],
       "adjacency": {
@@ -160,6 +174,11 @@
           "fact": "user.abandonedOrRepeated",
           "op": ">=",
           "value": 1
+        },
+        {
+          "fact": "user.expandsTechnique",
+          "op": "==",
+          "value": true
         }
       ],
       "adjacency": {
@@ -181,6 +200,11 @@
           "fact": "content.makeAheadShared",
           "op": ">=",
           "value": 2
+        },
+        {
+          "fact": "user.hasRhythm",
+          "op": "==",
+          "value": true
         }
       ],
       "adjacency": {
@@ -202,6 +226,11 @@
           "fact": "content.plannedRecipes",
           "op": ">=",
           "value": 2
+        },
+        {
+          "fact": "user.hasRhythm",
+          "op": "==",
+          "value": true
         }
       ],
       "adjacency": {
@@ -224,6 +253,11 @@
       "requires": [
         {
           "fact": "state.pantryKnown",
+          "op": "==",
+          "value": true
+        },
+        {
+          "fact": "user.abandonsOnListLength",
           "op": "==",
           "value": true
         }
@@ -250,6 +284,16 @@
           "fact": "state.timeOfDay",
           "op": "==",
           "value": "evening"
+        },
+        {
+          "fact": "user.hasRhythm",
+          "op": "==",
+          "value": false
+        },
+        {
+          "fact": "user.expandsTechnique",
+          "op": "==",
+          "value": false
         }
       ],
       "adjacency": {
@@ -372,40 +416,6 @@
       ],
       "slots": {
         "requires": "recipe: exactly 1 recipeId yielding more than the household size."
-      }
-    },
-    {
-      "name": "FromYourHistory",
-      "intent": "A callback to something they made before.",
-      "requires": [
-        {
-          "fact": "user.repeats",
-          "op": ">=",
-          "value": 1
-        }
-      ],
-      "adjacency": {
-        "maxPerPage": 1
-      },
-      "treatments": [
-        "oneline"
-      ],
-      "slots": {
-        "requires": "recipe: exactly 1 recipeId the user has cooked more than once."
-      }
-    },
-    {
-      "name": "SeasonalNote",
-      "intent": "One line tying tonight to the time of year.",
-      "requires": [],
-      "adjacency": {
-        "maxPerPage": 1
-      },
-      "treatments": [
-        "oneline"
-      ],
-      "slots": {
-        "requires": "text: no recipeIds needed."
       }
     }
   ],
