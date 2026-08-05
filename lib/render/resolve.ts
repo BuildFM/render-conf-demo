@@ -193,8 +193,17 @@ export const resolveBlock = (
          authored. */
       const branchLength = fork.branches[0].steps?.length ?? 0;
       return ok({
-        recipe: { ...r, summary: fork.shared },
+        /* `recipe` unmodified. It used to go out as `{ ...r, summary: fork.shared }`,
+           which threw away the dish's own headnote — "Cabbage has enough sugar to
+           behave like an onion if you let it" — and replaced it with a paragraph
+           restating steps one to three. Once the method is on the card that
+           paragraph was saying everything twice AND costing the card the one line
+           that said what the dish was. */
+        recipe: r,
         forkPoint: fork.forkPoint,
+        /* The claim about the split, which belongs on the rule rather than at the
+           top of the card. */
+        sharedNote: fork.shared,
         forkStep,
         sharedSteps: forkStep > 1 ? all.slice(0, forkStep - 1) : [],
         tailSteps: branchLength ? all.slice(forkStep - 1 + branchLength) : [],

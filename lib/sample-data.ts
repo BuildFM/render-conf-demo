@@ -31,9 +31,19 @@ export const beans: Recipe = {
   activeTime: 25,
   totalTime: 180,
   ingredientCount: 6,
-  summary:
-    "Beans, aromatics and three hours are shared by everyone at the table. Nothing before step six differs, so the pot stays one pot until the last twenty minutes.",
+  summary: "Three hours of nothing happening, and then everything has happened. Keep the liquid — it is the reason to make this rather than open a tin.",
   forkPoint: "Step 6 of 9",
+  steps: [
+    "Soak overnight, or don't — it costs an hour either way.",
+    "Cover with cold water by two fingers.",
+    "Bring it up slowly. A hard boil breaks the skins.",
+    "Garlic, rosemary and oil in once it is barely trembling.",
+    "Ninety minutes, lid ajar, checking the water twice.",
+    "The pot divides here — half stays whole, half goes on to be broken down.",
+    "Salt only now. Earlier and the skins stay tight.",
+    "Another thirty minutes for the half you want creamy.",
+    "Cool it in its own liquid. It is better on day two."
+  ],
   makeAhead: "Entirely, two days ahead"
 }
 

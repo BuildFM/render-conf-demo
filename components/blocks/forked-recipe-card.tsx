@@ -18,6 +18,10 @@ type ForkedRecipeCardProps = {
   sharedSteps?: string[]
   /** Which step is the first divergent one, so both branches number from it. */
   forkStep?: number
+  /** One line about the split itself — "Nothing before this point differs." It sits
+   *  under the rule, where the claim is about to be demonstrated, rather than at the
+   *  top of the card where it used to displace the dish's own headnote. */
+  sharedNote?: string
   /** Steps after the branches, when the method REJOINS. `031` diverges for exactly
    *  one step and is identical afterwards, which is the sharpest version of the
    *  point this block exists to make — and it could not be said at all while the
@@ -35,6 +39,7 @@ export const ForkedRecipeCard = ({
   forkPoint,
   sharedSteps,
   forkStep,
+  sharedNote,
   tailSteps,
   branches,
   treatment
@@ -104,6 +109,7 @@ export const ForkedRecipeCard = ({
         </Eyebrow>
         <div className={styles.rule} aria-hidden="true" />
       </div>
+      {sharedNote ? <p className={styles.sharedNote}>{sharedNote}</p> : null}
 
       <div className={styles.branches}>
         {branches.map((branch, i) => (

@@ -202,6 +202,20 @@ replace the branch prose rather than joining it; the prose is where the steps ca
 from, so printing both said everything twice. `MethodList` takes a `start` so two
 lists on one card can legitimately both open on "4".
 
+**The card shows the dish's own headnote again.** `resolve.ts` was sending
+`{ ...r, summary: fork.shared }` — throwing away each recipe's headnote ("Cabbage
+has enough sugar to behave like an onion if you let it") and replacing it with a
+paragraph that restated steps one to three. With the method on the card that
+paragraph said everything twice *and* cost the card the one line saying what the
+dish was. `fork.shared` is now trimmed to the CLAIM about the split — "Nothing
+before this point differs." — and printed under the rule, where it is about to be
+demonstrated rather than asserted at the top.
+
+**`/kit`'s specimen was updated with it.** The gallery has its own sample data, so
+the block changed underneath it and the specimen fell back to prose — a catalogue
+entry showing a version of the component no page produces, which is how a kit
+starts lying.
+
 **`031` is the sharpest version of the argument** and could not be expressed at all
 before: it diverges for exactly one step — anchovies or pancetta — and the other
 four are identical. Nothing currently composes it, so it is unrendered; verified

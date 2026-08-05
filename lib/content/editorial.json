@@ -206,10 +206,10 @@
     "weighted-sear": "Starting the pan cold"
   },
   "forks": {
-    "_": "Both branches of every dish that divides. The composer decides whether a fork is worth showing this household; it never writes either branch. Branch A is always the one without the constraint — it is not the compromise, and the copy should never imply it is.",
+    "_": "Both branches of every dish that divides. The composer decides whether a fork is worth showing this household; it never writes either branch. Branch A is always the one without the constraint — it is not the compromise, and the copy should never imply it is. `shared` is the CLAIM about the split, printed on the rule itself; it used to describe the shared method too, and was overwriting each recipe's own headnote to do it.",
     "039": {
       "forkPoint": "Step 4 of 6",
-      "shared": "The cabbage is quartered, oiled, salted and cooked cut-face down until the flat side is genuinely black at the edges. That takes twenty minutes and no attention, and nothing before this point differs.",
+      "shared": "Nothing before this point differs.",
       "branches": [
         {
           "label": "No dairy",
@@ -235,7 +235,7 @@
     },
     "038": {
       "forkPoint": "Step 6 of 9",
-      "shared": "Beans, aromatics and three hours are shared by everyone at the table. Nothing before step six differs, so the pot stays one pot until the last twenty minutes.",
+      "shared": "The pot stays one pot until the last twenty minutes.",
       "branches": [
         {
           "label": "No dairy",
@@ -263,7 +263,7 @@
     },
     "033": {
       "forkPoint": "Step 3 of 5",
-      "shared": "Both birds go in skin-down under the weight and stay there for six minutes without being touched. The flip is where they part company, and by then the skin has already done what it is going to do.",
+      "shared": "By the flip, the skin has already done what it is going to do.",
       "branches": [
         {
           "label": "Plain",
@@ -289,7 +289,7 @@
     },
     "031": {
       "forkPoint": "Step 2 of 5",
-      "shared": "The beans and their liquid are already made. Greens are stripped, garlic sliced, chilli measured — everything from here is under twenty minutes and the two versions take exactly the same time.",
+      "shared": "Everything from here is under twenty minutes, and both versions take exactly the same time.",
       "branches": [
         {
           "label": "No meat",

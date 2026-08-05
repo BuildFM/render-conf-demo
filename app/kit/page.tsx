@@ -253,19 +253,37 @@ export default function KitPage() {
         </Specimen>
 
         <Specimen name="ForkedRecipeCard" treatment="full">
+          {/* The specimen carries steps because the block does. A catalogue entry
+              that renders the prose fallback shows a version of the component no
+              page produces, which is how a kit starts lying. */}
           <ForkedRecipeCard
             recipe={beans}
             forkPoint={beans.forkPoint ?? "Step 6 of 9"}
+            sharedSteps={(beans.steps ?? []).slice(0, 5)}
+            forkStep={6}
+            sharedNote="The pot stays one pot until the last twenty minutes."
             branches={[
               {
                 label: "No dairy",
-                title: "Finish with olive oil and lemon",
-                body: "Lift two thirds into a second pan. Reduce hard for four minutes, then a long pour of oil off the heat — the starch does the emulsifying."
+                title: "Olive oil and lemon",
+                body: "Lift two thirds into a second pan. Reduce hard for four minutes, then a long pour of oil off the heat — the starch does the emulsifying.",
+                steps: [
+                  "Lift two thirds into a second pan.",
+                  "Reduce hard for four minutes.",
+                  "A long pour of oil off the heat — the starch already in the liquid does the emulsifying.",
+                  "It will look like it has cream in it. Cool it in the liquid; better on day two."
+                ]
               },
               {
                 label: "With dairy",
-                title: "Finish with butter and parmesan rind",
-                body: "The rind goes in at step four if you know in advance. Otherwise: butter, off the heat, one cube at a time, and do not let it boil after."
+                title: "Butter and a parmesan rind",
+                body: "The rind goes in at step four if you know in advance. Otherwise: butter, off the heat, one cube at a time, and do not let it boil after.",
+                steps: [
+                  "Butter off the heat, one cube at a time.",
+                  "Do not let it boil after this or it will split.",
+                  "A parmesan rind does the same job with an hour's notice, dropped in back at step four.",
+                  "Cool it in the liquid; better on day two."
+                ]
               }
             ]}
             treatment="full"
