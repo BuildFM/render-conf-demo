@@ -147,9 +147,11 @@ each decision. They are worth more than this README.
 
 ## The occasion
 
-One household has a dinner party scheduled — a "fast pace layer" that exists for a
-fortnight and then expires. It is ordinary application state, authored through a form:
-no model creates one, reads one, or infers one.
+One household has a dinner party scheduled. It is ordinary application state, put
+there through a form the way you would put an event in a calendar — no model creates
+one, reads one, or infers one. It exists for two weeks and then expires: the day
+after the party the page goes back to being about the cook, and nothing was deleted
+to make that happen.
 
 `?today=2026-08-13` moves the clock, so you can watch one fixture from several
 distances: deciding what to cook, shopping for it, getting ahead of it, and running
