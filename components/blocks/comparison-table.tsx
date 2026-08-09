@@ -12,8 +12,12 @@ type ComparisonTableProps = {
   treatment: "hero" | "full" | "collapsed"
 }
 
+/* Joined with the middot the rest of the system uses for a list of facts. It read
+   "compared on technique and active time and where it splits and make-ahead" —
+   four axes strung together with "and" is a sentence nobody finishes, and this is
+   a label, not prose. */
 const axisNote = (axes: string[]) =>
-  `Compared on ${axes.map((a) => a.toLowerCase()).join(" and ")}`
+  `Compared on ${axes.map((a) => a.toLowerCase()).join(" · ")}`
 
 /** Three to five dishes compared on axes chosen for this household. Column one
  *  is always the recipe at row scale; the last column is right-aligned. */
@@ -32,7 +36,10 @@ export const ComparisonTable = ({ title, axes, rows, treatment }: ComparisonTabl
            becomes the question: this is what choosing looks like when it is the job
            of the day. The axes get named as the reason, at display scale. */
         <>
-          <Eyebrow track="sm" tone="signal">
+          {/* Dim, not acid. The block stamp above already names the block in
+              tracked uppercase, and a second acid line of the same size directly
+              under it read as two competing labels over the headline. */}
+          <Eyebrow track="sm" tone="dim">
             {axisNote(shownAxes)}
           </Eyebrow>
           <DisplayHeading size="l" as="h2" className={styles.heroTitle}>

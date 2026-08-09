@@ -19,9 +19,12 @@ export const TonightShortlist = ({
   treatment
 }: TonightShortlistProps) => {
   if (treatment === "collapsed") {
+    /* No head. It rendered the title — "Tonight" — directly under a block stamp
+       reading "Tonight's shortlist", in the same tracked uppercase: the same word
+       twice, once as chrome and once as content. The stamp names the block, so the
+       collapsed variant is the list and nothing else. */
     return (
       <section className={styles.collapsed}>
-        <div className={styles.collapsedHead}>{title}</div>
         <ul className={styles.list}>
           {recipes.map((recipe) => (
             <li key={recipe.id} className={styles.listItem}>

@@ -2,12 +2,9 @@
 
 .collapsed { display: block; }
 
-.collapsedHead {
-  composes: microWide from "../type.module.css";
-  color: var(--text-signal);
-  padding-bottom: var(--space-3);
-  border-bottom: var(--border-width) solid var(--border-default);
-}
+/* `.collapsedHead` was here. It repeated the block stamp verbatim — and carried a
+   rule of its own directly under the stamp's, which is the one thing the rule
+   policy forbids. The list opens the block now. */
 
 .list {
   list-style: none;
