@@ -6,8 +6,9 @@ import { householdContext } from "@/lib/compose/compose";
 import { computeFacts, eligible, test } from "@/lib/compose/gates";
 import { loadManifest } from "@/lib/manifest/load";
 import { getProfile } from "@/lib/signals/profile";
+import { activeOccasion, effectiveToday } from "@/lib/occasion";
 import type { Ingredient } from "@/lib/render/resolve";
-import type { CookEvent, Household } from "@/lib/signals/types";
+import type { CookEvent, Household, Occasion } from "@/lib/signals/types";
 import type { Recipe } from "@/lib/types";
 
 /**
@@ -53,13 +54,19 @@ export const GET = async () => {
   const { households } = await read<{ households: Household[] }>("lib/content/households.json");
   const ingredientsRaw = await read<Record<string, Ingredient[]>>("lib/content/ingredients.json");
   const ingredients = new Map(Object.entries(ingredientsRaw).filter(([k]) => k !== "_"));
+  const { occasions } = await read<{ occasions: Occasion[] }>("lib/content/occasions.json");
   const now = { timeOfDay: "evening" as const };
 
   const out = await Promise.all(
     households.map(async (household) => {
       const events = await read<CookEvent[]>(`lib/signals/logs/${household.id}.json`);
       const { profile } = await getProfile(household, events, recipes);
-      const facts = computeFacts(recipes, profile, household, now, ingredients, events);
+      /* WITH the occasion, or the panel contradicts the page beside it. The stage
+         view exists to show the gating the page used; computing facts without the
+         fast layer had it reporting that ShoppingList was not permitted on the very
+         page that was leading with it. */
+      const occasion = activeOccasion(occasions, household.id, effectiveToday());
+      const facts = computeFacts(recipes, profile, household, now, ingredients, events, occasion);
       const allowed = eligible(manifest, facts);
 
       /* Only `user.*`. `content.*` describes the recipe library and is identical for

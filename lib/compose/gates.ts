@@ -1,6 +1,38 @@
 import type { ComponentSpec, Manifest, Predicate } from "@/lib/manifest/load";
 import type { Recipe } from "@/lib/types";
-import type { Household, Profile } from "@/lib/signals/types";
+import type { Household, Occasion, Profile } from "@/lib/signals/types";
+
+/**
+ * Everything whose dietary constraints have to be honoured on this page.
+ *
+ * The household's declared diet, plus anything an active occasion carries. This is
+ * the whole mechanism behind the beat's best moment: the learner records no allergy
+ * at all, and the notice still fires — for a guest, above the one dish with butter
+ * in it, and nowhere else.
+ *
+ * Nothing new had to be said in the manifest for that to work. The obligation
+ * already read "an allergen present in a dish on this page"; it was never about the
+ * household, and this is simply a second source for the same fact.
+ */
+export type AllergenSource = "household" | "guest";
+
+/* A MAP, NOT A SET — the source is half the fact.
+ *
+ * Merging both sources into a set and forgetting which one matched produced a
+ * notice on the learner's page reading "Allergy warning · dairy" for a household
+ * that declares no allergy at all. True, and unreadable as true: nothing said the
+ * constraint belonged to somebody coming to dinner. The household's own diet needs
+ * no explanation; a guest's does, and the page has to be able to give it. */
+const allergensInForce = (household: Household, occasion: Occasion | null): Map<string, AllergenSource> => {
+  const out = new Map<string, AllergenSource>();
+  for (const a of occasion?.avoid ?? []) out.set(a, "guest");
+  /* Declared last and wins: if the cook cannot eat it either, it is theirs, and
+     "for a guest" would be the smaller half of the truth. */
+  for (const d of household.declared.dietary) {
+    for (const a of DIETARY_TO_ALLERGEN[d] ?? []) out.set(a, "household");
+  }
+  return out;
+};
 
 /**
  * Everything the model is NOT allowed to decide.
@@ -12,6 +44,26 @@ import type { Household, Profile } from "@/lib/signals/types";
 
 export type Facts = Record<string, number | string | boolean>;
 
+export type OccasionPhase = "none" | "choosing" | "shopping" | "prep" | "cooking";
+
+/**
+ * WHAT JOB IS THE PAGE DOING TODAY, by subtraction.
+ *
+ * Exported so anything that needs to name a moment — the facts below, the index of
+ * demo routes — asks the same function. A second copy of these thresholds would
+ * eventually disagree with this one and the copy would be the lie.
+ */
+export const occasionPhase = (daysUntil: number | null): OccasionPhase =>
+  daysUntil === null
+    ? "none"
+    : daysUntil >= 10
+      ? "choosing"
+      : daysUntil >= 4
+        ? "shopping"
+        : daysUntil >= 1
+          ? "prep"
+          : "cooking";
+
 export const computeFacts = (
   recipes: Recipe[],
   profile: Profile,
@@ -20,7 +72,9 @@ export const computeFacts = (
   ingredients: Map<string, { name: string }[]> = new Map(),
   /* Structural rather than the CookEvent import: this only ever reads two fields,
      and a narrower shape keeps the compose gates independent of the signals layer. */
-  events: { type: string; recipeId?: string }[] = []
+  events: { type: string; recipeId?: string }[] = [],
+  /** The fast layer. Null for most requests, and null again the day after. */
+  occasion: { occasion: Occasion; daysUntil: number } | null = null
 ): Facts => {
   const pantry = household.pantry.map((p) => p.toLowerCase());
   const pantryGaps = recipes.reduce((n, r) => {
@@ -40,8 +94,26 @@ export const computeFacts = (
     ([, rs]) => rs.filter((r) => cookedIds.has(r.id)).length
   );
 
-  const allergies = new Set(household.declared.dietary.flatMap((d) => DIETARY_TO_ALLERGEN[d] ?? []));
+  const allergies = allergensInForce(household, occasion?.occasion ?? null);
   const allergenMatches = recipes.filter((r) => r.allergens.some((a) => allergies.has(a))).length;
+
+
+  /* Feeding more people than live here is the fact that makes half the occasion
+     vocabulary eligible, and it is a comparison rather than a flag — an occasion for
+     four in a household of six changes nothing about how a page should be built. */
+  const scaleUp = occasion ? occasion.occasion.guests > household.declared.size : false;
+
+  /**
+   * WHAT JOB IS THIS PAGE DOING TODAY.
+   *
+   * The single most important fact in this map. An occasion is not one state, it is
+   * four jobs in sequence, and they want different pages — not the same page with
+   * fewer rows. Deciding what to cook, buying it, getting ahead of it, and running
+   * the day are different tasks and the page should be ABOUT the current one.
+   *
+   * Derived by subtraction, in code. The model is never asked what phase it is.
+   */
+  const phase = occasionPhase(occasion?.daysUntil ?? null);
 
   return {
     // content — questions about the corpus, not about the person
@@ -50,7 +122,12 @@ export const computeFacts = (
     "content.sharedTechnique": maxSharing,
     "content.makeAhead": recipes.filter((r) => r.makeAhead).length,
     "content.makeAheadShared": recipes.filter((r) => r.makeAhead).length,
-    "content.plannedRecipes": profile.signals.repeatRecipeIds.length,
+    /* During an occasion the planned dishes ARE the menu — four dishes somebody has
+       committed to for a date. Outside one, the closest thing to a plan is what they
+       keep coming back to. Same question, two sources. */
+    "content.plannedRecipes": occasion?.occasion.menu?.length
+      ? occasion.occasion.menu.length
+      : profile.signals.repeatRecipeIds.length,
     "content.yieldExceedsHousehold": recipes.some((r) => r.yield > household.declared.size),
 
     // user — derived from ninety days of behaviour, never from what they declared
@@ -59,6 +136,25 @@ export const computeFacts = (
     "user.cookedOfComparable": cookedIds.size,
     "user.abandonedOrRepeated": profile.signals.abandonedRecipeIds.length + profile.signals.repeatRecipeIds.length,
     "user.makeAheadPattern": profile.signals.makeAheadPattern,
+    /* PRESSURE, not habit — and the distinction is the reason the occasion changes
+       anything.
+
+       A shopping list is for someone who plans. The learner does not plan, so it has
+       never been eligible for them and that is correct. But eight people are coming,
+       and cooking for eight is planning whether or not you are a planner. The fact
+       these blocks actually want is "is this household under planning pressure right
+       now", which is true for two different reasons: they always are, or this
+       fortnight they are.
+
+       Written as one fact rather than as an OR in the manifest on purpose. The
+       manifest goes on a screen in front of six hundred people and a predicate
+       language with boolean operators in it stops being readable at a glance — the
+       disjunction belongs in the code that computes the fact, not in the artifact
+       that states the rule. */
+    "state.planningPressure":
+      (profile.signals.repeatRecipeIds.length >= 2 && profile.signals.makeAheadPattern) || scaleUp,
+    "state.makeAheadPressure":
+      profile.signals.makeAheadPattern || phase === "shopping" || phase === "prep",
     "user.expandsTechnique": events.some((e) => e.type === "expanded"),
     /* Intention on the record, contradicted by behaviour. Every other signal here
        is one thing — this one is the gap between two, which is why a query reaches
@@ -80,7 +176,27 @@ export const computeFacts = (
     "state.pantryKnown": household.pantry.length > 0,
     "state.pantryGaps": pantryGaps,
     "state.dietarySplit": household.declared.dietary.length > 0 && household.declared.size > 1,
-    "state.allergenMatches": allergenMatches
+    "state.allergenMatches": allergenMatches,
+
+    /* occasion — the fast layer. Absent for most requests, and absent again the day
+       after. These are the only facts in this map with an expiry date.
+
+       `daysUntil` is what makes three moments out of one occasion: preconditions
+       key on it, so the vocabulary offered at fourteen days out is not the
+       vocabulary offered on the morning. Nobody wrote three pages. */
+    "state.occasionPhase": phase,
+    "state.hasOccasion": occasion !== null,
+    /* Sequencing work across days is what Twin B does every week by temperament, and
+       what anybody does in the last three days before eight people arrive. One fact,
+       two reasons — and it is what keeps PrepSchedule off the shopping page, where it
+       would compete with the list for the same job. */
+    "state.sequencingPressure": profile.signals.abandonThreshold !== null || phase === "prep",
+    "state.occasionGuests": occasion?.occasion.guests ?? 0,
+    "state.occasionScaleUp": scaleUp,
+    /* 999 rather than 0 when absent, so a `<=` precondition does not quietly become
+       true for every household that has no occasion at all. A missing fact and a
+       fact worth zero are different things and this is the one place it bites. */
+    "state.daysUntil": occasion?.daysUntil ?? 999
   };
 };
 
@@ -115,6 +231,38 @@ export const test = (p: Predicate, facts: Facts): boolean => {
 export const eligible = (manifest: Manifest, facts: Facts): ComponentSpec[] =>
   manifest.components.filter((c) => c.requires.every((p) => test(p, facts)));
 
+/**
+ * May this block be what the page is ABOUT — right now?
+ *
+ * `role` alone could not express this. A shopping list is what the page is about on
+ * the Tuesday before eight people come, and a supporting detail every other day of
+ * its life. Stating that as two components would be two templates; stating it as a
+ * permanent promotion would let it open a page for somebody who is not shopping.
+ *
+ * So leading is a permission like any other, and permissions can be conditional.
+ * `leadWhen` is the condition. This is the statement that makes four differently
+ * shaped pages out of one vocabulary.
+ */
+/**
+ * The assemblies that are actually in force for this page.
+ *
+ * An assembly says two blocks move as one unit. That is only a coherent rule while
+ * BOTH of them are available — and with conditional leads they are not always. On
+ * the shopping day the list is what the page is about and the schedule is not
+ * eligible at all, so PlanTheWeek is not a unit that exists today, and gluing the
+ * list to an absent partner deleted the lead off its own page.
+ *
+ * Filtering here rather than special-casing it downstream keeps the two places that
+ * care — the completer and the validator — asking the same question.
+ */
+export const activeAssemblies = (manifest: Manifest, allowed: ComponentSpec[]): Manifest["assemblies"] => {
+  const names = new Set(allowed.map((c) => c.name));
+  return manifest.assemblies.filter((a) => a.members.every((m) => names.has(m)));
+};
+
+export const canLead = (c: ComponentSpec, facts: Facts): boolean =>
+  c.role === "lead" || ((c.leadWhen?.length ?? 0) > 0 && c.leadWhen!.every((p) => test(p, facts)));
+
 export type FiredObligation = {
   name: string;
   treatment: "full";
@@ -141,9 +289,10 @@ export const obligationCandidates = (
   manifest: Manifest,
   facts: Facts,
   recipes: Recipe[],
-  household: Household
+  household: Household,
+  occasion: Occasion | null = null
 ): FiredObligation[] => {
-  const allergies = new Set(household.declared.dietary.flatMap((d) => DIETARY_TO_ALLERGEN[d] ?? []));
+  const allergies = allergensInForce(household, occasion);
   const out: FiredObligation[] = [];
 
   for (const o of manifest.obligations) {
@@ -152,11 +301,21 @@ export const obligationCandidates = (
     for (const r of recipes) {
       const hit = r.allergens.find((a) => allergies.has(a));
       if (!hit) continue;
+      const source = allergies.get(hit)!;
       out.push({
         name: o.name,
         treatment: "full",
         placement: o.locked.placement,
-        props: { allergen: hit, recipeTitle: r.title, recipeId: r.id }
+        props: {
+          allergen: hit,
+          recipeTitle: r.title,
+          recipeId: r.id,
+          source,
+          /* Whose constraint this is, in words, and only when the answer is not
+             "the person reading". The occasion authored the sentence; the app does
+             not write one, the same rule every other block lives under. */
+          detail: source === "guest" ? occasion?.avoidNote : undefined
+        }
       });
     }
   }
@@ -260,6 +419,85 @@ export const completeAssemblies = <T extends { component: string }>(
   }
 
   return { blocks: out, completed };
+};
+
+/**
+ * HOW WIDE EACH BLOCK IS — decided by the application, from what the manifest permits.
+ *
+ * This was briefly a field the model filled in, and it cost about half of all
+ * compositions: one more decision per block, and the answers came back as JSON
+ * encoded inside a string field often enough to be unusable on a stage.
+ *
+ * It should never have been asked. Which blocks belong on a page is a judgment about
+ * a person; whether two adjacent blocks can share a row is a fact about the design
+ * system, and the design system already states it — `spans` on each component. So
+ * the model chooses the blocks and the app pairs consecutive supports that both
+ * permit half.
+ *
+ * The lead is never paired: it opens the page, and a half-width opening is not one.
+ * Neither is a block that belongs to an assembly paired with one that does not —
+ * an assembly is one unit and a shared row is a visual claim that two blocks belong
+ * together, so pairing ShoppingList with the block after it split PlanTheWeek on
+ * screen after the completer and the validator had both spent a pass keeping it
+ * whole. Members may share a row with each other; the boundary is what is closed.
+ *
+ * Returns the ROWS as well as the spans, because who shares a row with whom is this
+ * function's decision and the renderer used to re-derive it from the spans alone.
+ * It scanned only the blocks that resolved, so one dropped block re-paired two
+ * blocks that were never paired here.
+ *
+ * Runs after adjacency, because moving a block changes who its neighbours are.
+ */
+export const enforceSpans = <T extends { component: string; treatment?: string }>(
+  blocks: T[],
+  manifest: Manifest
+): { blocks: (T & { span: "full" | "half" })[]; paired: string[]; rows: number[][] } => {
+  const spec = (n: string) => manifest.components.find((c) => c.name === n);
+  const mayHalf = (b: T, i: number) => i > 0 && (spec(b.component)?.spans ?? ["full"]).includes("half");
+
+  /* A SHARED ROW IS A CLAIM THAT TWO BLOCKS ARE COMPARABLE.
+   *
+   * Permission alone was the whole test, and permission says nothing about size: a
+   * RecipeCard with a photograph came out 996px tall beside a one-line
+   * MakeAheadCallout of 96px, leaving nine hundred pixels of empty column next to
+   * it. Two blocks in a row read as a pair; one of them being ten times the other
+   * reads as a mistake.
+   *
+   * Height is not knowable here — this runs on the server, before anything is
+   * measured — but the manifest already carries the fact that decides it. A block
+   * showing a photograph is tall, and it is the only reliably tall thing in the
+   * vocabulary. So a photograph may share a row with another photograph, and text
+   * with text; the boundary between them is where the mismatch lives. */
+  const showsPhoto = (b: T) =>
+    Boolean(spec(b.component)?.carriesPhoto) && (b.treatment === "hero" || b.treatment === "full");
+  const comparable = (a: T, b: T) => showsPhoto(a) === showsPhoto(b);
+
+  const memberOf = new Map<string, string>();
+  for (const a of manifest.assemblies) for (const m of a.members) memberOf.set(m, a.name);
+  const sameUnit = (a: T, b: T) => memberOf.get(a.component) === memberOf.get(b.component);
+
+  const span: ("full" | "half")[] = blocks.map(() => "full");
+  const paired: string[] = [];
+  const rows: number[][] = blocks.length ? [[0]] : [];
+  for (let i = 1; i < blocks.length; i++) {
+    const pairable =
+      i < blocks.length - 1 &&
+      span[i] !== "half" &&
+      mayHalf(blocks[i], i) &&
+      mayHalf(blocks[i + 1], i + 1) &&
+      sameUnit(blocks[i], blocks[i + 1]) &&
+      comparable(blocks[i], blocks[i + 1]);
+    if (pairable) {
+      span[i] = "half";
+      span[i + 1] = "half";
+      paired.push(`${blocks[i].component} + ${blocks[i + 1].component} share a row`);
+      rows.push([i, i + 1]);
+      i++;
+    } else {
+      rows.push([i]);
+    }
+  }
+  return { blocks: blocks.map((b, i) => ({ ...b, span: span[i] })), paired, rows };
 };
 
 /**

@@ -99,7 +99,7 @@ const trial = async (label, configure) => {
       attempted++;
       try {
         const { spec, ms } = await compose({
-          manifest, eligible: allowed, recipes, profile, household: h, fired: candidates
+          manifest, eligible: allowed, recipes, profile, household: h, fired: candidates, facts
         });
         latencies.push(ms);
 

@@ -60,6 +60,28 @@
   text-transform: uppercase;
 }
 
+/* The quiet register. A block whose title names the JOB IT IS DOING rather than a
+   dish or an idea speaks it instead of shouting it — "Compared side by side" is
+   framing, "White beans, long cooked" is content, and they should not arrive in the
+   same voice. Wide rather than condensed, sentence case, no tracking. */
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" var(--title-wdth), "wght" var(--title-wght);
+  font-size: var(--title-size);
+  line-height: var(--title-lh);
+  letter-spacing: var(--title-track);
+}
+
+/* Same voice at collapsed scale. Replaces `rowTitle` in collapsed blocks: a
+   collapsed block used to be a small LOUD block, which read as an important thing
+   rendered badly rather than as a quiet thing rendered correctly. */
+.titleS {
+  composes: title;
+  font-size: var(--title-s-size);
+  line-height: var(--title-s-lh);
+}
+
 .sectionTitle {
   margin: 0;
   font-family: var(--font-display);

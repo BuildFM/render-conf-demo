@@ -113,6 +113,20 @@
   --row-wdth: 74;
   --row-wght: 700;
 
+  /* The QUIET register. Same family, opened right up on the wdth axis and not
+     shouted — the voice a block uses when it is not what the page is about. The
+     system had two registers before this, a condensed uppercase shout and a mono
+     readout, so every block arrived at the same volume and a page of them read as
+     one texture. Sentence case is the whole point: do not add text-transform. */
+  --title-size: 25px;
+  --title-lh: 1.2;
+  --title-track: -0.005em;
+  --title-wdth: 92;
+  --title-wght: 600;
+
+  --title-s-size: 18px;      /* the same voice, collapsed */
+  --title-s-lh: 1.3;
+
   --section-size: 17px;      /* rule-underlined section titles */
   --section-track: 0.16em;
   --section-wdth: 70;

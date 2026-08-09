@@ -22,32 +22,15 @@ import { TroubleshootingList } from "@/components/blocks/troubleshooting-list"
 import { WhyThisWorks } from "@/components/blocks/why-this-works"
 import { SiteFooter } from "@/components/layout/site-footer"
 import { beans, brick, cabbage, cacio, focaccia } from "@/lib/sample-data"
+import { loadManifest } from "@/lib/manifest/load"
 import styles from "./page.module.css"
+
+export const runtime = "nodejs"
+export const dynamic = "force-dynamic"
 
 /* A contact sheet. Every block at every treatment it supports, with sample data,
    under a labelled heading. It is the check that the code and the catalogue have
    not drifted, and that nothing crashes on absent optional fields. */
-
-const Specimen = ({
-  name,
-  treatment,
-  note,
-  children
-}: {
-  name: string
-  treatment: string
-  note?: string
-  children: ReactNode
-}) => (
-  <section className={styles.specimen}>
-    <div className={styles.label}>
-      <span className={styles.name}>{name}</span>
-      <span className={styles.treatment}>{treatment}</span>
-      {note ? <span className={styles.note}>{note}</span> : null}
-    </div>
-    <div className={styles.stage}>{children}</div>
-  </section>
-)
 
 const thread = [
   { recipe: brick, date: "12 Jul", changed: "Dry-brined 24 hr instead of 4. Skin finally shattered." },
@@ -163,7 +146,40 @@ const steps = [
   "Move it only when it releases on its own."
 ]
 
-export default function KitPage() {
+export default async function KitPage() {
+  /* Read from disk like everywhere else rather than imported, so a label renamed on
+     stage is renamed here too. The catalogue showing a different word from the page
+     is the exact drift this file exists to catch. */
+  const manifest = await loadManifest()
+  const labels = new Map(
+    [...manifest.components, ...manifest.obligations].map((c) => [c.name, c.label])
+  )
+
+  /* Both names, deliberately. The reader-facing label is what the page says out
+     loud; the class name is what the code and the manifest key on. A kit that shows
+     only the class name is a list of exports, not a vocabulary. */
+  const Specimen = ({
+    name,
+    treatment,
+    note,
+    children
+  }: {
+    name: string
+    treatment: string
+    note?: string
+    children: ReactNode
+  }) => (
+    <section className={styles.specimen}>
+      <div className={styles.label}>
+        <span className={styles.name}>{labels.get(name) ?? name}</span>
+        <span className={styles.treatment}>{treatment}</span>
+        {labels.has(name) ? <span className={styles.className}>{name}</span> : null}
+        {note ? <span className={styles.note}>{note}</span> : null}
+      </div>
+      <div className={styles.stage}>{children}</div>
+    </section>
+  )
+
   return (
     <>
       <SiteChrome stamp="Week 30 · Tue" />

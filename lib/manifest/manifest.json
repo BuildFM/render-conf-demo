@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "_": "The design system, as far as the model is concerned. It never sees CSS, tokens or markup — only this. Four kinds of statement: permissions (what MAY appear), obligations (what MUST), assemblies (what moves as one unit), and the content contract in slots. Read from disk on every request, never bundled — this file is edited live on stage.",
+  "_": "The design system, as far as the model is concerned. It never sees CSS, tokens or markup \u2014 only this. Four kinds of statement: permissions (what MAY appear), obligations (what MUST), assemblies (what moves as one unit), and the content contract in slots. Read from disk on every request, never bundled \u2014 this file is edited live on stage.",
   "invariants": [
     "SiteChrome is always present and always in the same position.",
     "Search is always reachable without scrolling.",
@@ -15,8 +15,47 @@
   },
   "components": [
     {
+      "name": "OccasionPlan",
+      "label": "Occasion plan",
+      "intent": "A one-off occasion the household scheduled, sequenced backwards from its date for a guest count larger than the household. Not a weekly rhythm \u2014 it expires.",
+      "requires": [
+        {
+          "fact": "state.occasionPhase",
+          "op": "==",
+          "value": "cooking"
+        },
+        {
+          "fact": "state.occasionScaleUp",
+          "op": "==",
+          "value": true
+        }
+      ],
+      "adjacency": {
+        "neverWith": [
+          "TonightShortlist",
+          "MakeAheadCallout"
+        ],
+        "maxPerPage": 1
+      },
+      "treatments": [
+        "hero",
+        "full",
+        "collapsed"
+      ],
+      "slots": {
+        "requires": "stages: at least 2 recipeIds. The occasion supplies the date, the guest count and the dietary note; the model supplies only which dishes."
+      },
+      "role": "lead",
+      "carriesPhoto": true,
+      "spans": [
+        "full"
+      ],
+      "leadWhen": []
+    },
+    {
       "name": "TechniqueThread",
-      "intent": "Every attempt at one technique, in order, with what changed each time and the one variable not yet tried. For someone learning a move rather than collecting dishes. When this is on a page it IS the page — it takes the Display XL and everything else is support.",
+      "label": "Technique thread",
+      "intent": "Every attempt at one technique, in order, with what changed each time and the one variable not yet tried. For someone learning a move rather than collecting dishes. When this is on a page it IS the page \u2014 it takes the Display XL and everything else is support.",
       "requires": [
         {
           "fact": "user.techniqueRepeats",
@@ -27,6 +66,11 @@
           "fact": "user.expandsTechnique",
           "op": "==",
           "value": true
+        },
+        {
+          "fact": "state.hasOccasion",
+          "op": "==",
+          "value": false
         }
       ],
       "adjacency": {
@@ -42,10 +86,14 @@
       "slots": {
         "requires": "entries: at least 3 recipeIds, all sharing one technique tag, each cooked on a separate occasion. Also set techniqueTag."
       },
-      "role": "lead"
+      "role": "lead",
+      "spans": [
+        "full"
+      ]
     },
     {
       "name": "ComparisonTable",
+      "label": "Comparison",
       "intent": "Three to five dishes compared on axes chosen for this household. Use when the user is choosing rather than reading.",
       "requires": [
         {
@@ -57,22 +105,39 @@
           "fact": "user.cookedOfComparable",
           "op": ">=",
           "value": 2
+        },
+        {
+          "fact": "state.daysUntil",
+          "op": ">=",
+          "value": 7
         }
       ],
       "adjacency": {
         "maxPerPage": 1
       },
       "treatments": [
+        "hero",
         "full",
         "collapsed"
       ],
       "slots": {
         "requires": "rows: 3 to 5 recipeIds. axes: 2 to 4, chosen for this household, never a filter UI's columns. Also set emphasis."
       },
-      "role": "support"
+      "role": "support",
+      "spans": [
+        "full"
+      ],
+      "leadWhen": [
+        {
+          "fact": "state.occasionPhase",
+          "op": "==",
+          "value": "choosing"
+        }
+      ]
     },
     {
       "name": "RecipeCard",
+      "label": "Recipe",
       "intent": "A single dish presented for selection. The workhorse.",
       "requires": [],
       "adjacency": {
@@ -85,13 +150,18 @@
         "oneline"
       ],
       "slots": {
-        "requires": "recipe: exactly 1 recipeId. Use \"hero\" for the one dish this page is about — it takes the whole top of the page and claims the page's single Display XL, so a page with a hero may not also run TechniqueThread at full."
+        "requires": "recipe: exactly 1 recipeId. Use \"hero\" for the one dish this page is about \u2014 it takes the whole top of the page and claims the page's single Display XL, so a page with a hero may not also run TechniqueThread at full."
       },
       "role": "support",
-      "carriesPhoto": true
+      "carriesPhoto": true,
+      "spans": [
+        "full",
+        "half"
+      ]
     },
     {
       "name": "ForkedRecipeCard",
+      "label": "Recipe, two ways",
       "intent": "A dish that splits partway to serve two constraints at one table. The split is drawn, not described.",
       "requires": [
         {
@@ -121,10 +191,14 @@
         "requires": "recipe: exactly 1 recipeId, and it must be one that forks."
       },
       "role": "lead",
-      "carriesPhoto": true
+      "carriesPhoto": true,
+      "spans": [
+        "full"
+      ]
     },
     {
       "name": "WhyThisWorks",
+      "label": "Why this works",
       "intent": "The principle several dishes share. The most editorial block in the system.",
       "requires": [
         {
@@ -147,10 +221,15 @@
       "slots": {
         "requires": "recipes: at least 3 recipeIds sharing one technique tag. Also set techniqueTag."
       },
-      "role": "support"
+      "role": "support",
+      "spans": [
+        "full",
+        "half"
+      ]
     },
     {
       "name": "SkillPrimer",
+      "label": "Skill primer",
       "intent": "A fundamentals explainer on one technique.",
       "requires": [
         {
@@ -177,10 +256,15 @@
       "slots": {
         "requires": "techniqueTag: exactly one technique tag the user has attempted."
       },
-      "role": "support"
+      "role": "support",
+      "spans": [
+        "full",
+        "half"
+      ]
     },
     {
       "name": "TroubleshootingList",
+      "label": "Troubleshooting",
       "intent": "The ways this dish goes wrong. A description of a pan, never an alert.",
       "requires": [
         {
@@ -204,10 +288,15 @@
       "slots": {
         "requires": "techniqueTag: exactly one technique tag."
       },
-      "role": "support"
+      "role": "support",
+      "spans": [
+        "full",
+        "half"
+      ]
     },
     {
       "name": "PrepSchedule",
+      "label": "Prep schedule",
       "intent": "Work sequenced across days when several dishes share a base. The shared base is the reason the block exists.",
       "requires": [
         {
@@ -216,7 +305,7 @@
           "value": 2
         },
         {
-          "fact": "user.abandonsOnListLength",
+          "fact": "state.sequencingPressure",
           "op": "==",
           "value": true
         }
@@ -225,6 +314,7 @@
         "maxPerPage": 1
       },
       "treatments": [
+        "hero",
         "full",
         "collapsed"
       ],
@@ -232,10 +322,14 @@
         "requires": "days: at least 2 recipeIds that have make-ahead steps."
       },
       "role": "lead",
-      "carriesPhoto": true
+      "carriesPhoto": true,
+      "spans": [
+        "full"
+      ]
     },
     {
       "name": "ShoppingList",
+      "label": "Shopping list",
       "intent": "Buying, grouped by store section, in the order you walk it.",
       "requires": [
         {
@@ -244,9 +338,14 @@
           "value": 2
         },
         {
-          "fact": "user.hasRhythm",
+          "fact": "state.planningPressure",
           "op": "==",
           "value": true
+        },
+        {
+          "fact": "state.daysUntil",
+          "op": ">=",
+          "value": 2
         }
       ],
       "adjacency": {
@@ -256,16 +355,29 @@
         "maxPerPage": 1
       },
       "treatments": [
+        "hero",
         "full",
         "collapsed"
       ],
       "slots": {
         "requires": "sections: at least 2 recipeIds you are planning together."
       },
-      "role": "support"
+      "role": "support",
+      "spans": [
+        "full",
+        "half"
+      ],
+      "leadWhen": [
+        {
+          "fact": "state.occasionPhase",
+          "op": "==",
+          "value": "shopping"
+        }
+      ]
     },
     {
       "name": "PantryMatch",
+      "label": "From your pantry",
       "intent": "Starting from what is in the house rather than from a dish. The gap matters as much as the matches.",
       "requires": [
         {
@@ -297,10 +409,15 @@
       "slots": {
         "requires": "matches: 2 to 4 recipeIds, or leave empty to rank the whole corpus."
       },
-      "role": "lead"
+      "role": "lead",
+      "spans": [
+        "full",
+        "half"
+      ]
     },
     {
       "name": "TonightShortlist",
+      "label": "Tonight's shortlist",
       "intent": "Choosing among two to four dishes when deciding what to cook now.",
       "requires": [
         {
@@ -333,19 +450,28 @@
       "slots": {
         "requires": "recipes: 2 to 4 recipeIds."
       },
-      "role": "support"
+      "role": "support",
+      "spans": [
+        "full"
+      ]
     },
     {
       "name": "MakeAheadCallout",
+      "label": "Make ahead",
       "intent": "The step that can be done in advance, surfaced for someone who works that way.",
       "requires": [
         {
-          "fact": "user.makeAheadPattern",
+          "fact": "state.makeAheadPressure",
           "op": "==",
           "value": true
         },
         {
           "fact": "content.makeAhead",
+          "op": ">=",
+          "value": 1
+        },
+        {
+          "fact": "state.daysUntil",
           "op": ">=",
           "value": 1
         }
@@ -365,10 +491,15 @@
       "slots": {
         "requires": "step: exactly 1 recipeId that has a make-ahead step."
       },
-      "role": "support"
+      "role": "support",
+      "spans": [
+        "full",
+        "half"
+      ]
     },
     {
       "name": "SubstitutionTable",
+      "label": "Substitutions",
       "intent": "The gap between what a dish wants and what is available.",
       "requires": [
         {
@@ -385,12 +516,17 @@
         "collapsed"
       ],
       "slots": {
-        "requires": "rows: exactly 1 recipeId — the dish with the gap."
+        "requires": "rows: exactly 1 recipeId \u2014 the dish with the gap."
       },
-      "role": "support"
+      "role": "support",
+      "spans": [
+        "full",
+        "half"
+      ]
     },
     {
       "name": "TechniqueNote",
+      "label": "Technique note",
       "intent": "Why a step works.",
       "requires": [
         {
@@ -409,10 +545,15 @@
       "slots": {
         "requires": "techniqueTag: exactly one technique tag."
       },
-      "role": "support"
+      "role": "support",
+      "spans": [
+        "full",
+        "half"
+      ]
     },
     {
       "name": "LeftoversNote",
+      "label": "Leftovers",
       "intent": "What tomorrow does with tonight.",
       "requires": [
         {
@@ -430,12 +571,17 @@
       "slots": {
         "requires": "recipe: exactly 1 recipeId yielding more than the household size."
       },
-      "role": "support"
+      "role": "support",
+      "spans": [
+        "full",
+        "half"
+      ]
     }
   ],
   "obligations": [
     {
       "name": "AllergenNotice",
+      "label": "Allergy warning",
       "intent": "Declaring an allergen present in a dish on this page.",
       "requiredWhen": {
         "fact": "state.allergenMatches",
@@ -465,5 +611,5 @@
       ]
     }
   ],
-  "_role": "Some blocks can be what a page is ABOUT; the rest can only support one. A comparison table is useful on a page about choosing and is never the reason for the page. blocks[0] must be a lead, or a support block at \"hero\" — which is the treatment that makes a block the subject."
+  "_role": "Some blocks can be what a page is ABOUT; the rest can only support one. A comparison table is useful on a page about choosing and is never the reason for the page. blocks[0] must be a lead, or a support block at \"hero\" \u2014 which is the treatment that makes a block the subject."
 }

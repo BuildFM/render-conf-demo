@@ -1,0 +1,24 @@
+{
+  "note": "Occasions are ordinary application state, authored by a person through a form \u2014 the same way you would put an event in a calendar. No model creates one, reads one, or infers one. `avoid` is constrained to the allergen vocabulary the recipes declare against, so an occasion cannot reference an allergen no dish knows about. This is the FAST pace layer: it exists for a fortnight and then it expires. `scheduledOn` is when the person filled the form: before that date the occasion does not exist, which is why the household's ordinary page is the one you get until they plan something.",
+  "occasions": [
+    {
+      "id": "occ-learner-dinner",
+      "householdId": "h-learner",
+      "kind": "dinner-party",
+      "scheduledOn": "2026-08-08",
+      "label": "Dinner, eight people",
+      "guests": 8,
+      "date": "2026-08-22",
+      "avoid": [
+        "gluten"
+      ],
+      "avoidNote": "One guest does not eat gluten.",
+      "menu": [
+        "034",
+        "038",
+        "036",
+        "039"
+      ]
+    }
+  ]
+}

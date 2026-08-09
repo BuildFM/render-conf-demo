@@ -39,6 +39,7 @@ export const TonightShortlist = ({
       <SectionHead
         title={title}
         meta={`${recipes.length} to choose from`}
+        voice="quiet"
         className={styles.head}
       />
       {recipes.map((recipe) => (

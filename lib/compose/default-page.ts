@@ -29,10 +29,10 @@ export type DefaultBlock = LayoutSpec["blocks"][number] & { section?: string };
 export const defaultPageSpec = (): LayoutSpec & { blocks: DefaultBlock[] } => ({
   dominant: "RecipeCard",
   blocks: [
-    { component: "RecipeCard", treatment: "hero", recipeIds: ["041"], axes: [], emphasis: [] },
-    { component: "TonightShortlist", treatment: "collapsed", recipeIds: ["040", "039", "037"], axes: [], emphasis: [] },
-    { component: "RecipeCard", treatment: "collapsed", recipeIds: ["038"], section: "The index", axes: [], emphasis: [] },
-    { component: "RecipeCard", treatment: "collapsed", recipeIds: ["036"], axes: [], emphasis: [] }
+    { component: "RecipeCard", treatment: "hero", span: "full" as const, recipeIds: ["041"], axes: [], emphasis: [] },
+    { component: "TonightShortlist", treatment: "collapsed", span: "full" as const, recipeIds: ["040", "039", "037"], axes: [], emphasis: [] },
+    { component: "RecipeCard", treatment: "collapsed", span: "full" as const, recipeIds: ["038"], section: "The index", axes: [], emphasis: [] },
+    { component: "RecipeCard", treatment: "collapsed", span: "full" as const, recipeIds: ["036"], axes: [], emphasis: [] }
   ],
   rationale: "This is the best home page we can make for everyone."
 });

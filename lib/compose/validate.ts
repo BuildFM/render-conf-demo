@@ -1,7 +1,7 @@
-import type { Manifest } from "@/lib/manifest/load";
+import type { ComponentSpec, Manifest } from "@/lib/manifest/load";
 import type { LayoutSpec } from "./compose";
-import type { FiredObligation } from "./gates";
-import { satisfiesMustFollow } from "./gates";
+import type { Facts, FiredObligation } from "./gates";
+import { canLead, satisfiesMustFollow } from "./gates";
 
 /**
  * The semantic pass. Schema validity is free from generateObject; this is
@@ -18,7 +18,9 @@ export const validate = (
   /* Which components this household actually qualified for. Needed for one rule
      only — see the lead check — and optional so the hand-authored default page,
      which has no household and therefore no eligibility, validates unchanged. */
-  eligible?: { name: string; role: string }[]
+  eligible?: ComponentSpec[],
+  /** Needed to evaluate a conditional lead permission. Absent for the default page. */
+  facts?: Facts
 ): string[] => {
   const errors: string[] = [];
   const specs = new Map(manifest.components.map((c) => [c.name, c]));
@@ -56,6 +58,14 @@ export const validate = (
     if (n > max) errors.push(`${name} appears ${n} times; max is ${max}.`);
   }
 
+  /* The band at the foot of the page is the page explaining itself, and it is the
+     one sentence the model writes. The schema stopped requiring it — a required
+     field the model drops throws the request instead of producing the field — so
+     the requirement lives here, where a miss costs a repair rather than the page. */
+  if (!spec.rationale?.trim()) {
+    errors.push("No rationale. The page has to say, in one sentence, what it inferred about this household.");
+  }
+
   // The dominant block has to actually be dominant, or naming it is theatre.
   if (spec.dominant && spec.blocks[0]?.component !== spec.dominant) {
     errors.push(
@@ -76,12 +86,16 @@ export const validate = (
      was undercut by the one case where the model overrode the filtering. */
   const first = spec.blocks[0];
   const firstSpec = specs.get(first?.component ?? "");
-  const leadWasAvailable = eligible ? eligible.some((c) => c.role === "lead") : false;
-  if (firstSpec && firstSpec.role !== "lead") {
+  /* `canLead`, not `role` — leading is a conditional permission now. A shopping list
+     may open the page on the Tuesday before eight people come and not on any other
+     day, and the check has to ask the same question the prompt asked. */
+  const mayLead = (c: ComponentSpec) => (facts ? canLead(c, facts) : c.role === "lead");
+  const leadWasAvailable = eligible ? eligible.some(mayLead) : false;
+  if (firstSpec && !mayLead(firstSpec)) {
     if (leadWasAvailable) {
       errors.push(
-        `${firstSpec.name} is a support block and cannot lead this page: ` +
-          `${eligible!.filter((c) => c.role === "lead").map((c) => c.name).join(", ")} qualified as a lead.`
+        `${firstSpec.name} may not lead this page today: ` +
+          `${eligible!.filter(mayLead).map((c) => c.name).join(", ")} qualified as a lead.`
       );
     } else if (first?.treatment !== "hero") {
       errors.push(`${firstSpec.name} is a support block and cannot lead a page unless at "hero".`);

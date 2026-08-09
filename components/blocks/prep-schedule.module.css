@@ -26,13 +26,12 @@
   border-top: var(--border-width) solid var(--border-default);
 }
 
-/* One acid rule in the whole block: the day the shared base is made. */
+/* The shared-base day is marked by its acid TASK TEXT and its note, not by a rule.
+   The acid rule belongs to obligations now, and a schedule closing itself with a
+   bottom rule put a rule directly above the next block's own edge. */
 .dayShared {
   composes: day;
-  border-top: var(--border-width-strong) solid var(--border-signal);
 }
-
-.dayLast { border-bottom: var(--border-width) solid var(--border-default); }
 
 .dayName {
   composes: sectionTitle from "../type.module.css";
@@ -67,7 +66,7 @@
 .collapsed { display: block; }
 
 .collapsedTitle {
-  composes: rowTitle from "../type.module.css";
+  composes: titleS from "../type.module.css";
   color: var(--text-primary);
 }
 
@@ -78,3 +77,13 @@
 }
 
 .signal { color: var(--text-signal); }
+
+/* HALF WIDTH. A 360px well against a `1fr auto` head squeezes the title into what
+   is left of a 570px cell; the day column costs another 150px of the same. Stack
+   the head, and let the day name sit above its tasks rather than beside them. */
+@container (max-width: 700px) {
+  .head { grid-template-columns: 1fr; gap: var(--space-7); }
+  .well { width: 100%; }
+  .day,
+  .dayShared { grid-template-columns: 1fr; gap: var(--space-3); }
+}

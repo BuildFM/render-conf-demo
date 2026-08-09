@@ -13,7 +13,7 @@
 }
 
 .collapsedTitle {
-  composes: rowTitle from "../type.module.css";
+  composes: titleS from "../type.module.css";
   color: var(--text-primary);
 }
 

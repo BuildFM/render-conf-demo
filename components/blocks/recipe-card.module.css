@@ -18,6 +18,24 @@
   border-right: var(--border-width) solid var(--border-default);
 }
 
+/* HALF WIDTH. The manifest says this block may share a row, so it has to be able
+   to: at 570px a 340px well leaves the method wrapping three words to a line. The
+   image goes above the body instead of beside it, and the rule that divided the two
+   columns becomes the rule between the two rows. */
+@container (max-width: 700px) {
+  .full { grid-template-columns: 1fr; min-height: 0; }
+  .well {
+    border-right: 0;
+    border-bottom: var(--border-width) solid var(--border-default);
+  }
+  /* The index row drops the columns a narrow cell cannot hold. Title and time are
+     what the row is for; technique and active time are detail, and 446px of fixed
+     columns in a 570px cell left 124px for the dish. */
+  .row { grid-template-columns: 56px 1fr 110px; }
+  .row > .rowValue { display: none; }
+  .hero { grid-template-columns: 1fr; gap: var(--space-8); }
+}
+
 .body { padding: var(--space-8); }
 
 .kicker { margin-bottom: var(--space-4); }

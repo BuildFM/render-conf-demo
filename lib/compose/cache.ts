@@ -39,6 +39,7 @@ export const key = (args: {
   profile: Profile;
   household: Household;
   fired: FiredObligation[];
+  occasion?: { occasion: { id: string; guests: number }; daysUntil: number } | null;
   model: string;
 }): string =>
   digest([
@@ -55,6 +56,11 @@ export const key = (args: {
        is concerned. */
     args.eligible.map((c) => c.name),
     args.fired.map((f) => [f.name, f.props.recipeId]),
+    /* The fast layer moves without the eligible set always moving with it: three
+       days out and two days out can offer the same vocabulary and still want
+       different pages, because the prompt carries how long is left. Without this the
+       second moment serves the first one's composition and the rail says cache hit. */
+    args.occasion ? [args.occasion.occasion.id, args.occasion.daysUntil] : null,
     /* Or a Sonnet composition gets served to an Ollama run and the bake-off
        measures nothing. */
     args.model

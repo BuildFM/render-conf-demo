@@ -13,6 +13,7 @@ import { MakeAheadCallout } from "@/components/blocks/make-ahead-callout";
 import { SubstitutionTable } from "@/components/blocks/substitution-table";
 import { TechniqueNote } from "@/components/blocks/technique-note";
 import { LeftoversNote } from "@/components/blocks/leftovers-note";
+import { OccasionPlan } from "@/components/blocks/occasion-plan";
 import { AllergenNotice } from "@/components/obligations/allergen-notice";
 
 /**
@@ -44,6 +45,7 @@ export const registry: Record<string, any> = {
   SubstitutionTable,
   TechniqueNote,
   LeftoversNote,
+  OccasionPlan,
   AllergenNotice
 };
 

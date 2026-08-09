@@ -54,7 +54,7 @@ for (const model of CANDIDATES) {
     try {
       const t = Date.now();
       const { spec } = await compose({
-        manifest, eligible: allowed, recipes, profile, household: h, fired: candidates
+        manifest, eligible: allowed, recipes, profile, household: h, fired: candidates, facts
       });
       const ms = Date.now() - t;
       const errs = validate(spec, manifest, candidates, known, allowed);

@@ -9,6 +9,7 @@ import type { Recipe } from "@/lib/types";
 import type { Ingredient } from "@/lib/render/resolve";
 import type { Profile } from "@/lib/signals/types";
 import { SiteChrome } from "@/components/blocks/site-chrome";
+import { BlockStamp } from "@/components/layout/block-stamp";
 import { SectionHead } from "@/components/layout/section-head";
 import { SignalBand } from "@/components/layout/signal-band";
 import { TelemetryRail } from "@/components/stage/telemetry-rail";
@@ -57,7 +58,21 @@ const DefaultHome = async () => {
             <div style={{ display: "flex", flexDirection: "column", gap: group.tight ? "0" : "40px" }}>
               {group.items.map(({ component, props }, i) => {
                 const Block = registry[component];
-                return Block ? <Block key={i} {...props} /> : null;
+                if (!Block) return null;
+                /* Named from the manifest, exactly as on a composed page — the same
+                   vocabulary should not be anonymous here and labelled there.
+                   A TIGHT group is an index: the same component repeated, so it is
+                   stamped once at the top rather than saying "Recipe" five times. */
+                const spec = manifest.components.find((c) => c.name === component);
+                const stamped = group.tight ? i === 0 : true;
+                return (
+                  <div key={i} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+                    {stamped ? (
+                      <BlockStamp label={spec?.label ?? ""} lead={gi === 0 && i === 0} />
+                    ) : null}
+                    <Block {...props} />
+                  </div>
+                );
               })}
             </div>
           </section>

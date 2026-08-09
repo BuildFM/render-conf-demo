@@ -6,11 +6,22 @@
   padding-bottom: var(--space-3);
 }
 
-.ruleSignal { border-bottom: var(--border-width-strong) solid var(--border-signal); }
+/* Both weights are the ordinary rule now. `strong` is still the heavier of the two
+   for a page-level division, but the ACID rule left this component: it means "you
+   did not choose this", which is true of an obligation and of nothing else. */
+.ruleSignal { border-bottom: var(--border-width-strong) solid var(--border-default); }
 .ruleDefault { border-bottom: var(--border-width) solid var(--border-default); }
 
 .title {
   composes: sectionTitle from "../type.module.css";
+  color: var(--text-primary);
+}
+
+/* Inside a block, the same head speaks instead of shouting. A block head set in
+   tracked uppercase sits directly under the block stamp, which is ALSO tracked
+   uppercase — two labels in one voice, one of them redundant. */
+.titleQuiet {
+  composes: title from "../type.module.css";
   color: var(--text-primary);
 }
 

@@ -5,6 +5,14 @@
   align-items: start;
 }
 
+/* HALF WIDTH. Three columns in a 570px cell is 170px each, and "Pork belly, boned"
+   does not fit in 170px — the item and its quantity end up on separate lines, which
+   is the one thing a list you read in a shop must never do. One column instead. */
+@container (max-width: 700px) {
+  .columns { grid-template-columns: 1fr; gap: var(--space-7); }
+  .heroColumns { grid-template-columns: 1fr; }
+}
+
 .table { composes: table from "../type.module.css"; }
 
 .colQty { width: 90px; }
@@ -53,4 +61,29 @@
   composes: body from "../type.module.css";
   margin-top: var(--space-3);
   color: var(--text-body);
+}
+
+/* ---- hero. The shop as the page, not as an appendix. ---- */
+
+.heroTitle { margin-top: var(--space-3); margin-bottom: var(--space-4); }
+
+.heroStandfirst {
+  composes: body from "../type.module.css";
+  color: var(--text-body);
+  margin-bottom: var(--space-8);
+}
+
+/* Two wide columns rather than three narrow ones. At hero the list has the whole
+   measure, and a wider column means the item name and its quantity stay on one
+   line — which is the entire ergonomic point of a list you read in a shop. */
+.heroColumns {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-9) var(--grid-gap);
+  align-items: start;
+}
+
+.captionHero {
+  composes: caption;
+  padding-bottom: var(--space-4);
 }

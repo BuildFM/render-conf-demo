@@ -1,4 +1,4 @@
-# Mise — where this is, 5 Aug 2026
+# Mise — where this is, 6 Aug 2026
 
 **Read this first, from a cold start.** It assumes you know nothing about the
 project. It is the state of play, not a spec — the specs live in the vault at
@@ -36,6 +36,8 @@ over-engineer it.
 | `…/meta/plans/2026-07-26-realtime-ui-demo.md` | the build spec — what the demo must prove and why |
 | `…/meta/plans/2026-07-26-demo-design-brief.md` | the visual system and the manifest's contents |
 | `…/meta/plans/2026-08-04-mise-implementation-plan.md` | stack and build order |
+| `…/meta/plans/2026-08-06-occasion-beat.md` | the occasion beat — why it is a form and not a prompt |
+| `…/outputs/renderatl-2026-talk-script.md` | the spoken script |
 | `docs/component-direction.md`, `docs/react-handoff.md` | the component catalogue |
 
 Where this file disagrees with a plan about *what the code does*, this file wins.
@@ -59,6 +61,7 @@ pnpm dev --port 3717      # /stage · / · /h/h-learner · /h/h-twin-a · /h/h-t
 | `npx tsx --env-file=.env.local scripts/compose.mjs` | compose all three households in the terminal |
 | `… scripts/compose.mjs h-twin-a` | one household |
 | `… scripts/compose.mjs --dry` | eligibility only, no model calls |
+| `… scripts/compose.mjs --today=2026-08-19 h-learner` | move the clock — the occasion beat's three moments |
 | `… scripts/cost.mjs` | measured token cost of one call of each kind |
 | `pnpm bake-off --gateway` | first-pass validity + latency, hosted |
 | `pnpm bake-off --local granite4.1:8b qwen3.5:9b` | same, on local models |
@@ -81,7 +84,7 @@ resolved — three seconds per household. It found every bug worth finding.
 **The manifest (`lib/manifest/manifest.json`) is the artifact.** Data, not code,
 read from disk on *every request* — never bundled, because the finale is editing
 it and watching pages change with no rebuild. 15 components, 1 obligation, 2
-assemblies. Each component declares:
+assemblies. *16 components as of 6 Aug — `OccasionPlan` was added with the occasion beat.* Each component declares:
 
 - `requires` — a **permission**: a gate the app evaluates against behaviour
 - `role: lead | support` — may this block be what a page is *about*?
@@ -547,12 +550,14 @@ the design system doing the work, and it is the thesis with a number attached.
 
 ## Open decisions
 
-- **Beat 6's narration does not match what happens.** The spec says the allergen
-  notice appears on both households with a recorded allergy. It fires on **Twin A
-  only** — Twin B declares the same dairy allergy but composed no dairy dish, so the
-  condition never fires. Arguably the better story (the obligation attaches to the
-  dish, not the profile), but it is not what is written. Change the narration, or
-  give Twin B a dairy dish.
+- ~~**Beat 6's narration does not match what happens.**~~ **Resolved 5 Aug** — the
+  spec was corrected before this file was written, so this entry was stale on
+  arrival. Demo spec §9 now says Twin A only, and calls it the better story: the
+  obligation attaches to the dish on the page, not to the flag on the profile, so
+  two households with an identical declared allergy get different pages. The
+  spoken version is in the vault at `outputs/renderatl-2026-talk-script.md`.
+  **No code change wanted. Do not give Twin B a dairy dish** — the absence is the
+  argument.
 - **Raising `maxBlocks` is close to a no-op — the prompt overrides it.** Measured
   5 Aug: at `maxBlocks: 8` the three households composed 3, 4 and 4 blocks, the same
   as at 4. `compose.ts` interpolates the cap and then, in four hardcoded sentences
@@ -576,6 +581,202 @@ the design system doing the work, and it is the thesis with a number attached.
   pressure on 18GB — not isolated.
 - **Two components are built but out of the vocabulary**: `SeasonalNote`,
   `FromYourHistory`. Both produce orphans on a four-block page.
+
+## 6 Aug, later — layout vocabulary, four phases, and an unsolved reliability problem
+
+**Read the reliability section before doing anything else with this.**
+
+### What Brian's feedback was, and what it fixed
+
+*"They all look exactly the same to me. The content is different… the whole layout
+should change."* Correct, and the diagnosis was worse than polish:
+
+1. **There was no layout vocabulary.** The manifest said what may appear and at what
+   depth; `<main>` was a hardcoded flex column, so every block on every page was full
+   width and stacked. **The model could not produce a differently shaped page**, only
+   a differently filled one — which is a CMS, and a room of designers reads it as one.
+2. **The three occasion moments differed only INSIDE `OccasionPlan`.** All three led
+   with the same block; only its stage count changed.
+3. **The hero image moved between moments** because the composer re-picked recipes
+   every call, so the page appeared to say the dinner had changed.
+
+### What is built now
+
+**`spans` on every component** (`full` / `half`), a design-system statement like
+`treatments`. Consecutive support blocks that both permit `half` are paired into a
+grid row by `enforceSpans` in `gates.ts`, and the renderer groups rows. **The model
+does not choose widths** — see below.
+
+**Four phases, four different leads.** `state.occasionPhase` is derived by
+subtraction from `daysUntil`:
+
+| Phase | Days | Lead | The job |
+|---|---|---|---|
+| choosing | ≥10 | `ComparisonTable` @hero | what are we making? |
+| shopping | 4–9 | `ShoppingList` @hero | what do I buy? |
+| prep | 1–3 | `PrepSchedule` @hero | what can I do early? |
+| cooking | 0 | `OccasionPlan` @hero | what happens when? |
+
+**`leadWhen`** — a conditional lead permission. A shopping list is what the page is
+about on the Tuesday before eight people come and a supporting detail every other
+day of its life; `role` alone could not say that, and two components would have been
+two templates. `canLead()` in `gates.ts`, used by the prompt AND the validator so
+they cannot disagree.
+
+**`activeAssemblies`** — an assembly only binds while both members are eligible.
+`PlanTheWeek` glues `ShoppingList` to `PrepSchedule`, and on the shopping day the
+schedule is not eligible, so completion **deleted the lead off its own page**.
+
+**The menu is frozen** on the occasion (`menu: ["034","038","036","039"]`). Blocks
+resolve against it, keeping the model's picks that are on the menu and topping up
+from it. The dinner no longer changes when you reload.
+
+**`ShoppingList` and `ComparisonTable` gained hero treatments.** The list at hero is
+a headline, a count, and two wide columns — the shop as the page rather than an
+appendix.
+
+### Reliability — NOT SOLVED, and it is the blocker
+
+**Composition fails roughly half the time on occasion pages.** Measured 6 Aug over
+15 runs across the four phases: **7 failures.** The same measurement on the twins,
+whose path is unchanged: **0 in 6.** So it is specific to the occasion pages.
+
+The failure is `AI_NoObjectGeneratedError`. The model returns the whole spec **as a
+JSON string stuffed into one field** — `{ blocks: "{\"blocks\":[…]}" }` — or drops
+`dominant` and `rationale`. `compose()` retries twice and salvages a stringified
+payload when the content is complete (`unwrap` in `compose.ts`); the page falls back
+to the default rather than crashing, so **nothing 500s** — but two of five pages
+showed the default page on a single sweep, which is unusable for recording.
+
+**What was tried and ruled out**, so nobody repeats it:
+
+- **Not the `span` field.** Removing it from the schema entirely (the app decides
+  widths now) did not move the rate. Keeping that change anyway — it is the better
+  design and it is one less thing asked of the model.
+- **Not the "lead is already decided" prompt block.** 4/6 without it.
+- **Not the occasion prompt section.** 3/6 without it.
+- **Not thinking.** `thinking: enabled` is incompatible with this structured-output
+  path and fails instantly, 12/12.
+- **The empty `ASSEMBLIES` heading was A cause, not THE cause.** When
+  `activeAssemblies` filters everything out the prompt printed a heading and its
+  rules with nothing beneath. Now prints "(none apply to this page)". One sweep
+  after that fix came back 1/8; the next came back 7/15, so treat the improvement as
+  unproven.
+
+**What to try next**, in the order I would try it:
+
+1. **Shorten the prompt.** It has roughly doubled. The occasion pages are the long
+   ones and they are the ones that fail — that correlation is the strongest signal
+   available and it was never tested directly by cutting length rather than sections.
+2. **Split the call.** Choosing the lead and filling the page are two decisions; the
+   lead is already determined by eligibility on occasion pages, so it could be passed
+   in rather than asked for.
+3. **Pre-compose and freeze the four occasion pages to disk**, the way profiles are
+   frozen. For a recorded demo this is honest and it removes the risk entirely.
+   Option 3 is the safe answer if recording day arrives before 1 or 2 works.
+
+---
+
+## Where 6 Aug left it — the occasion beat
+
+**Built and working.** The fast pace layer: a household schedules a dinner IN the
+product and the home page reorganises around it for a fortnight, then the occasion
+expires and the page goes back to being about the cook.
+
+**Nobody types anything.** `lib/content/occasions.json` is state authored through a
+form — a date, a guest count, and a dietary note per guest chosen from the same
+allergen vocabulary the recipes declare against. **No third model call.** An earlier
+plan had free text parsed into structure; it was cut, because it added a call and a
+parsing concept to buy a proof this beat does not need to carry, and it put a text
+box on stage that reads as chat however it is framed.
+
+### How to see it
+
+```bash
+npx tsx --env-file=.env.local scripts/compose.mjs --today=2026-08-08 h-learner   # T-14
+… --today=2026-08-19    # T-3
+… --today=2026-08-22     # T-0, the morning
+… --today=2026-08-25     # expired — back to the ordinary learner page
+```
+
+Same on the page: `/h/h-learner?today=2026-08-19`. Unset, it is the real date and
+there is no occasion, because `scheduledOn` is 8 Aug — **an occasion does not exist
+before somebody created it**, which is why beat 1 of the demo still gets the
+learner's ordinary recipe-free page.
+
+### The three moments are one fixture seen from three distances
+
+`state.daysUntil` is arithmetic (`lib/occasion.ts`), and **preconditions key on
+it**, so the vocabulary offered differs per moment. `ComparisonTable` needs 7+ days
+— on the morning nobody is comparing dishes. Measured:
+
+| Moment | Lead | Stages inside the plan |
+|---|---|---|
+| T-14 | `OccasionPlan` @full | This week · Up to three days before · On the day |
+| T-3 | `OccasionPlan` @hero | The day before · On the day |
+| T-0 | `OccasionPlan` @hero | This morning |
+
+**The plan burns down as the date closes.** That is the legible visual — the page
+gets shorter and more focused, and it is not three templates.
+
+### The allergen fires for a guest
+
+**The best moment in the beat and it is verified.** The learner declares no dietary
+restriction at all. `allergensInForce` in `gates.ts` unions the household's declared
+diet with the occasion's `avoid`, so the notice fires above charred cabbage on all
+three moments — for somebody who does not live there. **Nothing new was said in the
+manifest**: the obligation already read "an allergen present in a dish on this
+page", and it was never about the household.
+
+### Two facts that are pressure, not habit
+
+`state.planningPressure` and `state.makeAheadPressure` (`gates.ts`). A shopping list
+is for someone who plans, and the learner does not plan — but eight people are
+coming, and cooking for eight is planning whether or not you are a planner. Written
+as one computed fact rather than as an OR in the manifest **on purpose**: the
+manifest goes on a screen in front of six hundred people and a predicate language
+with boolean operators stops being readable at a glance.
+
+### Two robustness fixes, and the second one matters
+
+1. **`compose()` retries once on a schema failure.** `generateObject` *throws* when
+   the response does not match — it does not return something the validator can
+   reject — so the repair pass never saw it. The model returns four good blocks and
+   silently omits `dominant` or `rationale`.
+2. **A compose failure now falls back instead of 500ing.** It was unwrapped in
+   `app/h/[household]/page.tsx`, so a schema miss took the whole request down.
+   Twin A did exactly this, once, on an ordinary load with no occasion involved —
+   **this was latent before the occasion beat, not caused by it.** The rail now says
+   `fell back to the default page — the model returned nothing usable`.
+
+### What was NOT built, deliberately
+
+- **No new recipes.** The audit said the twelve cover it: 034 pressed pork belly,
+  038 white beans, 036 focaccia and 037 green sauce all scale and all carry
+  make-ahead steps. 039 charred cabbage carries the dairy that makes the beat work.
+- **No second component.** `OccasionPlan` is the only addition. The instinct here is
+  a guest list, a countdown, a timeline widget — the density budget is four blocks
+  and a component that cannot appear on a four-block page is dead vocabulary.
+- **`ScalingControl` stayed out of the vocabulary.** The plan had it earning its
+  place at last, and it cannot: it is `"use client"`, and putting an interactive
+  control in a composed page breaks the no-client-JS property the whole build rests
+  on. **The occasion made the scaling a statement rather than a control** — the
+  system knows the number, so `OccasionPlan` prints "Scaled to 8 · ×1.33 on every
+  quantity · written for 6" and no stepper is needed. Better story, and the property
+  holds.
+
+### Open
+
+- **Cost numbers moved and the close quotes them.** `cost.mjs` now measures ~$0.02
+  per composition (up from $0.016 — the occasion adds prompt tokens) and ~$0.05 for
+  the profile (down from $0.085, which is single-sample variance in output tokens,
+  not a change). **Run it several times and settle on a figure before the talk.**
+- **`/stage` does not show the occasion** in the DATA pane yet. It renders fine; the
+  fast layer is just not visible there, and it should be — it is state.
+- The `?today=` parameter is visible in the URL bar. Fine for the harness, worth
+  hiding or cropping when recording.
+
+---
 
 ## Where 5 Aug left it
 

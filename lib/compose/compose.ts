@@ -2,8 +2,10 @@ import { generateObject } from "ai";
 import { z } from "zod";
 import type { Manifest, ComponentSpec } from "@/lib/manifest/load";
 import type { Recipe } from "@/lib/types";
-import type { Household, Profile } from "@/lib/signals/types";
+import type { Household, Occasion, Profile } from "@/lib/signals/types";
+import { occasionBrief } from "@/lib/occasion";
 import type { FiredObligation } from "./gates";
+import { canLead } from "./gates";
 import { composeModel, hasComposeModel } from "./model";
 import * as cache from "./cache";
 import { generateLocalObject } from "./ollama";
@@ -51,11 +53,30 @@ export const layoutSpecSchema = z.object({
   /* Naming the dominant block is a separate decision from listing the blocks, and
      making it separate is what stops the model reaching for whatever is generically
      useful. It has to commit to what the page is about before it fills the page. */
+  /* OPTIONAL IN THE SCHEMA, REQUIRED IN THE PROMPT — and those are different jobs.
+   *
+   * Measured, not guessed: composing h-learner during the occasion, the model
+   * returned a well-formed `blocks` array and NO `dominant` and NO `rationale` on
+   * roughly two calls in three. Both scalars, dropped together, `finishReason:
+   * "stop"` and 178 output tokens — not truncation, just a model that answered the
+   * question the prompt spent forty lines asking and skipped the two it mentions
+   * once each. Three retries at rising temperature all did the same, so the page
+   * fell back to the hand-authored default about half the time it was loaded.
+   *
+   * A required field that the model reliably omits does not make the field arrive —
+   * it converts a recoverable gap into a thrown request. So the schema stops
+   * demanding what it cannot enforce, and `dominant` is filled in code below: it is
+   * DERIVABLE, because the validator already requires it to equal blocks[0], and a
+   * value the app can compute was never worth a 500. The prompt still asks for it,
+   * because naming the lead before listing blocks is a commitment device that
+   * earns its keep whenever more than one block may lead. */
   dominant: z
     .string()
+    .optional()
     .describe(
-      "The COMPONENT NAME of the lead block — e.g. \"PrepSchedule\". Exactly as spelled in " +
-        "the LEAD list. Not a recipe title, not a description. It must equal blocks[0].component."
+      "REQUIRED IN YOUR ANSWER. The COMPONENT NAME of the lead block — e.g. \"PrepSchedule\". " +
+        "Exactly as spelled in the LEAD list. Not a recipe title, not a description. " +
+        "It must equal blocks[0].component."
     ),
   blocks: z.array(
     z.object({
@@ -70,16 +91,64 @@ export const layoutSpecSchema = z.object({
       emphasis: z.array(z.number()).default([]).describe("ComparisonTable only: which value per row carries the answer.")
     })
   ),
+  /* Optional for the same reason as `dominant`, and unlike `dominant` it is NOT
+   * derivable — it is the one sentence in the system the model actually writes. So
+   * a missing one is a validation error rather than a silent blank: the repair pass
+   * asks again, and only an answer that is still missing it falls back. The band at
+   * the foot of the page is the page explaining itself; rendering it empty is worse
+   * than rendering the default page. */
   rationale: z
     .string()
-    .describe("One sentence, under 25 words, stating an inference about this household. Never a count.")
+    .optional()
+    .describe("REQUIRED IN YOUR ANSWER. One sentence, under 25 words, stating an inference about this household. Never a count.")
 });
 
 export type LayoutSpec = z.infer<typeof layoutSpecSchema>;
+
+/**
+ * THE ANSWER WAS RIGHT. THE ENVELOPE WAS WRONG.
+ *
+ * Measured on the occasion prompt, where roughly half of all loads fell back to the
+ * default page: the model returns the whole, correct spec — four good blocks, the
+ * dominant name, a rationale in the house voice — JSON-encoded as a STRING, inside
+ * the `blocks` field that should have held the array:
+ *
+ *   {"blocks": "{\"blocks\":[…],\"dominant\":\"ShoppingList\",\"rationale\":\"…\"}"}
+ *
+ * So the parse fails, `dominant` and `rationale` read as undefined, and a
+ * composition that was correct in every particular is thrown away. Re-asking is the
+ * wrong response — nothing about the ANSWER was wrong, and a second call at a higher
+ * temperature reproduces the same envelope often enough to burn the whole ladder.
+ * The retry prompt already begs it not to do this ("not as JSON encoded inside a
+ * string field"), which is where the previous attempt to fix this by wording ran out.
+ *
+ * Unwrapping costs nothing, needs no model call, and cannot invent anything: it only
+ * ever un-nests fields the model already wrote.
+ */
+export const unwrapDoubleEncoded = (value: unknown): unknown => {
+  if (!value || typeof value !== "object") return value;
+  const v = value as Record<string, unknown>;
+  if (typeof v.blocks !== "string") return value;
+  try {
+    const inner: unknown = JSON.parse(v.blocks);
+    if (Array.isArray(inner)) return { ...v, blocks: inner };
+    /* The whole object, encoded into one of its own fields. Inner wins: the outer
+       copy is the envelope, and any dominant/rationale out there is a duplicate. */
+    if (inner && typeof inner === "object" && Array.isArray((inner as { blocks?: unknown }).blocks)) {
+      return { ...v, ...(inner as Record<string, unknown>) };
+    }
+  } catch {
+    /* Not JSON. Leave it: the schema reports it and the retry ladder takes over. */
+  }
+  return value;
+};
+
+/** A block after the application has decided how wide it is. */
+export type PlacedBlock = LayoutSpec["blocks"][number] & { span: "full" | "half" };
 export type Axis = (typeof AXES)[number];
 
 const describe = (c: ComponentSpec) =>
-  `${c.name} [${c.role}] — ${c.intent} Treatments: ${c.treatments.join("/")}. Max ${c.adjacency.maxPerPage} per page.` +
+  `${c.name} — ${c.intent} Treatments: ${c.treatments.join("/")}. Widths: ${c.spans.join("/")}. Max ${c.adjacency.maxPerPage} per page.` +
   (c.slots.requires ? ` NEEDS ${c.slots.requires}` : "") +
   (c.adjacency.neverWith?.length ? ` Never with: ${c.adjacency.neverWith.join(", ")}.` : "") +
   (c.adjacency.mustFollow?.length ? ` Must follow: ${c.adjacency.mustFollow.join(" or ")}.` : "");
@@ -110,7 +179,9 @@ const prompt = (
   recipes: Recipe[],
   profile: Profile,
   household: Household,
-  fired: FiredObligation[]
+  fired: FiredObligation[],
+  occasion: { occasion: Occasion; daysUntil: number } | null,
+  facts: Record<string, number | string | boolean>
 ) => `
 Compose one home page for one household, out of a fixed vocabulary.
 
@@ -123,7 +194,17 @@ first job is to pick the ONE block that most directly embodies it — if the sen
 is about dishes that branch, that is a fork card, not a shortlist; if it is about a
 weekly rhythm, that is a schedule, not a browse. Give that block the most prominent
 treatment it supports and put it first. Everything else on the page supports it.
-
+${occasion ? `
+THIS FORTNIGHT ONLY — a temporary job, and while it lasts it outranks the brief
+${occasionBrief(occasion.occasion, occasion.daysUntil)}
+The brief above still describes the person. The occasion describes THE JOB THIS
+PAGE HAS TODAY, and the job changes as the date closes: deciding what to make,
+buying it, getting ahead of it, then running the day. **The LEAD list below has
+already been narrowed to today's job — take the lead it offers.** Do not lead with
+a block about the occasion in general when the list offers the block about what
+they are actually doing this week. After the date the occasion is gone and the page
+goes back to the brief, so do not treat it as a change in who they are.
+` : ""}
 You are choosing WHICH blocks appear, IN WHAT ORDER, AT WHAT DEPTH, and which
 recipes go in them. You are not designing anything: type, colour, spacing and the
 components themselves were decided in advance by a person.
@@ -131,11 +212,14 @@ components themselves were decided in advance by a person.
 THE VOCABULARY YOU MAY USE — already filtered to what this household qualifies for.
 Anything not on this list does not exist for this page.
 
-LEAD — can be what a page is about. blocks[0] is one of these.
-${eligible.filter((c) => c.role === "lead").map(describe).join("\n") || "(none)"}
+LEAD — can be what a page is about RIGHT NOW. blocks[0] is one of these.
+${eligible.filter((c) => canLead(c, facts)).map(describe).join("\n") || "(none)"}
 
-SUPPORT — useful beside a lead, never the reason for the page.
-${eligible.filter((c) => c.role !== "lead").map(describe).join("\n")}
+SUPPORT — useful beside a lead, never the reason for the page today.
+${eligible.filter((c) => !canLead(c, facts)).map(describe).join("\n")}
+
+Widths are not your decision. Each block above lists the widths the design system
+permits it, and the application pairs blocks into rows afterwards.
 
 ALREADY PLACED BY THE APPLICATION — DO NOT INCLUDE THESE IN YOUR OUTPUT
 These are obligations. They are rendered automatically for any recipe you place.
@@ -144,7 +228,7 @@ ${fired.length ? fired.map((f) => `${f.name} — fires automatically if you plac
 
 ASSEMBLIES — one unit, not two blocks. Include EVERY member, adjacent, in this
 exact order, or include none of them. A partial assembly is rejected.
-${manifest.assemblies.map((a) => `${a.name}: ${a.members.join(" then ")}`).join("\n")}
+${manifest.assemblies.length ? manifest.assemblies.map((a) => `${a.name}: ${a.members.join(" then ")}`).join("\n") : "(none apply to this page)"}
 
 INVARIANTS
 ${manifest.invariants.map((i) => `- ${i}`).join("\n")}
@@ -155,6 +239,25 @@ ${recipes.map((r) => `${r.id} ${r.title} — techniques: ${r.technique.join(", "
 
 THIS HOUSEHOLD
 ${householdContext(profile, household)}
+
+${(() => {
+  const leads = eligible.filter((c) => canLead(c, facts));
+  return leads.length === 1
+    ? `THE LEAD IS ALREADY DECIDED
+Exactly one block qualifies to lead this page today: ${leads[0].name}.
+So "dominant" MUST be "${leads[0].name}" and blocks[0].component MUST be
+"${leads[0].name}", at the most prominent treatment it supports. This is not a
+preference — the filtering decided it from behaviour and from what day it is, and a
+spec that opens with anything else is rejected.`
+    : "";
+})()}
+
+THE OBJECT YOU RETURN HAS THREE KEYS. All three, every time:
+  "dominant"  — the component name of the lead block. Same string as blocks[0].component.
+  "blocks"    — the array.
+  "rationale" — the one sentence described at the bottom of this prompt.
+An answer containing only "blocks" is the most common way this goes wrong. The
+array is the longest part of the answer, not the whole of it.
 
 OUTPUT ORDER — do this in this order, it matters
 1. Pick the LEAD. It is blocks[0] and it goes in "dominant", at the most prominent
@@ -222,6 +325,9 @@ export const compose = async (args: {
   profile: Profile;
   household: Household;
   fired: FiredObligation[];
+  facts: Record<string, number | string | boolean>;
+  /** The fast layer. Null for most requests, and null again the day after. */
+  occasion?: { occasion: Occasion; daysUntil: number } | null;
   repairNotes?: string[];
 }): Promise<{
   spec: LayoutSpec;
@@ -261,7 +367,7 @@ export const compose = async (args: {
   }
 
   const text =
-    prompt(args.manifest, args.eligible, args.recipes, args.profile, args.household, args.fired) +
+    prompt(args.manifest, args.eligible, args.recipes, args.profile, args.household, args.fired, args.occasion ?? null, args.facts) +
     (args.repairNotes?.length
       ? `\n\nYOUR PREVIOUS ATTEMPT WAS REJECTED. Fix exactly these and return a whole new spec:\n${args.repairNotes.map((n) => `- ${n}`).join("\n")}`
       : "");
@@ -272,23 +378,81 @@ export const compose = async (args: {
      Ollama's OpenAI-compatible endpoint cannot turn thinking off — see
      lib/compose/ollama.ts, where that cost an hour. */
   let usage: { inputTokens: number; outputTokens: number } | null = null;
-  const object = local
+  /**
+   * One retry on a SCHEMA failure, which is a different failure from an invalid
+   * layout and was previously not handled at all.
+   *
+   * `generateObject` throws when the response does not match — it does not return
+   * something the validator can reject — so the repair pass downstream never saw it
+   * and the throw went straight through the page. Rare enough to miss until the
+   * occasion prompt made it common.
+   *
+   * Two different failures wear the same error, and they want opposite responses:
+   *   - a MALFORMED answer, which a retry at a nudged temperature can fix;
+   *   - a correct answer in a broken envelope, which `salvage` unwraps for free.
+   * Salvage runs first on every attempt. Asking again for something the model
+   * already got right costs a call and usually reproduces the same envelope.
+   */
+  /** Recover a spec the model got right but wrapped wrongly. Returns null when the
+   *  answer is genuinely malformed, and the temperature ladder takes it from there. */
+  const salvage = (e: { value?: unknown; text?: string }): LayoutSpec | null => {
+    const candidates: unknown[] = [e?.value];
+    try {
+      if (e?.text) candidates.push(JSON.parse(e.text));
+    } catch {
+      /* not JSON at all */
+    }
+    for (const c of candidates) {
+      const parsed = layoutSpecSchema.safeParse(unwrapDoubleEncoded(c));
+      if (parsed.success) {
+        console.warn("[compose] recovered a double-encoded spec — the answer was valid, the envelope was not");
+        return parsed.data;
+      }
+    }
+    return null;
+  };
+
+  const askOnce = async (temperature: number): Promise<LayoutSpec> => {
+    const r = await generateObject({
+      model: model!,
+      schema: layoutSpecSchema,
+      temperature,
+      // Arrangement, not judgment: the judgment already happened in call 1,
+      // which runs nightly and keeps its reasoning budget. Measured on the
+      // compose call: 16.5s -> 4.8s, output tokens 1525 -> 290, which is what
+      // makes "fast and cheap" true when said on stage.
+      providerOptions,
+      prompt: temperature === 0 ? text : `${text}
+
+Your previous answer was malformed. Return the result as a single structured object matching the schema exactly — not as text, and not as JSON encoded inside a string field. Name the dominant block, and give the one-sentence rationale.`
+    });
+    usage = { inputTokens: r.usage?.inputTokens ?? 0, outputTokens: r.usage?.outputTokens ?? 0 };
+    return r.object;
+  };
+
+  /** One attempt, with the envelope repaired locally before the failure counts. */
+  const attempt = (temperature: number): Promise<LayoutSpec> =>
+    askOnce(temperature).catch((e) => {
+      const recovered = salvage(e as { value?: unknown; text?: string });
+      return recovered ? recovered : Promise.reject(e);
+    });
+
+  const schemaMiss = (e: { name?: string; message?: string }) => {
+    const hit = e?.name === "AI_NoObjectGeneratedError" || /did not match schema|No object generated/.test(e?.message ?? "");
+    if (process.env.MISE_DEBUG_RETRY) console.error(`[retry] name=${e?.name} hit=${hit} msg=${String(e?.message).slice(0,80)}`);
+    return hit;
+  };
+
+  const raw = local
     ? await generateLocalObject({ model: localName, prompt: text, schema: layoutSpecSchema })
-    : await (async () => {
-        const r = await generateObject({
-          model: model!,
-          schema: layoutSpecSchema,
-          temperature: 0,
-          // Arrangement, not judgment: the judgment already happened in call 1,
-          // which runs nightly and keeps its reasoning budget. Measured on the
-          // compose call: 16.5s -> 4.8s, output tokens 1525 -> 290, which is what
-          // makes "fast and cheap" true when said on stage.
-          providerOptions,
-          prompt: text
-        });
-        usage = { inputTokens: r.usage?.inputTokens ?? 0, outputTokens: r.usage?.outputTokens ?? 0 };
-        return r.object;
-      })();
+    : await attempt(0)
+        .catch((e) => (schemaMiss(e) ? attempt(0.3) : Promise.reject(e)))
+        .catch((e) => (schemaMiss(e) ? attempt(0.6) : Promise.reject(e)));
+
+  /* The lead, named by the app when the model did not name it. Not a guess: the
+     validator rejects any spec where `dominant` and blocks[0] disagree, so blocks[0]
+     IS the answer and the only question was whether the model bothered to say it. */
+  const object: LayoutSpec = { ...raw, dominant: raw.dominant ?? raw.blocks[0]?.component };
 
   /* Deliberately NOT stored here. A layout is only worth keeping once it has passed
      validation — caching the raw output would pin an invalid composition and make

@@ -23,6 +23,19 @@ const predicate = z.object({
 
 const componentSpec = z.object({
   name: z.string(),
+  /** WHAT THIS BLOCK IS, in a reader's words — "Comparison", "Prep schedule".
+   *
+   *  The page says it out loud above every block. Before this, a block announced
+   *  its CONTENT ("Four ways to feed six people") and never its kind, so a page of
+   *  five blocks read as five headlines in one voice and several blocks — the
+   *  tables, the notes — arrived with no name at all.
+   *
+   *  It lives here rather than in the components because the manifest IS the
+   *  vocabulary: renaming a block on stage renames it on all three pages with no
+   *  rebuild, which is the same argument the density edit makes and cheaper to see.
+   *  Defaulted rather than required so a mistyped edit during the demo drops the
+   *  label instead of throwing the page — `checkDrift` reports it in the rail. */
+  label: z.string().default(""),
   intent: z.string(),
   /** PERMISSION — a gate on a choice the model makes. */
   requires: z.array(predicate).default([]),
@@ -33,6 +46,15 @@ const componentSpec = z.object({
   }),
   /** Can this block be what a page is ABOUT, or only support one? */
   role: z.enum(["lead", "support"]).default("support"),
+  /** …and if not always, then WHEN. A shopping list is what the page is about on the
+   *  Tuesday before eight people come, and a supporting detail every other day. That
+   *  is one component with a conditional permission, not two templates. */
+  leadWhen: z.array(predicate).default([]),
+  /** WIDTHS this block may occupy. The layout half of the vocabulary: treatments say
+   *  how deep a block goes, spans say how wide. Without this the model can only
+   *  change what is on a page and never what the page is shaped like — which makes
+   *  every composition a stack, however different the content. */
+  spans: z.array(z.enum(["full", "half"])).default(["full"]),
   /** Does this block put a photograph on the page at "hero" or "full"? The density
    *  budget is spent in photographs, and counting every large block as one was a
    *  proxy that over-counted: TechniqueThread at full is large and carries none. */
@@ -43,6 +65,10 @@ const componentSpec = z.object({
 
 const obligationSpec = z.object({
   name: z.string(),
+  /** As above — what this is in a reader's words. An obligation names itself on the
+   *  page already ("Allergy warning · dairy"), so this is for the catalogue and for
+   *  anywhere else the vocabulary is listed rather than rendered. */
+  label: z.string().default(""),
   intent: z.string(),
   /** OBLIGATION — not a choice. Evaluated in code, placed before the model runs. */
   requiredWhen: predicate,
@@ -90,6 +116,16 @@ export const checkDrift = (manifest: Manifest, registryNames: string[]) => {
 
   const missingComponent = [...declared].filter((n) => !built.has(n));
   const missingEntry = [...built].filter((n) => !declared.has(n));
+  /* Anything in the vocabulary the page cannot name. Silent otherwise — the block
+     still renders, just anonymously, which is the state this existed to end. */
+  const missingLabel = [...manifest.components, ...manifest.obligations]
+    .filter((c) => !c.label)
+    .map((c) => c.name);
 
-  return { missingComponent, missingEntry, ok: !missingComponent.length && !missingEntry.length };
+  return {
+    missingComponent,
+    missingEntry,
+    missingLabel,
+    ok: !missingComponent.length && !missingEntry.length && !missingLabel.length
+  };
 };

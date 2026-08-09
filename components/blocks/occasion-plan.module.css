@@ -1,0 +1,116 @@
+.title { margin-top: var(--space-3); margin-bottom: var(--space-4); }
+
+/* Same head as PrepSchedule and ForkedRecipeCard. Three lead blocks treating a
+   photograph identically is the system showing rather than three decisions. */
+.head {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-9);
+  align-items: center;
+  margin-bottom: var(--space-7);
+}
+
+.well { width: 360px; }
+
+.standfirst {
+  composes: body from "../type.module.css";
+  color: var(--text-body);
+}
+
+/* The one acid moment in the block, and it is the number. Everything else here is
+   a schedule; this is the fact the occasion supplied. */
+.scaled {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+  padding: var(--space-4) 0;
+  border-top: var(--border-width) solid var(--border-default);
+  margin-bottom: var(--space-6);
+}
+
+.scaledValue {
+  composes: sectionTitle from "../type.module.css";
+  color: var(--text-signal);
+}
+
+.scaledNote {
+  /* `micro`, not `caption` — there is no `caption` in the type scale, and composing
+     a class that does not exist fails silently: both notes were shipping with a
+     literal "undefined" in their class list and no type styles at all. */
+  composes: micro from "../type.module.css";
+  color: var(--text-dim);
+}
+
+.stage {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: var(--space-7);
+  align-items: start;
+  padding: var(--space-4) 0;
+  border-top: var(--border-width) solid var(--border-default);
+}
+
+/* No closing rule: the block ends where the next block's edge begins. */
+
+.when {
+  composes: sectionTitle from "../type.module.css";
+  color: var(--text-primary);
+}
+
+.whenNote { margin-top: var(--space-2); }
+
+.tasks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.task {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-5);
+  align-items: baseline;
+}
+
+.taskText {
+  composes: body from "../type.module.css";
+  color: var(--text-body);
+}
+
+.taskTextAhead {
+  composes: taskText;
+  color: var(--text-signal);
+}
+
+.guestNote {
+  /* `micro`, not `caption` — there is no `caption` in the type scale, and composing
+     a class that does not exist fails silently: both notes were shipping with a
+     literal "undefined" in their class list and no type styles at all. */
+  composes: micro from "../type.module.css";
+  color: var(--text-dim);
+  margin-top: var(--space-5);
+}
+
+.collapsed { display: block; }
+
+.collapsedTitle {
+  composes: titleS from "../type.module.css";
+  color: var(--text-primary);
+}
+
+.collapsedBody {
+  composes: body from "../type.module.css";
+  margin-top: var(--space-2);
+  color: var(--text-body);
+}
+
+.signal { color: var(--text-signal); }
+
+/* HALF WIDTH — same as PrepSchedule, and for the same reasons. The two blocks
+   share a head shape, so they share how it gives way. */
+@container (max-width: 700px) {
+  .head { grid-template-columns: 1fr; gap: var(--space-7); }
+  .well { width: 100%; }
+  .stage { grid-template-columns: 1fr; gap: var(--space-3); }
+}

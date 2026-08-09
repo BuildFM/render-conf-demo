@@ -39,11 +39,13 @@
   color: var(--text-body);
 }
 
-/* The untried variable is the point of the block: acid rule, Display L. */
+/* The untried variable is the point of the block: Display L, and an acid KICKER —
+   the rule itself is now the ordinary weight, because the acid rule means "nobody
+   chose this" and this is the one thing on the page the reader most gets to choose. */
 .untried {
   margin-top: var(--space-8);
   padding-top: var(--space-5);
-  border-top: var(--border-width-strong) solid var(--border-signal);
+  border-top: var(--border-width) solid var(--border-default);
   display: grid;
   grid-template-columns: auto 1fr;
   gap: var(--space-7);

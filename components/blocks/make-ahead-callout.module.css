@@ -1,6 +1,7 @@
+/* One rule, at the top, in the default weight. The acid rule belongs to
+   obligations; the callout's own emphasis is carried by its type. */
 .panel {
-  border-top: var(--border-width-strong) solid var(--border-signal);
-  border-bottom: var(--border-width) solid var(--border-default);
+  border-top: var(--border-width) solid var(--border-default);
   padding: var(--space-5) 0;
 }
 

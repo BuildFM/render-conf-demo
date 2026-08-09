@@ -3,6 +3,12 @@
 .m { composes: displayM from "../type.module.css"; }
 .s { composes: displayS from "../type.module.css"; }
 
+/* voice="quiet" — the same heading slot, spoken. Size still selects the scale, so
+   a caller swaps the voice without also having to re-pick a size. */
+.quietL { composes: title from "../type.module.css"; }
+.quietM { composes: title from "../type.module.css"; }
+.quietS { composes: titleS from "../type.module.css"; }
+
 .primary { color: var(--text-primary); }
 .onSignal { color: var(--text-on-signal); }
 .balance { text-wrap: balance; }

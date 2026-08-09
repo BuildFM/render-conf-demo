@@ -18,12 +18,13 @@
   color: var(--text-body);
 }
 
-/* The gap gets the acid rule, not the inventory. */
+/* The gap gets the acid, not the inventory — in the label, which is where the
+   colour still belongs. The rule under it is an ordinary head division. */
 .missingHead {
   composes: microWide from "../type.module.css";
   color: var(--text-signal);
   padding-bottom: var(--space-3);
-  border-bottom: var(--border-width-strong) solid var(--border-signal);
+  border-bottom: var(--border-width) solid var(--border-default);
 }
 
 .missingList {
@@ -100,4 +101,10 @@
   composes: body from "../type.module.css";
   margin-top: var(--space-3);
   color: var(--text-body);
+}
+
+/* HALF WIDTH. The inventory and the gap list stop being columns and become a
+   sequence — at 570px neither holds a line of ingredient names. */
+@container (max-width: 700px) {
+  .pantry { grid-template-columns: 1fr; gap: var(--space-7); }
 }

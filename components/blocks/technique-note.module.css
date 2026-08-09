@@ -1,3 +1,10 @@
+/* DELIBERATE EXCEPTION, kept on purpose.
+ *
+ * The horizontal acid rule belongs to obligations and to nothing else — it means
+ * "you did not choose this". This is a VERTICAL accent, a different device: it
+ * marks a margin rather than dividing the page, and it played no part in the
+ * horizontal-rule pile-up that emptied the acid out of the other nine blocks.
+ * It stays. Do not grey it out in the name of the rule above. */
 .panel {
   border-left: var(--border-width-strong) solid var(--border-signal);
   padding-left: var(--space-5);

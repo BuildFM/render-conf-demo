@@ -25,6 +25,41 @@ export type Household = {
   pantry: string[];
 };
 
+/**
+ * A one-off event the household scheduled IN the product — the fast pace layer.
+ *
+ * No model authors this, parses it, or infers it. It is a form: a date, a number,
+ * and a dietary note per guest chosen from the same allergen vocabulary the recipes
+ * declare against, which is why an occasion cannot name an allergen no dish knows
+ * about. A site that DEDUCED you were having a party would be a different and
+ * creepier product, and it would be wrong often.
+ */
+export type Occasion = {
+  id: string;
+  householdId: string;
+  kind: "dinner-party" | "weeknight-guests" | "batch-cook";
+  /** When the person filled the form. Before this the occasion does not exist —
+   *  an occasion is not a standing fact about a household, it is an event with
+   *  two ends. */
+  scheduledOn: string;
+  label: string;
+  guests: number;
+  /** ISO date. `daysUntil` is computed from it per request — see lib/occasion.ts. */
+  date: string;
+  avoid: string[];
+  avoidNote?: string;
+  /**
+   * The dishes, once decided.
+   *
+   * A menu chosen fourteen days out is a FACT by day three — the dinner did not
+   * change because you reloaded the page. Frozen here for the same reason profiles
+   * are frozen to disk: it is a decision that gets made once, and letting it move
+   * under the reader makes the system look like it is guessing rather than
+   * remembering.
+   */
+  menu?: string[];
+};
+
 /** Output of call 1. Slow-moving — computed nightly, cached to disk. */
 export const profileSchema = z.object({
   characterization: z.string().min(40).describe("Three or four plain sentences. No jargon, no marketing register."),

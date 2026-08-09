@@ -1,5 +1,5 @@
 .full {
-  border-top: var(--border-width-strong) solid var(--border-signal);
+  border-top: var(--border-width) solid var(--border-default);
   padding-top: var(--space-7);
   display: grid;
   grid-template-columns: 1.15fr 1fr;
@@ -43,7 +43,7 @@
 .collapsed { display: block; }
 
 .collapsedPrinciple {
-  composes: rowTitle from "../type.module.css";
+  composes: titleS from "../type.module.css";
   margin-top: var(--space-3);
   color: var(--text-primary);
 }
@@ -52,4 +52,10 @@
   composes: body from "../type.module.css";
   margin-top: var(--space-2);
   color: var(--text-body);
+}
+
+/* HALF WIDTH. Two proportional columns are fine at the full measure and become two
+   270px columns in a shared row, which is under the body measure for both. */
+@container (max-width: 700px) {
+  .full { grid-template-columns: 1fr; gap: var(--space-7); }
 }

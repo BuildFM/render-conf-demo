@@ -12,7 +12,7 @@ type PrepScheduleProps = {
   days: Day[]
   /** The shared base dish — the one the week is built on. Never any other. */
   image?: { src: string; alt: string; tag?: string }
-  treatment: "full" | "collapsed"
+  treatment: "hero" | "full" | "collapsed"
 }
 
 const hasSharedBase = (day: Day) => day.tasks.some((task) => task.sharedBase)
@@ -49,7 +49,7 @@ export const PrepSchedule = ({ title, days, image, treatment }: PrepScheduleProp
           treat their photograph identically, which is the system showing rather
           than two separate decisions. */}
       <div className={image ? styles.head : undefined}>
-        <DisplayHeading size="m" as="h2" className={styles.title}>
+        <DisplayHeading size={treatment === "hero" ? "l" : "m"} as="h2" className={styles.title}>
           {title}
         </DisplayHeading>
         {image ? (
@@ -66,12 +66,7 @@ export const PrepSchedule = ({ title, days, image, treatment }: PrepScheduleProp
       {days.map((day, i) => (
         <div
           key={day.day}
-          className={[
-            hasSharedBase(day) ? styles.dayShared : styles.day,
-            i === days.length - 1 ? styles.dayLast : ""
-          ]
-            .filter(Boolean)
-            .join(" ")}
+          className={hasSharedBase(day) ? styles.dayShared : styles.day}
         >
           <div>
             <h3 className={styles.dayName}>{day.day}</h3>

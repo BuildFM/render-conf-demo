@@ -68,7 +68,7 @@ const candidates = obligationCandidates(manifest, facts, recipes, h);
    production — a cost model built on a hand-rebuilt prompt measures nothing. */
 const { compose } = await import("../lib/compose/compose.ts");
 const composed = await compose({
-  manifest, eligible: allowed, recipes, profile, household: h, fired: candidates
+  manifest, eligible: allowed, recipes, profile, household: h, fired: candidates, facts
 });
 
 console.log(`\n${bold("measured, one real call of each kind")}\n`);

@@ -1,0 +1,7 @@
+/* Sits on a hairline, so the stamp reads as the top edge of a block rather than as
+   a floating label. Rules do the work boxes usually do — this is the same rule the
+   rest of the system uses, one step quieter than a section head's. */
+.stamp {
+  padding-top: var(--space-3);
+  border-top: var(--border-width) solid var(--border-default);
+}

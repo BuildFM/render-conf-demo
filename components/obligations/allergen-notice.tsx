@@ -5,6 +5,10 @@ import styles from "./allergen-notice.module.css"
 type AllergenNoticeProps = {
   allergen: string
   recipeTitle: string
+  /** WHOSE constraint this is. A household that declares an allergy needs no
+   *  explanation; a guest's does — without it, the learner, who records no allergy
+   *  at all, got a warning that read as a claim about them. */
+  source?: "household" | "guest"
   /** Optional second sentence. The first is generated from the two names. */
   detail?: string
 }
@@ -19,8 +23,11 @@ type AllergenNoticeProps = {
  *  not: the design brief sanctions three glyphs (→ · ©) and that was a fourth,
  *  doing the job of a warning icon in a system that bans icon sets. It was also
  *  adding emphasis to the most emphatic thing on the page. */
-export const AllergenNotice = ({ allergen, recipeTitle, detail }: AllergenNoticeProps) => (
-  <section className={styles.notice} aria-label={`Allergen notice: ${allergen}`}>
+export const AllergenNotice = ({ allergen, recipeTitle, source, detail }: AllergenNoticeProps) => (
+  <section
+    className={styles.notice}
+    aria-label={`Allergen notice: ${allergen}${source === "guest" ? ", for a guest" : ""}`}
+  >
     <div className={styles.band}>
       {/* "Recorded for this household" until 5 Aug. It described the provenance of
           the fact and never named the thing it was warning about — on a block whose
@@ -28,6 +35,7 @@ export const AllergenNotice = ({ allergen, recipeTitle, detail }: AllergenNotice
           someone who has been looking at it for two seconds. The word is "allergy". */}
       <Eyebrow track="lg" className={styles.kicker}>
         Allergy warning · {allergen}
+        {source === "guest" ? " · for a guest" : null}
       </Eyebrow>
       <DisplayHeading size="l" as="h2" className={styles.statement}>
         {recipeTitle} contains {allergen.toLowerCase()}

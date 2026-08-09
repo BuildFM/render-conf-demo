@@ -1,10 +1,17 @@
 .notice { display: block; }
 
-/* Acid rule above and below. Never red, never a badge, and no mark — the rules,
-   the kicker and the Display L statement are the whole signal. */
+/* THE ACID RULE, AND THE ONLY ONE IN THE SYSTEM.
+ *
+ * It means: you did not choose this. Obligations are the one thing on a page that
+ * nobody picked — not the reader, not the model — so the one structural use of the
+ * signal colour marks them and nothing else. Nine other places drew this rule once;
+ * a mark that appears everywhere marks nothing.
+ *
+ * Top only. It used to bracket the notice top and bottom, which boxed it — and two
+ * notices in a row put four acid rules on screen with only space between two of
+ * them. A rule separates; two rules box, and there are no boxes here. */
 .band {
   border-top: var(--border-width-strong) solid var(--border-signal);
-  border-bottom: var(--border-width-strong) solid var(--border-signal);
   padding: var(--space-8) 0;
 }
 

@@ -4,38 +4,60 @@
   padding: var(--space-13) 0;
 }
 
+/* NOTHING ON THIS PAGE THAT IS NOT A BLOCK USES THE ACID.
+ *
+ * The kit is a contact sheet: the specimens are the content and everything else is
+ * the sheet they are pinned to. Chrome set in the brand's own colour and its own
+ * display type competes with the specimens for the eye and, worse, teaches the
+ * wrong lesson about where the acid goes — it is the signal colour, and a page that
+ * spends it on its own furniture has spent it on nothing. Grey, small, and out of
+ * the way. If you need to find your place on this page, scroll; the blocks are the
+ * landmarks. */
 .head { margin-bottom: var(--rhythm-section); }
 
 .title {
-  composes: displayXl from "../../components/type.module.css";
-  color: var(--text-primary);
+  composes: title from "../../components/type.module.css";
+  color: var(--text-body);
 }
 
 .lede {
   composes: body from "../../components/type.module.css";
-  margin-top: var(--space-7);
+  margin-top: var(--space-5);
   max-width: var(--measure-lede);
-  color: var(--text-body);
+  color: var(--text-dim);
 }
 
 .specimen { margin-bottom: var(--rhythm-section); }
 
+/* The specimen label says which drawer you are looking in. It was set in display
+   800 at section-head scale with an acid treatment beside it, which put a heavier,
+   louder line above each specimen than the specimen's own headline. Micro floor,
+   one grey, and a faint rule — the three parts separate by position, not colour. */
 .label {
   display: flex;
   align-items: baseline;
-  gap: var(--space-5);
+  gap: var(--space-4);
   padding-bottom: var(--space-3);
-  border-bottom: var(--border-width) solid var(--border-default);
+  border-bottom: var(--border-width) solid var(--border-faint);
 }
 
 .name {
-  composes: sectionTitle from "../../components/type.module.css";
-  color: var(--text-primary);
+  composes: micro from "../../components/type.module.css";
+  color: var(--text-body);
 }
 
 .treatment {
   composes: micro from "../../components/type.module.css";
-  color: var(--text-signal);
+  color: var(--text-dim);
+}
+
+/* The export name, beside the reader-facing one. Mono lowercase, not tracked —
+   it is code, and it should not be mistaken for something a person reads. */
+.className {
+  composes: micro from "../../components/type.module.css";
+  color: var(--text-dim);
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .note {

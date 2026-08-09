@@ -1,6 +1,7 @@
 import type { ComparisonRow } from "@/lib/types"
 import { SectionHead } from "@/components/layout/section-head"
 import { Eyebrow } from "@/components/core/eyebrow"
+import { DisplayHeading } from "@/components/core/display-heading"
 import styles from "./comparison-table.module.css"
 
 type ComparisonTableProps = {
@@ -8,7 +9,7 @@ type ComparisonTableProps = {
   /** 2–4 axes. They are the personalisation — say so above the table. */
   axes: string[]
   rows: ComparisonRow[]
-  treatment: "full" | "collapsed"
+  treatment: "hero" | "full" | "collapsed"
 }
 
 const axisNote = (axes: string[]) =>
@@ -26,8 +27,20 @@ export const ComparisonTable = ({ title, axes, rows, treatment }: ComparisonTabl
         <Eyebrow track="md" className={styles.axisNote}>
           {axisNote(shownAxes)}
         </Eyebrow>
+      ) : treatment === "hero" ? (
+        /* HERO. The comparison opens the page, so it stops being a reference and
+           becomes the question: this is what choosing looks like when it is the job
+           of the day. The axes get named as the reason, at display scale. */
+        <>
+          <Eyebrow track="sm" tone="signal">
+            {axisNote(shownAxes)}
+          </Eyebrow>
+          <DisplayHeading size="l" as="h2" className={styles.heroTitle}>
+            {title}
+          </DisplayHeading>
+        </>
       ) : (
-        <SectionHead title={title} meta="Columns chosen for you" metaTone="signal" />
+        <SectionHead title={title} meta="Columns chosen for you" metaTone="signal" voice="quiet" />
       )}
 
       <table className={collapsed ? styles.tableCollapsed : styles.table}>
