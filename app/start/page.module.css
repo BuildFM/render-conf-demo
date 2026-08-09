@@ -1,0 +1,79 @@
+.sheet {
+  width: var(--canvas-width);
+  margin: 0 auto;
+  padding: var(--space-13) 0;
+}
+
+.head { margin-bottom: var(--rhythm-section); }
+
+.title {
+  composes: displayXl from "../../components/type.module.css";
+  color: var(--text-primary);
+}
+
+.lede {
+  composes: body from "../../components/type.module.css";
+  margin-top: var(--space-7);
+  max-width: var(--measure-lede);
+  color: var(--text-body);
+}
+
+.section { margin-bottom: var(--rhythm-section); }
+
+.aside {
+  composes: body from "../../components/type.module.css";
+  max-width: var(--measure-lede);
+  margin-top: var(--space-5);
+  color: var(--text-dim);
+}
+
+.code { color: var(--text-signal); }
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  margin-top: var(--space-5);
+}
+
+/* A row is a door. Four columns: what it is, why you would open it, which moment
+   it belongs to, and the URL — the last one because this is a run sheet and the
+   address is the thing you type when the click does not work on stage. */
+.row {
+  display: grid;
+  grid-template-columns: 200px 1fr 150px 310px;
+  gap: var(--space-5);
+  align-items: baseline;
+  padding: var(--space-4) 0;
+  border-top: var(--border-width) solid var(--border-default);
+  text-decoration: none;
+}
+
+.row:last-child { border-bottom: var(--border-width) solid var(--border-default); }
+
+.row:hover { background: var(--surface-raised); }
+
+.row:hover .name { color: var(--text-signal); }
+
+.name {
+  composes: sectionTitle from "../../components/type.module.css";
+  color: var(--text-primary);
+}
+
+.note {
+  composes: body from "../../components/type.module.css";
+  color: var(--text-body);
+}
+
+.tag {
+  composes: micro from "../../components/type.module.css";
+  color: var(--text-signal);
+}
+
+/* `data`, not `micro` — micro uppercases, and a URL you might have to type on
+   stage is the one string on the page that has to be transcribable exactly. */
+.href {
+  composes: data from "../../components/type.module.css";
+  color: var(--text-dim);
+  text-align: right;
+  white-space: nowrap;
+}
