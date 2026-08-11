@@ -799,6 +799,27 @@ Sixteen chips in three states:
 | outlined | offered to the model, not chosen | the model |
 | acid | on the page | the model |
 
+**The states are the layout** *(11 Aug)*. They were rendered as sixteen chips in
+manifest order with the state carried by colour, which meant the three states were
+shuffled together and the room had to classify each box in turn to see the shape of
+it — the one thing this exists to make instant. They are now **three labelled columns
+with the count in the heading**, set in the big acid numeral: 7 not eligible, 6 passed
+over, 3 on the page. Nobody has to read a chip. The headings also retired the legend,
+which was saying what the column headings now say.
+
+It pays off hardest in move 2: flipping one fact takes the counts from **7 / 6 / 3 to
+11 / 3 / 2** and the left column visibly balloons. That reads from the back of a room;
+five boxes changing colour in place did not.
+
+The middle column is **"passed over", not "offered"** — deliberately. `offered` was
+ambiguous against the rail's `vocabulary 9/16`: nine WERE offered, six went unused, so
+the same word carried two numbers on one screen and the narration had to pick one.
+
+`/twins` keeps manifest order (`layout="sequence"`). Different question — there you
+want to know WHICH block differs, and that is answered by two rows in the same order
+and looking straight down. Grouping would move a block between columns and turn a
+glance into a search.
+
 **Three states, not two, and that is the whole point.** Two — used and unused — only
 says "this page has these blocks on it", which you can learn by looking at the page.
 Grey is the application; the gap between outlined and acid is the model's ENTIRE

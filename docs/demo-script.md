@@ -74,17 +74,21 @@ explained.
 > This is the vocabulary. Sixteen blocks — everything this site is capable of putting
 > on a page. A person wrote those sixteen. The model cannot invent a seventeenth.
 >
-> Three states. Grey means it wasn't eligible — and it tells you why.
-
-**Read one grey chip out loud, verbatim.** "needs user dot expands technique equals
-true". The machine's own words beat any paraphrase.
-
-> That was decided in code, before the model was asked anything.
+> Three columns. Read the numbers.
 >
-> Outlined means the model was offered it and passed. Yellow means it's on the page.
+> Seven were never offered. A gate said no, in code, before the model was asked
+> anything — and it tells you which gate.
+
+**Read one chip in the first column out loud, verbatim.** "needs user dot expands
+technique equals true". The machine's own words beat any paraphrase.
+
+> Six it was shown and passed over. Three it used.
 >
-> Nine of sixteen were offered. Three are on the page. That gap — outlined to yellow —
-> is the entire amount of authority the model has here.
+> So of sixteen blocks, the model got a say over nine of them and used three. Those
+> two columns on the right are the whole of its authority. Everything on the left had
+> already been decided.
+
+*(The counts are the point — nobody has to read a chip to see the shape of it.)*
 
 **The job:** turn "these pages are different" from a claim into a fact the room can
 count. Everything after this depends on the three states being understood.
@@ -106,13 +110,14 @@ count. Everything after this depends on the three states being understood.
 
 *(4–6s. Do not fill it with apology. The wait is proof it is happening.)*
 
-It lands: the vocabulary halves, **9 of 16 down to 5**, and the page now opens on a
-recipe.
+It lands. The columns visibly rebalance — **7 / 6 / 3 becomes 11 / 3 / 2** — and the
+page now opens on a recipe.
 
 > Two different things just happened, and they are not the same kind of thing.
 >
-> Five blocks went grey. That's code. It's arithmetic, it took a hundred
-> milliseconds, and it would work with the wifi off.
+> Seven became eleven. Four blocks moved into the left-hand column. That's code —
+> it's arithmetic, it took a hundred milliseconds, and it would work with the wifi
+> off.
 >
 > And *then* the model built a page out of what was left.
 >

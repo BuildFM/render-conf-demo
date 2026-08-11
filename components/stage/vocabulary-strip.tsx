@@ -58,6 +58,16 @@ type Props = {
   today?: string;
   /** Names the strip. The household's label when more than one is on screen. */
   heading?: string;
+  /**
+   * `grouped` — three labelled columns, one per state. What a single page wants: the
+   *   question there is "how much of this did the model decide", and the answer is a
+   *   count and a column height rather than sixteen boxes to classify one at a time.
+   * `sequence` — every block in manifest order, states shown as colour. What the
+   *   twins view wants: there the question is "which block differs", and that is
+   *   answered by two rows in the same order and looking straight down. Grouping
+   *   would move a block between columns and turn a glance into a search.
+   */
+  layout?: "grouped" | "sequence";
   /** Off when something above has already taught the three states — the twins view
    *  shows two strips and a legend printed twice is a legend nobody reads once. */
   showLegend?: boolean;
@@ -83,10 +93,38 @@ export const VocabularyStrip = ({
   today,
   heading = "The vocabulary",
   showLegend = true,
-  switches = "links"
+  switches = "links",
+  layout = "grouped"
 }: Props) => {
   const eligibleSet = new Set(eligible);
   const chosenMap = new Map(chosen.map((c) => [c.component, c.treatment]));
+
+  const stateOf = (c: ComponentSpec) =>
+    chosenMap.has(c.name) ? "chosen" : eligibleSet.has(c.name) ? "offered" : "off";
+
+  /** The first failing predicate, not all of them. A chip listing three reasons is a
+   *  chip nobody reads at distance, and one is enough to answer the only question
+   *  being asked of it — why is this one out. */
+  const firstFailure = (c: ComponentSpec) => c.requires.find((p) => !test(p, facts));
+
+  const Chip = ({ c }: { c: ComponentSpec }) => {
+    const state = stateOf(c);
+    const treatment = chosenMap.get(c.name);
+    const failed = state === "off" ? firstFailure(c) : null;
+    return (
+      <li className={`${styles.chip} ${styles[state === "chosen" ? "isChosen" : state === "offered" ? "isOffered" : "isOff"]}`}>
+        <span className={styles.chipName}>{c.label || c.name}</span>
+        <span className={styles.chipNote}>{treatment ? treatment : failed ? `needs ${say(failed)}` : " "}</span>
+      </li>
+    );
+  };
+
+  /* The three groups, each keeping manifest order inside itself. */
+  const groups = [
+    { key: "off", title: "Not eligible", note: "a gate said no, in code" },
+    { key: "offered", title: "Passed over", note: "the model was shown these and didn’t use them" },
+    { key: "chosen", title: "On the page", note: "the model chose these" }
+  ].map((g) => ({ ...g, items: components.filter((c) => stateOf(c) === g.key) }));
 
   /* Assembled by hand rather than through URLSearchParams, which percent-encodes the
      colons into `%3A` — correct, and unreadable in a URL bar that is on a projector
@@ -105,67 +143,88 @@ export const VocabularyStrip = ({
       <div className={styles.head}>
         <h2 className={styles.title}>{heading}</h2>
         <p className={styles.counts}>
-          <span>{components.length} blocks</span>
-          <span className={styles.sep}>·</span>
-          <span>{eligibleSet.size} offered to the model</span>
-          <span className={styles.sep}>·</span>
-          <span>{chosenMap.size} on the page</span>
+          {layout === "grouped" ? (
+            <span>{components.length} blocks, and what became of each</span>
+          ) : (
+            <>
+              <span>{components.length} blocks</span>
+              <span className={styles.sep}>·</span>
+              <span>{eligibleSet.size} offered</span>
+              <span className={styles.sep}>·</span>
+              <span>{chosenMap.size} on the page</span>
+            </>
+          )}
         </p>
       </div>
 
-      {/* Taught once, then the chips carry it. Without this the three states are
-          three shades of nothing — the room has no reason to read a dim chip as
-          "the application refused" rather than as "unimportant".
-
-          The legend items ARE chips, in their own state, rather than a swatch beside
-          a caption. A swatch cannot show the "not eligible" state at all: that state
-          is the absence of a box, so a 22×12 sample of it is an empty rectangle the
-          room reads as a rendering bug. Showing the state on the words that name it
-          has nothing to draw and nothing to get wrong. */}
-      {showLegend && (
-        <ul className={styles.legend}>
-          <li className={`${styles.legendItem} ${styles.isOff}`}>
-            not eligible — a gate said no, in code
-          </li>
-          <li className={`${styles.legendItem} ${styles.isOffered}`}>
-            offered — the model could have, and didn&rsquo;t
-          </li>
-          <li className={`${styles.legendItem} ${styles.isChosen}`}>
-            chosen — the model put it on the page
-          </li>
-        </ul>
+      {/* THE STATES ARE THE ARGUMENT, SO THEY ARE THE LAYOUT.
+          Sixteen chips in manifest order meant the three states were shuffled
+          together, and the room had to classify each box in turn to see the shape of
+          it — which is the one thing this exists to make instant. Grouped, the count
+          in each heading is the whole story and nobody has to read a single chip.
+          The headings also retire the legend: a column headed "not eligible — a gate
+          said no, in code" does not need a swatch above it saying the same. */}
+      {layout === "grouped" ? (
+        <div className={styles.groups}>
+          {groups.map((g) => (
+            <section key={g.key} className={styles.group} data-state={g.key}>
+              <header className={styles.groupHead}>
+                <span className={styles.groupCount}>{g.items.length}</span>
+                <span className={styles.groupTitle}>{g.title}</span>
+                <span className={styles.groupNote}>{g.note}</span>
+              </header>
+              <ul className={styles.column}>
+                {g.items.map((c) => (
+                  <Chip key={c.name} c={c} />
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      ) : (
+        <>
+          {/* Manifest order, states as colour. The legend has to stay here — nothing
+              in this layout names the three states. */}
+          {showLegend && (
+            <ul className={styles.legend}>
+              <li className={`${styles.legendItem} ${styles.isOff}`}>
+                not eligible — a gate said no, in code
+              </li>
+              <li className={`${styles.legendItem} ${styles.isOffered}`}>
+                passed over — the model was shown it and didn&rsquo;t use it
+              </li>
+              <li className={`${styles.legendItem} ${styles.isChosen}`}>
+                chosen — the model put it on the page
+              </li>
+            </ul>
+          )}
+          <ul className={styles.chips}>
+            {components.map((c) => (
+              <Chip key={c.name} c={c} />
+            ))}
+          </ul>
+        </>
       )}
 
-      <ul className={styles.chips}>
-        {components.map((c) => {
-          const isEligible = eligibleSet.has(c.name);
-          const treatment = chosenMap.get(c.name);
-          const state = treatment ? "isChosen" : isEligible ? "isOffered" : "isOff";
-          /* The FIRST failing predicate, not all of them. A chip that lists three
-             reasons is a chip nobody reads at distance, and one reason is enough to
-             answer the only question being asked of it — why is this one out. */
-          const failed = isEligible ? null : c.requires.find((p) => !test(p, facts));
-          return (
-            <li key={c.name} className={`${styles.chip} ${styles[state]}`}>
-              <span className={styles.chipName}>{c.label || c.name}</span>
-              <span className={styles.chipNote}>
-                {treatment ? treatment : failed ? `needs ${say(failed)}` : " "}
-              </span>
-            </li>
-          );
-        })}
-      </ul>
-
+      {/* The obligation, apart and last — a fourth position on the same axis rather
+          than a fourth kind of thing: code said no, model chose, model declined, and
+          then code said YES and the model had no vote at all. It was headed "not a
+          choice", which named the mechanism rather than the fact. */}
       <div className={styles.obligations}>
-        <span className={styles.obligationsLabel}>Not a choice</span>
-        <ul className={styles.chips}>
+        <div className={styles.obligationsHead}>
+          <span className={styles.obligationsLabel}>Placed by the application</span>
+          <span className={styles.obligationsNote}>
+            an obligation — the model can neither choose it nor suppress it
+          </span>
+        </div>
+        <ul className={styles.obligationList}>
           {obligations.map((o) => {
             const fired = firedObligations.includes(o.name);
             return (
               <li key={o.name} className={`${styles.chip} ${fired ? styles.isForced : styles.isOff}`}>
                 <span className={styles.chipName}>{o.label || o.name}</span>
                 <span className={styles.chipNote}>
-                  {fired ? "placed by the application" : `dormant — needs ${say(o.requiredWhen)}`}
+                  {fired ? "on the page" : `dormant — needs ${say(o.requiredWhen)}`}
                 </span>
               </li>
             );

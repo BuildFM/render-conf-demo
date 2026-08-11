@@ -104,7 +104,7 @@ const TwinsPage = async ({
         {/* Printed once, above both strips — see the note at the top of this file. */}
         <ul className={styles.legend}>
           <li className={`${styles.legendItem} ${styles.isOff}`}>not eligible — a gate said no, in code</li>
-          <li className={`${styles.legendItem} ${styles.isOffered}`}>offered — the model could have, and didn&rsquo;t</li>
+          <li className={`${styles.legendItem} ${styles.isOffered}`}>passed over — the model was shown it and didn&rsquo;t use it</li>
           <li className={`${styles.legendItem} ${styles.isChosen}`}>chosen — the model put it on the page</li>
         </ul>
       </main>
@@ -115,6 +115,11 @@ const TwinsPage = async ({
           heading={r.household.label}
           showLegend={false}
           switches="readonly"
+          /* Manifest order, not grouped by state — see the note on `layout`. Two rows
+             in the same order is what makes a difference findable by looking straight
+             down; grouping would move a block between columns and turn that glance
+             into a search. */
+          layout="sequence"
           components={r.manifest.components}
           obligations={r.manifest.obligations}
           firedObligations={[...new Set(r.fired.map((f) => f.name))]}

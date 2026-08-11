@@ -63,6 +63,81 @@
   border: var(--border-width) solid transparent;
 }
 
+/* --- the three groups ------------------------------------------------------
+   One column per state, each keeping manifest order inside itself. The count in the
+   heading is the readable-from-the-back element: it says how much of the vocabulary
+   the application refused and how much the model actually used, without anybody
+   reading a chip. */
+
+.groups {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-9);
+  align-items: start;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
+/* A rule per column, in the colour of the state it heads — the only place the state
+   is stated other than the chips themselves, and the thing the eye lands on first. */
+.groupHead {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: baseline;
+  gap: 0 var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: var(--border-width-strong) solid var(--border-default);
+}
+
+.group[data-state="chosen"] .groupHead { border-bottom-color: var(--border-signal); }
+
+.groupCount {
+  grid-row: span 2;
+  font-family: var(--font-display);
+  font-size: var(--numeral-size);
+  font-weight: var(--numeral-wght);
+  font-stretch: calc(var(--numeral-wdth) * 1%);
+  line-height: var(--numeral-lh);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-dim);
+}
+
+.group[data-state="offered"] .groupCount { color: var(--text-primary); }
+.group[data-state="chosen"] .groupCount { color: var(--text-signal); }
+
+.groupTitle {
+  font-family: var(--font-display);
+  font-size: var(--section-size);
+  font-weight: var(--section-wght);
+  font-stretch: calc(var(--section-wdth) * 1%);
+  letter-spacing: var(--micro-track);
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+.groupNote {
+  grid-column: 2;
+  font-family: var(--font-mono);
+  font-size: var(--micro-size);
+  letter-spacing: var(--micro-track);
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.column {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
 /* --- the chips ------------------------------------------------------------ */
 
 .chips {
@@ -86,19 +161,27 @@
   border: var(--border-width) solid transparent;
 }
 
+/* Up from --button-size (15px). The grouped columns are ~360px against the old
+   four-up's ~280px, so the name can take the room it needs — and this is the text a
+   person at the back is actually trying to read. */
 .chipName {
   font-family: var(--font-display);
-  font-size: var(--button-size);
+  font-size: 18px;
   font-weight: var(--button-wght);
   font-stretch: calc(var(--button-wdth) * 1%);
-  letter-spacing: var(--button-track);
+  letter-spacing: 0.1em;
+  line-height: 1.15;
   text-transform: uppercase;
 }
 
+/* The condition, and it stays small on purpose. It is read ALOUD once, from a metre
+   away, and it is the only text here nobody needs to decode from row twenty — so it
+   buys its legibility at the top of the chip rather than here. */
 .chipNote {
   font-family: var(--font-mono);
   font-size: var(--micro-size);
   letter-spacing: var(--micro-track);
+  line-height: 1.45;
   min-height: 1em;
 }
 
@@ -139,18 +222,48 @@
 .obligations {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-4);
   border-top: var(--border-width) solid var(--border-faint);
   padding-top: var(--space-5);
 }
 
+/* One chip in a full-width band used to sit in a field of black. Held to a third of
+   the measure it reads as a footnote to the three columns, which is what it is. */
+.obligationList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+}
+
+.obligationsHead,
+.whatHead {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
 .obligationsLabel,
 .whatLabel {
-  font-family: var(--font-mono);
-  font-size: var(--micro-size);
-  letter-spacing: var(--micro-track-wide);
+  font-family: var(--font-display);
+  font-size: var(--section-size);
+  font-weight: var(--section-wght);
+  font-stretch: calc(var(--section-wdth) * 1%);
+  letter-spacing: var(--micro-track);
   text-transform: uppercase;
   color: var(--text-signal);
+}
+
+.obligationsNote,
+.whatNote {
+  font-family: var(--font-mono);
+  font-size: var(--micro-size);
+  letter-spacing: var(--micro-track);
+  text-transform: uppercase;
+  color: var(--text-dim);
 }
 
 /* --- the switches --------------------------------------------------------- */
@@ -163,19 +276,9 @@
   padding-top: var(--space-5);
 }
 
-.whatHead {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-4);
-  flex-wrap: wrap;
-}
-
-.whatNote {
-  font-family: var(--font-mono);
-  font-size: var(--micro-size);
-  letter-spacing: var(--micro-track);
-  color: var(--text-dim);
-}
+/* `.whatHead` and `.whatNote` are declared with the obligations block above, which
+   they now share a treatment with — two headings of the same rank should not be two
+   sets of rules that can drift apart. */
 
 .switches {
   margin: 0;
