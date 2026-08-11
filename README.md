@@ -8,6 +8,14 @@ There are three fixture households with 90 days of generated cooking history eac
 (Twin A and Twin B) declare identical profile data and differ only in behaviour, so their pages
 come out different.
 
+Under every composed page is a **vocabulary strip**: all 16 blocks in three states — not eligible
+(a gate said no, in code, with the failing condition printed), offered to the model but not chosen,
+and chosen. It is the quickest way to see what the model actually decided versus what the
+application decided for it.
+
+`docs/demo-script.md` is the run sheet for the talk. `docs/STATE.md` is the long-form state of the
+project and explains why most things are the way they are.
+
 ## Requirements
 
 - Node 20.9+ (Next 16 floor)
@@ -78,10 +86,12 @@ telemetry rail reports `compose: stub`.
 
 ## How a page is built
 
-Every step is code except step 5.
+All of it runs in `lib/compose/pipeline.ts`, which both `/h/…` and `/twins` call. Every step is
+code except step 5.
 
 1. **Load the manifest** — read from disk per request, never bundled, so edits apply without a
-   rebuild. `lib/manifest/load.ts`
+   rebuild. Components marked `"retired": true` are dropped here and are invisible to everything
+   downstream. `lib/manifest/load.ts`
 2. **Compute facts** — from content, profile and session. `lib/compose/gates.ts`
 3. **Fire obligations** — conditions evaluated in code before the model runs (e.g. allergen notices).
 4. **Filter the vocabulary** — the model only sees components the household qualifies for.
@@ -100,10 +110,13 @@ repair or fallback happened, and any dropped blocks with reasons.
 | file | what it is |
 |---|---|
 | `lib/manifest/manifest.json` | the component vocabulary the model sees (no CSS) |
+| `lib/compose/pipeline.ts` | the ten stages, in order |
 | `lib/compose/gates.ts` | facts, permissions, obligations, assemblies, widths |
 | `lib/compose/compose.ts` | the composition model call and its prompt |
 | `lib/compose/validate.ts` | composition validation rules |
+| `lib/compose/overrides.ts` | the behavioural facts `?facts=` can force |
 | `lib/render/resolve.ts` | ids in, values out |
+| `components/stage/vocabulary-strip.tsx` | the strip under every composed page |
 
 Comments in these files explain the reasoning behind each decision.
 
@@ -111,22 +124,50 @@ Comments in these files explain the reasoning behind each decision.
 
 | route | what it is |
 |---|---|
-| `/start` | index of everything below |
+| `/start` | index of every route, in the order the demo runs |
 | `/` | hand-authored home page; no household, model or signal |
 | `/h/h-learner`, `/h/h-twin-a`, `/h/h-twin-b` | the three composed pages |
+| `/twins` | Twin A and Twin B's vocabulary strips stacked, with no pages — the eligibility comparison |
 | `/kit` | every block at every treatment, with sample data |
-| `/stage` | the manifest beside the pages it produces |
+| `/stage` | the manifest beside the pages it produces; edit it and all three recompose |
 | `/api/context` | each household's data, split into gated-in-code vs sent-to-model |
 | `/api/manifest` | the manifest as served |
+
+## Query parameters
+
+Both work on any `/h/…` page, and every combination is a URL you can bookmark or type.
+
+| param | example | what it does |
+|---|---|---|
+| `?today=` | `?today=2026-06-11` | moves the clock (see the dinner party fixture) |
+| `?facts=` | `?facts=technique:0` | forces behavioural facts, so you can watch eligibility re-gate |
+
+`?facts=` takes a comma-separated list of `slug:0` or `slug:1`. The slugs are defined in
+`lib/compose/overrides.ts` and the switches at the foot of the strip build the URLs for you. Only
+facts derived from behaviour are exposed, and only leaf facts — see the notes in that file for why.
+When any fact is forced, the frozen profile is withheld from the compose prompt, because it
+describes the household as they actually behave; the telemetry rail says so.
+
+## Editing the vocabulary
+
+On `/stage`, each row in the blocks list has a square: filled means the block is in the vocabulary,
+empty means it is struck out. Click it and press ⌘S — this writes `"retired": true` into that
+component in `lib/manifest/manifest.json` and all three pages recompose against the smaller
+vocabulary. Click again to put it back; nothing is deleted.
+
+`pnpm stage:status` reports whether any block is currently struck out, and `pnpm stage:reset` puts
+them all back.
 
 ## Dinner party fixture
 
 One household has a scheduled dinner party. It is ordinary application state entered through a form —
-no model creates, reads or infers it. It expires after two weeks.
+no model creates, reads or infers it. It exists for a fortnight and then expires.
 
-`?today=2026-08-13` overrides the date so you can view the same fixture at different phases
-(planning, shopping, prep, day-of). The phase is derived from the date and the manifest's
-preconditions key on it. `/start` lists the relevant dates.
+It is dated **6–20 June 2026 and is therefore expired**, so the household's ordinary page is what
+you get by default. Keep it that way: while an occasion is live, that household's page is an
+occasion page instead. `?today=2026-06-11` overrides the date so you can view the same fixture at
+each phase (choosing, shopping, prep, the day itself). The phase is derived from the date and the
+manifest's preconditions key on it. `/start` lists the dates.
 
 ## CLI
 
@@ -134,7 +175,7 @@ preconditions key on it. `/start` lists the relevant dates.
 pnpm exec tsx --env-file=.env.local scripts/compose.mjs            # all households
 pnpm exec tsx --env-file=.env.local scripts/compose.mjs h-twin-a   # one household
 pnpm exec tsx --env-file=.env.local scripts/compose.mjs --dry      # eligibility only, no model call
-pnpm exec tsx --env-file=.env.local scripts/compose.mjs --today=2026-08-20
+pnpm exec tsx --env-file=.env.local scripts/compose.mjs --today=2026-06-11
 ```
 
 Prints the vocabulary offered, what the model chose, whether it validates, and what resolved.
