@@ -1,4 +1,4 @@
-# Mise — where this is, 6 Aug 2026
+# Mise — where this is, 11 Aug 2026
 
 **Read this first, from a cold start.** It assumes you know nothing about the
 project. It is the state of play, not a spec — the specs live in the vault at
@@ -53,8 +53,14 @@ to review and commit.
 ## Run it
 
 ```bash
-pnpm dev --port 3717      # /stage · / · /h/h-learner · /h/h-twin-a · /h/h-twin-b · /kit
+pnpm dev --port 3717      # /start is the run sheet and lists every route below
 ```
+
+`/start` · `/` · `/h/h-learner` · `/h/h-twin-a` · `/h/h-twin-b` · `/twins` · `/stage` · `/kit`
+
+Two query params on the composed pages, and both are demo instruments:
+`?today=` moves the clock, `?facts=technique:0` forces behavioural facts.
+(`?strip=0` also exists and is not for you — the stage view uses it.)
 
 | Command | What it does |
 |---|---|
@@ -102,7 +108,8 @@ The app evaluates it and places the block itself.
 | Profile — *what kind of cook is this?* | Opus 5 | once per household, nightly (frozen to disk here) | the hardest judgment; latency irrelevant |
 | Composition — *what should this page be?* | Sonnet 5 | per view, cached | small, structured, latency on screen |
 
-**The pipeline** (`app/h/[household]/page.tsx`): load manifest → resolve state →
+**The pipeline** (`lib/compose/pipeline.ts` — it left the page file on 9 Aug so
+`/twins` could run it too): load manifest → resolve state →
 evaluate obligations → filter by precondition → compose → complete assemblies →
 enforce adjacency → validate → repair once → fall back to the default page →
 resolve slots → render. **Eight of the ten stages are code.** That ratio is the
@@ -117,8 +124,8 @@ dish, because it is not the thing saying anything about a dish.
 
 ## What works
 
-Four pages plus the stage view. Compositions land valid on the first call, no
-repairs, no fallbacks, 3.5–6s each.
+Four pages, the twins view and the stage view. Compositions land valid on the first
+call, no repairs, no fallbacks, 3.5–6s each.
 
 | Page | Lead block — stable | Support blocks — vary run to run |
 |---|---|---|
@@ -573,6 +580,13 @@ the design system doing the work, and it is the thesis with a number attached.
   every unmatched ingredient as substitutable, so its gap list is water, salt, pepper
   and bay leaves and the authored substitutions never get a chance. Mark staples
   non-substitutable, or cut it. It has never appeared on a page.
+  **Promoted 9 Aug from a wart to a decision that has to be made before recording.**
+  It used to fail invisibly; the strip now gives it a chip, and on the toggle beat
+  (`?facts=technique:0`) the model chooses it, it fails to resolve, and the
+  rail reads `blocks 2/3` with `dropped SubstitutionTable — no substitutions authored
+  for those gaps` underneath. That is a visible failure in the middle of move 2.
+  Cutting it takes the vocabulary to **15**, which is a number the talk says out loud
+  — so this is Brian's call, not a tidy-up.
 - **The learner page is the only one with no photograph.** Deliberate, but check it
   on a real screen beside the twins. If it reads impoverished rather than austere,
   the answer is the fifth component held in reserve, not an image.
@@ -581,6 +595,336 @@ the design system doing the work, and it is the thesis with a number attached.
   pressure on 18GB — not isolated.
 - **Two components are built but out of the vocabulary**: `SeasonalNote`,
   `FromYourHistory`. Both produce orphans on a four-block page.
+
+## 11 Aug, later — the finale is one click
+
+**The finale was unperformable and nobody had tried it end to end.** Removing a
+component meant switching the drawer to `raw`, finding one object inside 350 lines of
+JSON at projection distance, and deleting it without breaking a comma — in front of
+six hundred people, on a clock.
+
+Each row in the blocks list now carries a **square**: filled means the block is in the
+vocabulary, empty means it is struck. Click it, ⌘S, three pages rebuild. The beat is
+unchanged; only the typing is gone.
+
+### It is a real manifest edit, and it had to be
+
+A UI filter would have been three lines and a lie. The entire claim is that the file
+causes the pages, so the square writes `"retired": true` into that component and
+**`loadManifest` drops retired components before anything downstream sees the file** —
+not gated, not offered, not counted, not rendered. The nine places that read
+`components` never learn the concept exists, the hash moves, the cache invalidates,
+and `vocabulary n/16` becomes `n/15` on the rail. Measured, striking `ForkedRecipeCard`:
+
+| | vocabulary | other |
+|---|---|---|
+| learner | 9/16 → 9/15 | — |
+| Twin A | 7/16 → 6/15 | `obligations 2 → 3`, `blocks 3/3 → 4/4` |
+| Twin B | 7/16 → 7/15 | — |
+
+4.1s / 4.5s / 4.3s, all three live, no repairs, no fallbacks.
+
+**Twin A's `obligations 2 → 3` is the best thing in the demo and it was not designed.**
+Losing the fork card put different dishes on the page, and the allergen obligation
+attaches to dishes — so removing a block *added* two allergy warnings. Nobody wrote
+that. It is worth pointing at.
+
+### A flag, not a deletion
+
+Reversible in one click, because the finale is live and a mis-click that deletes the
+wrong block is unrecoverable without a terminal. The entry staying in the file is also
+the more honest record: design systems retire components, they do not pretend they
+were never there.
+
+### The edit is surgical text, not a re-serialisation
+
+`setRetired` in `lib/manifest/slice.ts` inserts or removes **one line**, immediately
+before the component's `"name"` line at matching indentation. Before rather than after,
+because a key inserted before a key is always followed by a comma-separated sibling and
+is therefore always valid, while inserting *after* a line requires knowing whether that
+line was the object's last.
+
+Parsing and re-serialising would have reflowed all 350 lines of `components` — and the
+raw view is one click away and may well be on screen when the square is clicked, so it
+would visibly rewrite itself. Verified: retire → restore is byte-identical, and the
+save path still schema-validates the whole manifest server-side before writing, so a
+malformed edit is refused and surfaced in the drawer rather than reaching disk.
+
+### Two things that would have bitten on the day
+
+- **`checkDrift` counted a retired component as drift.** It is built and deliberately
+  not declared, which is exactly what that check flags — so the rail would have lit up
+  `drift: ForkedRecipeCard` half a second after the edit, in frame, reading as though
+  the edit had broken something. Retired names are passed through on the manifest and
+  excluded.
+- **`stage:reset` did not clear retired flags.** It only ever spliced `obligations`, so
+  a rehearsal would leave the block struck, the script would report a clean file, and
+  the next take would open on a fifteen-word vocabulary while the narration said
+  sixteen. It clears them now, and `stage:status` prints which blocks are struck.
+
+**And the `obligations.after.txt` fixture had drifted** — it predates the `label` field,
+so any `stage:reset` → `stage:after` round trip silently dropped `"label": "Allergy
+warning"` and the rail would have warned `unnamed in the manifest: AllergenNotice`.
+Fixed; the round trip is byte-identical now. Worth re-checking whenever an obligation
+gains a field.
+
+## 11 Aug — the shopping list stopped leaving a hole
+
+Two changes, and the second is the one that matters. The occasion fixture also moved
+today — that is written up in the 9 Aug section below, where the reason lives.
+
+### `Dry goods` was a catch-all and it broke the layout
+
+Forty of the corpus's sixty-eight ingredients were in one section, so a four-dish
+list came out **Produce 4, Butcher 1, Dairy 1, Dry goods 12**. The block laid those
+out as `grid-template-columns: repeat(3, 1fr)` flowing row-wise, which meant row one
+was as tall as Produce with two nearly empty cells beside it and row two was as tall
+as Dry goods with two *entirely* empty cells beside it. About two thirds of the block
+was a hole.
+
+Split into **`Store cupboard`** (23) and **`Spice rack`** (17) in
+`lib/content/ingredients.json`, which is better information design for a list you
+shop from anyway — one section per part of the shop rather than one section for
+everything that is not perishable. `resolve.ts` carries the walk order and it now has
+six entries.
+
+**A latent trap went with it.** The sort was `order.indexOf(a) - order.indexOf(b)`,
+and `indexOf` returns −1 for anything unlisted — so a section not in the array sorted
+*ahead of Produce*. Adding one to the fixtures silently reordered the walk, and it
+would have looked like a data problem rather than a sorting one. Unlisted sections now
+rank last.
+
+### The block packs its own columns now
+
+Re-categorising alone would not have fixed this, because **the model chooses which
+recipes go in the list**, so the shape of the list is different on every composition.
+A hardcoded column count is a bet that the sections are evenly sized, and that bet
+loses on some composition eventually — probably on stage.
+
+`packColumns` in `shopping-list.tsx` derives the count from the content. It splits
+the sections into **contiguous** groups — contiguous because section order is the
+order you walk a shop, and a column reading Produce, Dairy, Butcher has thrown away
+the only thing the grouping was for — and measures the result: shortest column over
+tallest. Below `BALANCE` (0.5) it drops a column and tries again. A column half the
+height of its neighbour is a ragged bottom, which is what a list of things looks
+like; a column a fifth of its neighbour is a bug. The old layout scored 0.15 on the
+four dishes that prompted this; it now packs 9/9/5.
+
+Hero caps at two columns and `full` at three — the old two-columns-at-hero rule,
+which existed so a wide column keeps an item and its quantity on one line, is now
+expressed as an argument to one packer instead of a second CSS class. `.heroColumns`
+is gone.
+
+**The column count is a `data-cols` attribute, not an inline style.** An inline
+`grid-template-columns` outranks the stylesheet, which would have killed the
+container query that collapses the list to one column below 700px — and that query is
+load-bearing: three columns in a 570px half-width cell wraps "Pork belly, boned" onto
+two lines, which is the one thing a list read in a shop must never do. Verified
+collapsing at 760px wide.
+
+### Open
+
+- **`Water 400 ml` is on the shopping list.** It comes from the focaccia recipe, and
+  it is correct as an ingredient and daft as a thing to buy. Nobody in a UX audience
+  will blame the model — the app built that list — but somebody will notice. Either
+  mark tap ingredients unbuyable in `ingredients.json`, or leave it and know it is
+  there. Not touched, because it changes what is on screen.
+
+## 9 Aug — the vocabulary strip, and the demo cut to four moves
+
+**Read this before touching `/h/…`, `/stage` or the demo script.** The pipeline moved
+files and the run sheet is now in beat order.
+
+### What was wrong, in Brian's words
+
+> *"I can see different page layouts, but it's kind of unclear what's different about
+> them."*
+
+Correct, and the diagnosis is worse than polish. Three composed layouts prove that
+something changed and never say WHAT, so the room has to take the cause on trust —
+and the cause was only ever on screen in `/stage`, as 350 lines of `components` JSON
+at a size nobody can read. The demo was thirteen equally-weighted doors on `/start`,
+which at five minutes is twenty-three seconds each: a tour, not an argument.
+
+### The demo is four moves now
+
+`/start` is organised by the run sheet rather than by what a route IS. In order:
+
+| | Route | What it does |
+|---|---|---|
+| 0 | `/` | the ground: hand-authored, no household, no model |
+| 1 | `/h/h-learner` | one page, full size, strip underneath. A recipe site with no recipe |
+| 2 | `/h/h-learner?facts=technique:0` | the vocabulary halves, no model called. Then compose from what is left |
+| 3 | `/twins` | same form byte for byte, two strips stacked, no pages |
+| 4 | `/stage` | the playground. Strike a block out of the vocabulary, all three rebuild |
+
+The spine changed from "compare three pages" to "walk the pipeline once, then show it
+generalises". The strip is the through-line in every move, which is what the old demo
+lacked — there was no single object the room tracked from beginning to end.
+
+**The occasion is cut**, and it is cut for three reasons rather than one: it needs 45
+seconds of its own exposition, it is a SECOND proof of the same thesis the twins
+already carry, and it fails roughly half the time live (see the reliability section
+below, still unsolved). It is built, it works, and `/start` lists it under *Cut from
+the demo* with the reason on the page so nobody re-adds it by accident. If it ever
+comes back it wants freezing to disk first.
+
+**The fixture dates moved to 6–20 June 2026, and they must not move forward.** They
+were 8–22 Aug, which meant the occasion was LIVE — and while one is live the
+learner's page is an occasion page, because `TechniqueThread` requires
+`state.hasOccasion == false`. Move 1's beat is *a recipe site with no recipe on it*,
+and it silently did not exist. This is the sharpest instance of a general hazard: an
+active occasion changes the learner's page without changing anything you would think
+to look at, and the page it produces is perfectly good, so nothing reads as broken.
+
+June puts it inside the ninety-day log window, so it is permanently expired and reads
+as a dinner that happened — which is the pace-layer argument anyway. A future date
+would only postpone the problem: real time arrives at it. Every phase is still
+reachable with `?today=`, verified after the move: T−14 leads `ComparisonTable`, T−3
+`PrepSchedule`, T−0 `OccasionPlan`, T+1 back to `TechniqueThread`. `/start` derives
+its links from `scheduledOn` and `date`, so they moved with the fixture.
+
+**After any edit to `lib/content/occasions.json`, load `/h/h-learner` and check it
+leads with `TechniqueThread` and the rail says `obligations 0`.** That is the whole
+regression test.
+
+### The strip — `components/stage/vocabulary-strip.tsx`
+
+Under every `/h/…` page, permanently, on the raised ground below the signal band.
+Sixteen chips in three states:
+
+| | Means | Who decided |
+|---|---|---|
+| greyed | not eligible, with the failing predicate printed | the application |
+| outlined | offered to the model, not chosen | the model |
+| acid | on the page | the model |
+
+**Three states, not two, and that is the whole point.** Two — used and unused — only
+says "this page has these blocks on it", which you can learn by looking at the page.
+Grey is the application; the gap between outlined and acid is the model's ENTIRE
+authority, and since about half the vocabulary drops out per household that authority
+is visibly small and visibly bounded.
+
+The obligation is shown apart, as a **fourth position on the same axis** rather than a
+fourth kind of thing: code said no → model chose → model declined → code said YES and
+the model had no vote. It renders reversed-out in paper, **not acid** — acid means
+"the model chose this", and the one block on the page it never chose must not wear it.
+
+The legend items ARE chips in their own state. A swatch cannot show "not eligible",
+because that state is the absence of a box and a 22×12 sample of it reads as a
+rendering bug. That was built the wrong way first.
+
+### The toggles — `lib/compose/overrides.ts`
+
+`?facts=technique:0`. Five behavioural facts, forced from the URL, applied on
+top of `computeFacts` before anything downstream runs.
+
+**Query params, not client state.** The composed pages have no client JavaScript and
+that property is load-bearing for the argument; a toggle needing `useState` would put
+the first client component on the page whose server-rendered purity is the claim. The
+cost is a ~100ms round trip. The gains are that every state is a URL — so a take can
+be recorded against exact states, and a live demo that goes wrong is rescued by typing
+one — and that the beat cannot die on conference wifi, because eligibility is pure
+code and no model is involved.
+
+**ONLY LEAF FACTS ARE OVERRIDABLE.** `user.makeAheadPattern` and
+`user.abandonsOnListLength` are deliberately absent: three other facts in the map
+derive from the same profile signals, so forcing either would move one gate and leave
+`hasRhythm`, `planningPressure` and `makeAheadPressure` stale. The strip would then
+show a household that opens technique notes beside a make-ahead callout that
+disagreed about why. If either is ever wanted, the override has to move up into the
+profile signals and let `computeFacts` run again.
+
+**Five, not fifteen.** The sharpest risk in this beat is that toggles-then-blocks reads
+as a rules engine — which is the strongest competing explanation for the whole talk.
+Two defences: keep the list short (a wall of switches argues FOR the rules engine),
+and always END the beat by composing. Facts change eligibility in code, THEN the model
+makes a page out of what survived. Stop before composing and you have demoed a rules
+engine on stage.
+
+**Every toggle is a `user.*` fact, and that was a correction.** *(11 Aug.)* The set
+shipped with `state.dietarySplit` and `state.pantryKnown` in it — both straight off
+`household.declared`, i.e. the signup form. They are things the household SAID, sitting
+under a panel headed *what this household did… from ninety days of behaviour*, which
+contradicts the exact distinction the demo is built on, on the panel the room is
+looking at while you draw it. There is no sixth toggle because the remaining `user.*`
+facts (`savedNeverCooked`, `repeats`) gate nothing, and a switch that moves no chip
+teaches the room that the switches do nothing.
+
+**The labels are plain English, and the chips are not.** *(11 Aug — the labels shipped
+wrong.)* They read "Cooks on a rhythm", "Cooks dishes that fork", "Pantry on file":
+`fork` is a word this codebase invented, `rhythm` names a conjunction of two facts the
+reader cannot see, and `on file` is a database talking about itself. All three broke
+the copy rule already written down below — a label must decode in one second from the
+back of a room. The split now is deliberate and worth keeping: **the switches are the
+human layer, the chips print the machine's own predicate** (`needs
+user.expandsTechnique = true`), because on the chips being unmistakably code is the
+whole point.
+
+### The profile is withheld when facts are overridden
+
+The frozen Opus profile describes the household as they REALLY behave. Compose an
+overridden page with it and the model writes a rationale about a different person —
+one sentence, in the largest type on the page, contradicting the page beside it.
+
+So `factsOverridden` withholds both the brief and the characterization, swaps in an
+instruction to compose from the vocabulary alone, and the rail says
+`profile: withheld — facts overridden`. Measured: it returns *"Eight people, one
+gluten gap — here's what actually fits together"* — grounded in the blocks rather than
+claiming to know anybody. It is also in the compose cache key, because withholding
+changes the PROMPT without always changing the eligible set.
+
+### `/twins` — two strips, no pages
+
+The twins were the sharpest thing in the demo and the hardest to show, because the
+proof lived in two layouts compared from memory ninety seconds apart. The claim is
+about ELIGIBILITY, which is not a visual property of either page — so this view drops
+the pages entirely.
+
+**Stacked, not side by side.** Same sixteen chips in the same order, one row above the
+other, so a block that differs is a colour change you find by looking straight down a
+column. Two columns would put the same block at two different heights and turn a
+glance into a search. Six chips differ.
+
+The declared data is printed ONCE above both. It is identical — that is the setup —
+and printing it twice invites the room to compare two things that do not differ.
+
+The six facts appear per household as `switches="readonly"`: stated, not pressable.
+There the facts are the evidence, and a switch you can press invites the room to watch
+you press it instead of reading the two rows.
+
+### The pipeline moved out of the page
+
+`app/h/[household]/page.tsx` held the ten stages inline, which was fine while exactly
+one route composed. `/twins` composes two. They now both call `runPipeline` in
+**`lib/compose/pipeline.ts`**; the page file is render-only.
+
+The alternative was a second copy, and that is the mistake this codebase has already
+paid for twice — `satisfiesMustFollow` held separately by the enforcer and the
+validator, and the display copy of `test()` the stage view nearly grew. A display that
+computes its own answer eventually disagrees with the pipeline, and then the display
+is the lie. Verified equivalent: all three households compose to the same vocabulary
+counts, same block counts, no fallbacks, before and after.
+
+### Not to relearn, about the strip
+
+- **A numeric toggle's `on` value MUST be the threshold its precondition asks for.**
+  It is read twice — to force the fact, and by `toggleState` to decide which way the
+  switch currently points. Set to 10 against a gate wanting 2, Twin B (who has 4)
+  showed a switch reading OFF beside a chip that was plainly eligible.
+- **The strip is suppressed inside `/stage` via `?strip=0`, and that is mechanical as
+  well as editorial.** The stage measures each pane from the bottom of the last body
+  child, so an 860px instrument under every page silently draws each one into a frame
+  three times too tall. It is also the wrong place for it: the stage is the playground
+  where you read page SHAPES, and the strip is the focused per-household instrument.
+- **The strip's third state is read off what RESOLVED, not off what the model named.**
+  A chip filled in for a block that failed to build would claim the model put
+  something on the page that is not on the page.
+- **The copy rule still applies and the strip is on the wrong side of it.** Chip names
+  come from the manifest's `label`, so renaming a block on stage renames it here too.
+- **`?facts=` hrefs are assembled by hand, not through `URLSearchParams`**, which
+  percent-encodes the colons into `%3A` — correct, and unreadable in a URL bar that is
+  on a projector at the time.
 
 ## 6 Aug, later — layout vocabulary, four phases, and an unsolved reliability problem
 
@@ -693,16 +1037,18 @@ box on stage that reads as chat however it is framed.
 ### How to see it
 
 ```bash
-npx tsx --env-file=.env.local scripts/compose.mjs --today=2026-08-08 h-learner   # T-14
-… --today=2026-08-19    # T-3
-… --today=2026-08-22     # T-0, the morning
-… --today=2026-08-25     # expired — back to the ordinary learner page
+npx tsx --env-file=.env.local scripts/compose.mjs --today=2026-06-06 h-learner   # T-14
+… --today=2026-06-17    # T-3
+… --today=2026-06-20     # T-0, the morning
+… --today=2026-06-21     # expired — back to the ordinary learner page
 ```
 
-Same on the page: `/h/h-learner?today=2026-08-19`. Unset, it is the real date and
-there is no occasion, because `scheduledOn` is 8 Aug — **an occasion does not exist
-before somebody created it**, which is why beat 1 of the demo still gets the
-learner's ordinary recipe-free page.
+*Dates updated 11 Aug when the fixture moved — see the 9 Aug section. They were
+August, and August was live.*
+
+Same on the page: `/h/h-learner?today=2026-06-17`. Unset, it is the real date and
+there is no occasion, because the whole fortnight is in the past — which is why
+move 1 of the demo gets the learner's ordinary recipe-free page.
 
 ### The three moments are one fixture seen from three distances
 
@@ -814,6 +1160,13 @@ entirely, nothing here needs finishing first.**
 
 - **The manifest is read from disk per request** and its hash is in the cache key.
   That is what makes the live edit work. Do not bundle it.
+- **The ten stages live in `lib/compose/pipeline.ts`, not in the page.** Two routes
+  run them. Do not give a third one its own copy — see 9 Aug, and see
+  `satisfiesMustFollow` below for the same lesson learned the expensive way.
+- **The stage view measures each pane from the bottom of the last body child**, so
+  anything appended to a composed page inflates every frame in it. The vocabulary
+  strip is kept out with `?strip=0` for exactly this reason. Whatever gets appended
+  next has to do the same.
 - **Obligations are placed by the app, never the model**, and render *immediately
   above the dish they are about* — not at the top of the page.
 - **Adjacency is a rule about units, not members.** A block that must follow

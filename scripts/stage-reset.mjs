@@ -52,17 +52,34 @@ const spliceObligations = (raw, replacement) => {
   return raw.slice(0, start) + replacement.trimEnd() + raw.slice(i + 1);
 };
 
+/**
+ * Put every retired component back.
+ *
+ * The finale strikes a block out of the vocabulary from the drawer, which writes
+ * `"retired": true` into that component. Nothing else here touches `components`, so
+ * without this a rehearsal would leave the block struck, `stage-reset` would report
+ * a clean file, and the next take would open on a fifteen-word vocabulary that the
+ * narration calls sixteen. Silent, and only visible once it is on tape.
+ *
+ * A line regex rather than a parse: `retired` exists on nothing but a component, it
+ * is always written as its own line by `setRetired`, and this script deliberately
+ * runs under plain node between takes with no loader and nothing clever.
+ */
+const clearRetired = (raw) => raw.replace(/^[ \t]*"retired"\s*:\s*(?:true|false)\s*,?[ \t]*\r?\n/gm, "");
+
 const args = process.argv.slice(2);
 const raw = readFileSync(MANIFEST, "utf8");
 
 if (args.includes("--status")) {
   const declared = /"name":\s*"AllergenNotice"/.test(raw);
   console.log(declared ? "after  — AllergenNotice is declared" : "before — no obligation declared");
+  const struck = [...raw.matchAll(/"retired":\s*true[\s\S]*?"name":\s*"([A-Za-z]+)"/g)].map((m) => m[1]);
+  console.log(struck.length ? `\x1b[33mstruck out of the vocabulary:\x1b[0m ${struck.join(", ")}` : "vocabulary — whole");
   process.exit(0);
 }
 
 const which = args.includes("--after") ? "after" : "before";
-const next = spliceObligations(raw, readFileSync(fixture(which), "utf8"));
+const next = clearRetired(spliceObligations(raw, readFileSync(fixture(which), "utf8")));
 writeFileSync(MANIFEST, next, "utf8");
 
 console.log(`manifest → ${which}`);

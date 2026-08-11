@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { setRetired } from "@/lib/manifest/slice";
 import styles from "./stage-view.module.css";
 
 /**
@@ -109,6 +110,9 @@ type Component = {
   requires?: Require[];
   adjacency?: { neverWith?: string[]; mustFollow?: string[]; maxPerPage?: number };
   carriesPhoto?: boolean;
+  /** Struck out of the vocabulary. Still in the file, still in this list — see the
+   *  toggle on each row and the note on `retired` in lib/manifest/load.ts. */
+  retired?: boolean;
 };
 
 /** `user.techniqueRepeats` → `technique repeats`. The namespace prefix is dropped:
@@ -496,11 +500,37 @@ export const StageView = ({
                      rather than four hundred lines of it. */
                   <div className={styles.blocks}>
                     {components!.map((c) => (
-                      <div key={c.name} className={styles.block}>
+                      <div key={c.name} className={styles.block} data-retired={Boolean(c.retired)}>
                         <div className={styles.blockHead}>
+                          {/* STRIKE A BLOCK OUT OF THE VOCABULARY, in one click.
+                              The finale used to mean switching the drawer to raw,
+                              finding one object in 350 lines of JSON, and deleting
+                              it without breaking a comma — which is not a thing to
+                              do live in front of six hundred people. This writes the
+                              same edit the file would have got, and ⌘S still does the
+                              saving, so the beat is unchanged: strike it, save, watch
+                              three pages rebuild.
+
+                              Filled means IN the vocabulary. Empty means struck, and
+                              the row goes dim and strikes through — one click back if
+                              the wrong one goes. */}
+                          <button
+                            type="button"
+                            className={styles.blockToggle}
+                            data-in={!c.retired}
+                            aria-pressed={!c.retired}
+                            title={c.retired ? `Put ${c.name} back in the vocabulary` : `Take ${c.name} out of the vocabulary`}
+                            onClick={() => {
+                              setTexts((prev) => ({
+                                ...prev,
+                                components: setRetired(prev.components ?? "", c.name, !c.retired)
+                              }))
+                              setDirty((prev) => ({ ...prev, components: true }))
+                            }}
+                          />
                           <span className={styles.blockName}>{c.name}</span>
                           <span className={styles.blockRole} data-lead={c.role === "lead"}>
-                            {c.role ?? ""}
+                            {c.retired ? "removed" : c.role ?? ""}
                           </span>
                         </div>
                         <div className={styles.blockNeeds}>
@@ -692,7 +722,15 @@ export const StageView = ({
                       }}
                       key={`${h.id}-${gen}`}
                       className={styles.frame}
-                      src={`/h/${h.id}?v=${gen}`}
+                      /* `strip=0` — the vocabulary strip stays out of here.
+                         Two reasons, and the second is mechanical. The stage is the
+                         playground: three page SHAPES beside the manifest that
+                         causes them, and a strip enumerating the vocabulary a third
+                         time in a pane 578px wide is noise on the one screen that
+                         cannot afford any. And the pane height is measured from the
+                         bottom of the last child, so an 860px instrument under every
+                         page silently triples the frame each one is drawn into. */
+                      src={`/h/${h.id}?v=${gen}&strip=0`}
                       title={h.label}
                       style={{
                         width: PANE_VIEWPORT,

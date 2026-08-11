@@ -1,0 +1,249 @@
+/* Instrumentation, and it says so by sitting on the raised ground below the page
+   rather than inside the canvas. The composed page above it is the artifact; this
+   is the apparatus that explains it, and the two must never be mistaken for one
+   design. Same rule the telemetry rail lives under. */
+.strip {
+  border-top: var(--border-width-strong) solid var(--border-signal);
+  background: var(--surface-raised);
+  padding-block: var(--space-9);
+  padding-inline: max(var(--inset-section), calc((100% - var(--canvas-width)) / 2));
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-7);
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-7);
+  flex-wrap: wrap;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--section-size);
+  font-weight: var(--section-wght);
+  font-stretch: calc(var(--section-wdth) * 1%);
+  letter-spacing: var(--section-track);
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+.counts {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--data-size);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-body);
+  display: flex;
+  gap: var(--space-2);
+}
+
+.sep { color: var(--text-dim); }
+
+.legend {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--micro-size);
+  letter-spacing: var(--micro-track);
+  text-transform: uppercase;
+}
+
+/* Same box the chips use, so the sample and the thing it explains cannot drift.
+   The state classes below supply the border, ground and colour. */
+.legendItem {
+  padding: var(--space-2) var(--space-3);
+  border: var(--border-width) solid transparent;
+}
+
+/* --- the chips ------------------------------------------------------------ */
+
+.chips {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  /* Four across at the canvas width, and it degrades to three and two without a
+     media query. Sixteen chips have to be in frame at once — a strip you scroll is
+     a strip that cannot be compared with the one beside it. */
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-2);
+}
+
+.chip {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+  min-height: 62px;
+  border: var(--border-width) solid transparent;
+}
+
+.chipName {
+  font-family: var(--font-display);
+  font-size: var(--button-size);
+  font-weight: var(--button-wght);
+  font-stretch: calc(var(--button-wdth) * 1%);
+  letter-spacing: var(--button-track);
+  text-transform: uppercase;
+}
+
+.chipNote {
+  font-family: var(--font-mono);
+  font-size: var(--micro-size);
+  letter-spacing: var(--micro-track);
+  min-height: 1em;
+}
+
+/* THE THREE STATES, and they are meant to be told apart at fifteen metres by
+   VALUE rather than by hue — a projector and a room's ambient light will take the
+   hue and leave the value. Solid, outlined, and neither. */
+.isOff {
+  border-color: var(--border-faint);
+  color: var(--text-dim);
+  background: transparent;
+}
+.isOff .chipNote { color: var(--text-dim); opacity: 0.75; }
+
+.isOffered {
+  border-color: var(--border-default);
+  color: var(--text-primary);
+  background: var(--surface-page);
+}
+.isOffered .chipNote { color: var(--text-dim); }
+
+.isChosen {
+  border-color: var(--border-signal);
+  background: var(--surface-signal);
+  color: var(--text-on-signal);
+}
+.isChosen .chipNote { color: var(--text-on-signal); opacity: 0.72; }
+
+/* The obligation when it fires. Not acid — acid means "the model chose this", and
+   an obligation is the one block on the page it had no vote on. Reversed out in
+   paper instead, so it reads as emphatic and as a different KIND of emphatic. */
+.isForced {
+  border-color: var(--border-default);
+  background: var(--text-primary);
+  color: var(--ink-0);
+}
+.isForced .chipNote { color: var(--ink-0); opacity: 0.7; }
+
+.obligations {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  border-top: var(--border-width) solid var(--border-faint);
+  padding-top: var(--space-5);
+}
+
+.obligationsLabel,
+.whatLabel {
+  font-family: var(--font-mono);
+  font-size: var(--micro-size);
+  letter-spacing: var(--micro-track-wide);
+  text-transform: uppercase;
+  color: var(--text-signal);
+}
+
+/* --- the switches --------------------------------------------------------- */
+
+.what {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  border-top: var(--border-width) solid var(--border-faint);
+  padding-top: var(--space-5);
+}
+
+.whatHead {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.whatNote {
+  font-family: var(--font-mono);
+  font-size: var(--micro-size);
+  letter-spacing: var(--micro-track);
+  color: var(--text-dim);
+}
+
+.switches {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.switch {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: var(--border-width) solid var(--border-faint);
+  font-family: var(--font-mono);
+  font-size: var(--body-size);
+  color: var(--text-dim);
+  background: transparent;
+}
+
+.switch:hover {
+  border-color: var(--border-hover);
+  color: var(--text-primary);
+}
+
+.switchOn {
+  border-color: var(--border-default);
+  color: var(--text-primary);
+  background: var(--surface-page);
+}
+
+/* Overridden rather than observed, and the page has to say so — every number under
+   this panel is now about a household that does not exist, and a strip that hid
+   that would be the one dishonest thing on screen. */
+.switchForced {
+  border-color: var(--border-signal);
+}
+
+.switchMark {
+  font-size: var(--micro-size);
+  letter-spacing: var(--micro-track);
+  text-transform: uppercase;
+  min-width: 3ch;
+  color: var(--text-dim);
+}
+
+.switchOn .switchMark { color: var(--text-signal); }
+
+/* Stated, not offered. Same box so the two views teach the same shape, minus the
+   hover that would invite a press this view has nothing to do with. */
+.switchStatic {
+  cursor: default;
+}
+.switchStatic:hover {
+  border-color: var(--border-faint);
+  color: inherit;
+}
+.switchOn.switchStatic:hover {
+  border-color: var(--border-default);
+  color: var(--text-primary);
+}
+
+.reset {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--micro-size);
+  letter-spacing: var(--micro-track);
+  text-transform: uppercase;
+}

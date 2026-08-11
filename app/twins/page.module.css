@@ -1,0 +1,103 @@
+.sheet {
+  width: var(--canvas-width);
+  margin: 0 auto;
+  padding: var(--space-13) 0 var(--space-11);
+}
+
+.head { margin-bottom: var(--rhythm-section); }
+
+.title {
+  composes: displayXl from "../../components/type.module.css";
+  color: var(--text-primary);
+}
+
+.lede {
+  composes: body from "../../components/type.module.css";
+  margin-top: var(--space-7);
+  max-width: var(--measure-lede);
+  color: var(--text-body);
+}
+
+.section { margin-bottom: var(--rhythm-section); }
+
+.aside {
+  composes: body from "../../components/type.module.css";
+  max-width: var(--measure-lede);
+  margin-top: var(--space-5);
+  color: var(--text-dim);
+}
+
+/* The form, as filled in. Deliberately flat and unemphatic — it is the thing that
+   turns out NOT to decide anything, and a panel that looked important would argue
+   the opposite of what it is here to argue. */
+.declared {
+  margin: var(--space-7) 0 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 0;
+  border-top: var(--border-width) solid var(--border-default);
+}
+
+.pair {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-5);
+  padding: var(--space-4) var(--space-3);
+  border-bottom: var(--border-width) solid var(--border-faint);
+}
+
+.pair dt {
+  font-family: var(--font-mono);
+  font-size: var(--micro-size);
+  letter-spacing: var(--micro-track);
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.pair dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--data-size);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+
+/* Same three samples the strip prints, hoisted up here because two strips means two
+   legends and the second one is noise. Kept in sync by eye — if a fourth state ever
+   arrives, this is the other place it has to be added. */
+.legend {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--micro-size);
+  letter-spacing: var(--micro-track);
+  text-transform: uppercase;
+}
+
+.legendItem {
+  padding: var(--space-2) var(--space-3);
+  border: var(--border-width) solid transparent;
+}
+
+.isOff {
+  border-color: var(--border-faint);
+  color: var(--text-dim);
+  background: transparent;
+}
+
+.isOffered {
+  border-color: var(--border-default);
+  color: var(--text-primary);
+  background: var(--surface-raised);
+}
+
+.isChosen {
+  border-color: var(--border-signal);
+  background: var(--surface-signal);
+  color: var(--text-on-signal);
+}

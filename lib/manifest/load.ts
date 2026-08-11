@@ -39,6 +39,22 @@ const componentSpec = z.object({
   intent: z.string(),
   /** PERMISSION — a gate on a choice the model makes. */
   requires: z.array(predicate).default([]),
+  /**
+   * TAKEN OUT OF THE VOCABULARY, without being deleted.
+   *
+   * `loadManifest` drops these before anything downstream sees the file, so a
+   * retired component is not gated, not offered, not counted and not rendered — it
+   * has stopped existing as far as the application is concerned, which is what
+   * "removed from the vocabulary" has to mean if the demo's finale is going to be
+   * true rather than theatrical.
+   *
+   * A flag rather than a deletion, for one reason: the finale happens live, on
+   * stage, and a mis-click that deletes the wrong block is unrecoverable without a
+   * terminal. This is one click back. The entry staying in the file is also the
+   * honest record — a design system retires components, it does not pretend they
+   * were never there.
+   */
+  retired: z.boolean().default(false),
   adjacency: z.object({
     mustFollow: z.array(z.string()).optional(),
     neverWith: z.array(z.string()).optional(),
@@ -92,13 +108,27 @@ export const manifestSchema = z.object({
 export type Predicate = z.infer<typeof predicate>;
 export type ComponentSpec = z.infer<typeof componentSpec>;
 export type ObligationSpec = z.infer<typeof obligationSpec>;
-export type Manifest = z.infer<typeof manifestSchema> & { hash: string };
+export type Manifest = z.infer<typeof manifestSchema> & {
+  hash: string;
+  /** Names of components in the file that were retired out of the vocabulary. Only
+   *  the drift check wants these; everything else is meant not to know. */
+  retired: string[];
+};
 
 export const loadManifest = async (): Promise<Manifest> => {
   const raw = await readFile(MANIFEST_PATH, "utf8");
   const hash = createHash("sha256").update(raw).digest("hex").slice(0, 7);
   const parsed = manifestSchema.parse(JSON.parse(raw));
-  return { ...parsed, hash };
+
+  /* Retired components are removed HERE, once, rather than filtered at each of the
+     nine places that read `components`. Gating, the prompt, the validator, the
+     vocabulary strip and the `n/16` on the rail all then agree without being told,
+     and the count on screen drops the moment the file changes — which is the whole
+     visible proof that the edit landed. */
+  const retired = parsed.components.filter((c) => c.retired).map((c) => c.name);
+  const components = parsed.components.filter((c) => !c.retired);
+
+  return { ...parsed, components, retired, hash };
 };
 
 /**
@@ -115,7 +145,13 @@ export const checkDrift = (manifest: Manifest, registryNames: string[]) => {
   const built = new Set(registryNames);
 
   const missingComponent = [...declared].filter((n) => !built.has(n));
-  const missingEntry = [...built].filter((n) => !declared.has(n));
+  /* A RETIRED COMPONENT IS NOT DRIFT. It is built and it is deliberately not in the
+     vocabulary, which is exactly the state this check exists to flag — so without
+     this the finale would light up the rail with `drift: ForkedRecipeCard` half a
+     second after the edit, in front of the room, and it would read as the edit
+     having broken something. */
+  const retired = new Set(manifest.retired);
+  const missingEntry = [...built].filter((n) => !declared.has(n) && !retired.has(n));
   /* Anything in the vocabulary the page cannot name. Silent otherwise — the block
      still renders, just anonymously, which is the state this existed to end. */
   const missingLabel = [...manifest.components, ...manifest.obligations]

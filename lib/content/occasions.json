@@ -1,14 +1,15 @@
 {
   "note": "Occasions are ordinary application state, authored by a person through a form \u2014 the same way you would put an event in a calendar. No model creates one, reads one, or infers one. `avoid` is constrained to the allergen vocabulary the recipes declare against, so an occasion cannot reference an allergen no dish knows about. This is the FAST pace layer: it exists for a fortnight and then it expires. `scheduledOn` is when the person filled the form: before that date the occasion does not exist, which is why the household's ordinary page is the one you get until they plan something.",
+  "dates": "DELIBERATELY IN THE PAST, and do not move them forward. While an occasion is live the learner's page is an occasion page \u2014 it leads with ComparisonTable at hero and carries a shopping list \u2014 because TechniqueThread requires `state.hasOccasion == false`. That silently costs the demo its best beat: a recipe site with no recipe on it. These dates sit inside the ninety-day log window, so the dinner reads as something that happened and expired, which is the pace-layer argument anyway. Every moment of the occasion beat is still reachable with `?today=`, and /start derives its links from these two fields rather than from a table of dates, so moving them moves the links with them. A future date would only postpone the problem: real time would arrive at it.",
   "occasions": [
     {
       "id": "occ-learner-dinner",
       "householdId": "h-learner",
       "kind": "dinner-party",
-      "scheduledOn": "2026-08-08",
+      "scheduledOn": "2026-06-06",
       "label": "Dinner, eight people",
       "guests": 8,
-      "date": "2026-08-22",
+      "date": "2026-06-20",
       "avoid": [
         "gluten"
       ],

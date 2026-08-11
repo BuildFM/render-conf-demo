@@ -1,6 +1,7 @@
 "obligations": [
     {
       "name": "AllergenNotice",
+      "label": "Allergy warning",
       "intent": "Declaring an allergen present in a dish on this page.",
       "requiredWhen": {
         "fact": "state.allergenMatches",

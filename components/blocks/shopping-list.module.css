@@ -1,16 +1,30 @@
+/* The column COUNT is decided in the component, from how evenly the sections can be
+   split — see packColumns. Declared here per count rather than passed as an inline
+   style, so the container query below can still overrule it. */
 .columns {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
   gap: var(--grid-gap);
   align-items: start;
 }
 
+.columns[data-cols="1"] { grid-template-columns: 1fr; }
+.columns[data-cols="2"] { grid-template-columns: repeat(2, 1fr); }
+.columns[data-cols="3"] { grid-template-columns: repeat(3, 1fr); }
+
+/* One column is one stack of sections, in store-walk order. */
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-9);
+  min-width: 0;
+}
+
 /* HALF WIDTH. Three columns in a 570px cell is 170px each, and "Pork belly, boned"
    does not fit in 170px — the item and its quantity end up on separate lines, which
-   is the one thing a list you read in a shop must never do. One column instead. */
+   is the one thing a list you read in a shop must never do. One column instead.
+   Same specificity as the rules above and later in the file, so it wins. */
 @container (max-width: 700px) {
-  .columns { grid-template-columns: 1fr; gap: var(--space-7); }
-  .heroColumns { grid-template-columns: 1fr; }
+  .columns[data-cols] { grid-template-columns: 1fr; gap: var(--space-7); }
 }
 
 .table { composes: table from "../type.module.css"; }
@@ -73,15 +87,9 @@
   margin-bottom: var(--space-8);
 }
 
-/* Two wide columns rather than three narrow ones. At hero the list has the whole
-   measure, and a wider column means the item name and its quantity stay on one
-   line — which is the entire ergonomic point of a list you read in a shop. */
-.heroColumns {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-9) var(--grid-gap);
-  align-items: start;
-}
+/* `.heroColumns` lived here. Hero and full now share one packer — it caps hero at
+   two columns, which is the same "wider column keeps the name and the quantity on
+   one line" rule this class existed to state, expressed once instead of twice. */
 
 .captionHero {
   composes: caption;

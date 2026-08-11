@@ -40,6 +40,7 @@ export const key = (args: {
   household: Household;
   fired: FiredObligation[];
   occasion?: { occasion: { id: string; guests: number }; daysUntil: number } | null;
+  factsOverridden?: boolean;
   model: string;
 }): string =>
   digest([
@@ -61,6 +62,10 @@ export const key = (args: {
        different pages, because the prompt carries how long is left. Without this the
        second moment serves the first one's composition and the rail says cache hit. */
     args.occasion ? [args.occasion.occasion.id, args.occasion.daysUntil] : null,
+    /* An overridden page withholds the brief, and that is a different prompt against
+       an eligible set that may well be identical. Two compositions that differ only
+       in what they were told about the person must not share an entry. */
+    Boolean(args.factsOverridden),
     /* Or a Sonnet composition gets served to an Ollama run and the bake-off
        measures nothing. */
     args.model

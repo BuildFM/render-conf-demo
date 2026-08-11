@@ -118,49 +118,83 @@ const StartPage = async () => {
           </p>
         </div>
 
+        {/* THE RUN SHEET, IN THE ORDER IT IS PERFORMED.
+            Everything below this section is available and none of it is in the five
+            minutes. The list used to be organised by what a route IS, which is how
+            thirteen equally-weighted doors ended up on one screen — a tour rather
+            than an argument, and no way to tell from the page which four mattered. */}
         <section className={styles.section}>
-          <SectionHead title="The pages" rule="signal" />
+          <SectionHead title="The demo, in order" rule="signal" />
+          <p className={styles.aside}>
+            Four moves. Each one is a different instrument: a page, the same page
+            re-gated, the comparison with no pages at all, and the playground.
+          </p>
           <Rows
             rows={[
               {
                 href: "/",
                 name: "The home page",
                 note: "Hand-authored, in advance. No household, no model, no signal.",
-                tag: "beat 0"
+                tag: "0 · the ground"
               },
-              ...households.map((h) => ({
-                href: `/h/${h.id}`,
-                name: h.label,
-                note: HOUSEHOLD_NOTE[h.id] ?? `${h.declared.size} people`,
-                tag: `${h.declared.size} · ${h.declared.statedSkill}`
-              }))
+              {
+                href: "/h/h-learner",
+                name: "The learner",
+                note: "One page, full size, with the vocabulary strip under it. A recipe site with no recipe on it.",
+                tag: "1 · the page"
+              },
+              {
+                href: "/h/h-learner?facts=technique:0",
+                name: "…with one fact forced",
+                note: "Six chips move and no model is called. Eligibility is code. Then compose from what is left.",
+                tag: "2 · the gate"
+              },
+              {
+                href: "/twins",
+                name: "The twins",
+                note: "Same form, byte for byte. Two strips stacked, no pages — the difference reads straight down.",
+                tag: "3 · the proof"
+              },
+              {
+                href: "/stage",
+                name: "The split screen",
+                note: "The manifest beside the pages it causes. Strike a block out of the vocabulary and all three rebuild.",
+                tag: "4 · the ending"
+              }
             ]}
+          />
+        </section>
+
+        <section className={styles.section}>
+          <SectionHead title="The three households" rule="default" />
+          <Rows
+            rows={households.map((h) => ({
+              href: `/h/${h.id}`,
+              name: h.label,
+              note: HOUSEHOLD_NOTE[h.id] ?? `${h.declared.size} people`,
+              tag: `${h.declared.size} · ${h.declared.statedSkill}`
+            }))}
           />
         </section>
 
         {occasion ? (
           <section className={styles.section}>
-            <SectionHead title={`The occasion, from ${count(moments.length)} distances`} rule="signal" />
+            <SectionHead title={`Cut from the demo — the occasion, from ${count(moments.length)} distances`} rule="default" />
             <p className={styles.aside}>
-              One fixture — {occasion.label.toLowerCase()} on {pretty(occasion.date)} — seen
-              from {count(moments.length)} days. Same household, same vocabulary, no page written per moment:
-              the phase is subtraction from a date. <span className={styles.code}>?today=</span>{" "}
-              moves the clock and nothing else.
+              Built and working, and out of the five minutes: it is a second proof of
+              the same thesis and it needs its own setup. One fixture —{" "}
+              {occasion.label.toLowerCase()} on {pretty(occasion.date)} — seen from{" "}
+              {count(moments.length)} days, no page written per moment.{" "}
+              <span className={styles.code}>?today=</span> moves the clock and nothing else.
             </p>
             <Rows rows={moments} />
           </section>
         ) : null}
 
         <section className={styles.section}>
-          <SectionHead title="The instruments" rule="signal" />
+          <SectionHead title="Reference" rule="default" />
           <Rows
             rows={[
-              {
-                href: "/stage",
-                name: "The split screen",
-                note: "The manifest beside the page it causes. Edit the left, the right moves.",
-                tag: "the ending"
-              },
               {
                 href: "/kit",
                 name: "The specimen sheet",

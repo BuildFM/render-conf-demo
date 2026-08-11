@@ -287,9 +287,19 @@ export const resolveBlock = (
         }
       }
       if (!bySection.size) return fail("no ingredients for those recipes");
-      const order = ["Produce", "Butcher", "Fish", "Dairy", "Dry goods"];
+      /* THE ORDER YOU WALK A SHOP, and the reason the list is grouped at all.
+         `Dry goods` was split into `Store cupboard` and `Spice rack` on 11 Aug — it
+         was a catch-all holding forty of the corpus's sixty-eight ingredients, so
+         every list came out as one enormous section beside two of one item, and no
+         column arrangement could make that look like anything but a hole. */
+      const order = ["Produce", "Butcher", "Fish", "Dairy", "Store cupboard", "Spice rack"];
+      /* Unlisted sections sort LAST, not first. `indexOf` returns -1 for anything it
+         does not know, which put a new section ahead of Produce — so adding one to
+         the fixtures silently reordered the walk, and the failure looked like a data
+         problem rather than a sorting one. */
+      const rank = (name: string) => (order.indexOf(name) + 1 || order.length + 1);
       const sections = [...bySection.entries()]
-        .sort((a, b) => order.indexOf(a[0]) - order.indexOf(b[0]))
+        .sort((a, b) => rank(a[0]) - rank(b[0]))
         .map(([name, items]) => ({ name, items: dedupe(items) }));
       const occ = ctx.occasion;
       return ok({

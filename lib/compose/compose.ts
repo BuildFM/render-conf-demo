@@ -163,9 +163,14 @@ const describe = (c: ComponentSpec) =>
  * rhythm and the signup form. It never receives the facts that gated the
  * vocabulary — those are evaluated in code and decide what it is allowed to see.
  */
-export const householdContext = (profile: Profile, household: Household) =>
+export const householdContext = (profile: Profile, household: Household, suppressProfile = false) =>
   [
-    profile.characterization,
+    /* WITHHELD WHEN THE FACTS WERE OVERRIDDEN — see the note on `factsOverridden`.
+       The characterization is prose about a real ninety-day log, and the moment a
+       fact is forced from the URL it is prose about somebody else. */
+    suppressProfile
+      ? "(The nightly characterization has been withheld: this request overrides facts, so it would describe a different household.)"
+      : profile.characterization,
     `Cooked: ${profile.signals.cookedRecipeIds.join(", ") || "nothing"}`,
     `Repeats: ${profile.signals.repeatRecipeIds.join(", ") || "none"}`,
     `Abandoned: ${profile.signals.abandonedRecipeIds.join(", ") || "none"}`,
@@ -181,10 +186,23 @@ const prompt = (
   household: Household,
   fired: FiredObligation[],
   occasion: { occasion: Occasion; daysUntil: number } | null,
-  facts: Record<string, number | string | boolean>
+  facts: Record<string, number | string | boolean>,
+  /** Some fact was forced from the URL — see the note on `compose`. */
+  factsOverridden = false
 ) => `
 Compose one home page for one household, out of a fixed vocabulary.
+${factsOverridden ? `
+THERE IS NO BRIEF FOR THIS PAGE
+The one-sentence inference that normally opens this prompt has been withheld. It was
+drawn from ninety days of behaviour, and this request overrides some of those facts,
+so the sentence now describes a household that is not the one the gates below just
+described. Sending it stale would put a page and a claim about a person side by side
+that disagree with each other.
 
+So compose from the vocabulary alone. Take the lead the filtering left you, give it
+the most prominent treatment it supports, and choose supports that are about the
+same thing.
+` : `
 THE ONE THING THIS PAGE IS ABOUT
   "${profile.salientInference}"
 
@@ -194,6 +212,7 @@ first job is to pick the ONE block that most directly embodies it — if the sen
 is about dishes that branch, that is a fork card, not a shortlist; if it is about a
 weekly rhythm, that is a schedule, not a browse. Give that block the most prominent
 treatment it supports and put it first. Everything else on the page supports it.
+`}
 ${occasion ? `
 THIS FORTNIGHT ONLY — a temporary job, and while it lasts it outranks the brief
 ${occasionBrief(occasion.occasion, occasion.daysUntil)}
@@ -238,7 +257,7 @@ techniqueTag, pass exactly one of them, never a joined string.
 ${recipes.map((r) => `${r.id} ${r.title} — techniques: ${r.technique.join(", ")}; serves ${r.yield}; ${r.activeTime} min active, ${r.totalTime} total; ${r.ingredientCount} ingredients; allergens ${r.allergens.join("/") || "none"}${r.makeAhead ? "; HAS A MAKE-AHEAD STEP" : ""}${r.forkPoint ? `; SPLITS PARTWAY (${r.forkPoint}) so one pot serves two constraints` : ""}`).join("\n")}
 
 THIS HOUSEHOLD
-${householdContext(profile, household)}
+${householdContext(profile, household, factsOverridden)}
 
 ${(() => {
   const leads = eligible.filter((c) => canLead(c, facts));
@@ -296,9 +315,14 @@ RULES
   a legitimate composition if this household's history argues for it.
 
 RATIONALE — the single most important thing you write
-Say the brief at the top of this prompt again, in your own words, addressed TO this
+${factsOverridden
+  ? `Say what the LEAD BLOCK is doing here, addressed TO this person as "you". There
+is no brief this time, so do not claim to know anything about them that the blocks
+on this page do not already show — an inference drawn from facts that were forced is
+a sentence about nobody.`
+  : `Say the brief at the top of this prompt again, in your own words, addressed TO this
 person as "you". Same idea, tighter. Do not introduce a different observation — the
-page and the sentence have to be about the same thing or neither lands.
+page and the sentence have to be about the same thing or neither lands.`}
 UNDER 12 WORDS. It is the page explaining itself in the time it takes to read one
 line, so it has to be the truest thing you can say about them.
 
@@ -328,6 +352,22 @@ export const compose = async (args: {
   facts: Record<string, number | string | boolean>;
   /** The fast layer. Null for most requests, and null again the day after. */
   occasion?: { occasion: Occasion; daysUntil: number } | null;
+  /**
+   * A fact was forced from the URL, so this is a household that does not exist.
+   *
+   * It changes one thing and it matters: the profile is frozen on disk and describes
+   * the household as it REALLY behaves, so composing an overridden page with the
+   * real brief pairs a page built for one person with a sentence written about
+   * another. The model would then write a rationale that contradicts the page it is
+   * looking at — one line, in the largest type on the page, in front of the room.
+   *
+   * So the brief and the characterization are withheld whenever this is true, and
+   * the rail says so. Withholding is the cheap answer; the expensive one is running
+   * the nightly inference again against a log that was never edited, which would be
+   * a model call in the middle of a beat that exists to show what happens WITHOUT
+   * one.
+   */
+  factsOverridden?: boolean;
   repairNotes?: string[];
 }): Promise<{
   spec: LayoutSpec;
@@ -359,6 +399,10 @@ export const compose = async (args: {
      serve the repaired layout to the next first attempt. Repairs always run live
      and are never stored. */
   const repairing = Boolean(args.repairNotes?.length);
+  /* `factsOverridden` is in the key because it changes the PROMPT without always
+     changing the eligible set — forcing a fact that no precondition reads leaves the
+     vocabulary identical and still withholds the brief. Without it the first
+     overridden load would be served the real household's cached composition. */
   const k = repairing ? null : cache.key({ ...args, model: label });
 
   if (k && cache.enabled()) {
@@ -367,7 +411,7 @@ export const compose = async (args: {
   }
 
   const text =
-    prompt(args.manifest, args.eligible, args.recipes, args.profile, args.household, args.fired, args.occasion ?? null, args.facts) +
+    prompt(args.manifest, args.eligible, args.recipes, args.profile, args.household, args.fired, args.occasion ?? null, args.facts, args.factsOverridden ?? false) +
     (args.repairNotes?.length
       ? `\n\nYOUR PREVIOUS ATTEMPT WAS REJECTED. Fix exactly these and return a whole new spec:\n${args.repairNotes.map((n) => `- ${n}`).join("\n")}`
       : "");

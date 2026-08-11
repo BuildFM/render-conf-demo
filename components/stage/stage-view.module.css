@@ -630,3 +630,45 @@
   color: var(--text-primary);
 }
 .railValue[data-changed="true"] { color: var(--text-signal); }
+
+/* --- striking a block out of the vocabulary -------------------------------- */
+
+/* Filled acid is IN the vocabulary; an empty outline is struck. State rather than
+   action, because the row has to be readable at a glance from the back of a room
+   and a control labelled "remove" tells you what it will do rather than what is
+   true. Square, because there is no radius anywhere in this system. */
+.blockToggle {
+  flex: none;
+  width: calc(11px * var(--stage-k));
+  height: calc(11px * var(--stage-k));
+  padding: 0;
+  border: var(--border-width) solid var(--border-default);
+  background: transparent;
+  cursor: pointer;
+  align-self: center;
+  transition: background var(--transition-color), border-color var(--transition-color);
+}
+
+.blockToggle[data-in="true"] {
+  background: var(--surface-signal);
+  border-color: var(--border-signal);
+}
+
+.blockToggle:hover { border-color: var(--border-hover); }
+
+/* The struck row stays in the list — it has to, or there is nothing to click to put
+   it back — but it stops looking like part of the vocabulary. */
+.block[data-retired="true"] .blockName {
+  color: var(--text-dim);
+  text-decoration: line-through;
+}
+
+.block[data-retired="true"] .blockNeeds,
+.block[data-retired="true"] .blockAdjacency {
+  color: var(--text-dim);
+  opacity: 0.55;
+}
+
+.block[data-retired="true"] .blockRole {
+  color: var(--text-signal);
+}
