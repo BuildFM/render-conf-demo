@@ -33,7 +33,22 @@
   color: var(--text-on-signal);
   border: 0;
 }
-.signal:hover:not(:disabled) { background: var(--paper); }
+
+/* THE TEXT COLOUR IS RESTATED HERE, and it is not redundant.
+ *
+ * A Button with an `href` renders an `<a>`, and tokens.css carries a global
+ * `a:hover { color: var(--link-hover) }` — which is `--paper`. This rule only ever
+ * set the background, so on hover the anchor rule won the colour and painted paper
+ * text onto a paper background: the label vanished. It read as correct in every
+ * screenshot, because nothing is hovered in a screenshot.
+ *
+ * The base `color` cannot save it — `.signal` is one class and `a:hover` is a class
+ * plus a pseudo-class, so the global wins the moment the pointer arrives. Any hover
+ * state on an element that might be an anchor has to state its own colour. */
+.signal:hover:not(:disabled) {
+  background: var(--paper);
+  color: var(--text-on-signal);
+}
 
 .outline {
   background: transparent;

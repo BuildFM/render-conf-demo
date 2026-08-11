@@ -56,7 +56,11 @@
   cursor: pointer;
   transition: background var(--transition-color);
 }
-.button:hover { background: var(--paper); }
+/* See core/button.module.css — a signal hover states its own colour. */
+.button:hover {
+  background: var(--paper);
+  color: var(--text-on-signal);
+}
 
 .success {
   composes: data from "../type.module.css";

@@ -74,7 +74,14 @@
   cursor: pointer;
   transition: background var(--transition-color);
 }
-.searchButton:hover { background: var(--paper); }
+/* Colour restated, as on every signal hover in the system — see the note in
+   core/button.module.css. This one is a real <button> today, so the global `a:hover`
+   cannot reach it, but that is a fact about the markup rather than a decision, and
+   it stops being true the day this becomes a link. */
+.searchButton:hover {
+  background: var(--paper);
+  color: var(--text-on-signal);
+}
 
 .stamp {
   composes: micro from "../type.module.css";

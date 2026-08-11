@@ -1167,6 +1167,15 @@ entirely, nothing here needs finishing first.**
   anything appended to a composed page inflates every frame in it. The vocabulary
   strip is kept out with `?strip=0` for exactly this reason. Whatever gets appended
   next has to do the same.
+- **A hover state on anything that might be an anchor must state its own `color`.**
+  `tokens.css` carries a global `a:hover { color: var(--link-hover) }`, and
+  `--link-hover` is `--paper`. `Button` renders an `<a>` whenever it has an `href`, so
+  the signal button's hover — which only set `background: var(--paper)` — got paper
+  text on a paper ground and the label disappeared entirely. The base `color` cannot
+  save it: `.signal` is one class and `a:hover` is a class plus a pseudo-class. Fixed
+  11 Aug on all three signal buttons; the two that are `<button>` elements were only
+  safe by accident of markup. **Screenshots will never catch this** — nothing is
+  hovered in a screenshot.
 - **Obligations are placed by the app, never the model**, and render *immediately
   above the dish they are about* — not at the top of the page.
 - **Adjacency is a rule about units, not members.** A block that must follow
