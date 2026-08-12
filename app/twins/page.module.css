@@ -119,6 +119,26 @@
   min-width: 0;
 }
 
+/* The page and its link, held tight together — they are one object. */
+.pageGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* THE ARTIFACT ENDS HERE AND THE APPARATUS BEGINS.
+ *
+ * Every child of the column sat at the same 14px rhythm, so the page's bottom edge,
+ * the link under it and the first row of diagnostics read as one continuous list —
+ * and the whole point of this view is that the page is the thing and the numbers are
+ * the footnote. A section's worth of space says that without a caption. Same rule the
+ * strip lives under on the composed pages, where it is drawn with an acid rule
+ * instead; two acid rules per column here would fight the one under the household
+ * name, so this boundary is made of space. */
+.diagnostics {
+  margin-top: var(--rhythm-section);
+}
+
 .columnHead {
   display: flex;
   align-items: baseline;

@@ -158,36 +158,43 @@ const TwinsPage = async ({
                   </p>
                 </header>
 
-                <div className={styles.window}>
-                  <iframe
-                    className={styles.frame}
-                    /* `strip=0` — the page's own vocabulary strip would be a third
-                       copy of the diagnostics on a view that exists to have fewer. */
-                    src={`/h/${r.household.id}?strip=0${q}`}
-                    title={`${r.household.label}'s home page`}
-                    loading="eager"
-                    scrolling="no"
-                  />
+                {/* The page and the link that opens it are ONE thing — the artifact.
+                    Everything below is the apparatus that explains it, and the two
+                    were running together at a single rhythm. */}
+                <div className={styles.pageGroup}>
+                  <div className={styles.window}>
+                    <iframe
+                      className={styles.frame}
+                      /* `strip=0` — the page's own vocabulary strip would be a third
+                         copy of the diagnostics on a view that exists to have fewer. */
+                      src={`/h/${r.household.id}?strip=0${q}`}
+                      title={`${r.household.label}'s home page`}
+                      loading="eager"
+                      scrolling="no"
+                    />
+                  </div>
+
+                  <a className={styles.openFull} href={`/h/${r.household.id}${today ? `?today=${today}` : ""}`}>
+                    Open {r.household.label} full size →
+                  </a>
                 </div>
 
-                <a className={styles.openFull} href={`/h/${r.household.id}${today ? `?today=${today}` : ""}`}>
-                  Open {r.household.label} full size →
-                </a>
-
-                <VocabularyStrip
-                  layout="counts"
-                  switches="readonly"
-                  showLegend={false}
-                  components={r.manifest.components}
-                  obligations={r.manifest.obligations}
-                  firedObligations={[...new Set(r.fired.map((f) => f.name))]}
-                  facts={r.facts}
-                  eligible={r.allowed.map((c) => c.name)}
-                  chosen={r.chosen}
-                  overrides={r.overrides}
-                  basePath={`/h/${r.household.id}`}
-                  today={today}
-                />
+                <div className={styles.diagnostics}>
+                  <VocabularyStrip
+                    layout="counts"
+                    switches="readonly"
+                    showLegend={false}
+                    components={r.manifest.components}
+                    obligations={r.manifest.obligations}
+                    firedObligations={[...new Set(r.fired.map((f) => f.name))]}
+                    facts={r.facts}
+                    eligible={r.allowed.map((c) => c.name)}
+                    chosen={r.chosen}
+                    overrides={r.overrides}
+                    basePath={`/h/${r.household.id}`}
+                    today={today}
+                  />
+                </div>
               </section>
             );
           })}
