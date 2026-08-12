@@ -7,9 +7,10 @@ built the way it is; this file stays a script.
 **What it has to land:** a design system is what earns a model the right to compose an
 interface. Every move is one step of that, and no move is a feature tour.
 
-The through-line is the **vocabulary strip** — sixteen blocks, in three states. It is
-on screen in three of the four moves, and it is the only object the room tracks from
-beginning to end.
+The through-line is the **vocabulary strip** — sixteen blocks, in three states. Moves
+1 and 2 teach it in full; move 3 spends it, showing only the three counts under two
+real pages. **Pages carry the argument, instruments explain it.** If a move is all
+instrument, the room has stopped looking at design.
 
 ---
 
@@ -151,15 +152,20 @@ showing the model working *after* the rules ran.
 > Two households. Same form at signup — same size, same diet, same stated skill, the
 > same nine things in the pantry. Byte for byte identical.
 
-**Point at the declared panel, then move down to the fact rows.**
+**Point at the declared panel, then let them look at the two pages.**
 
-> Here is what they have each actually done since. Not the same.
+*(beat — this is the one moment the room works instead of you. Two pages, side by
+side, obviously not the same page.)*
+
+> One of them opens on a dish that splits two ways. The other opens on a schedule.
+> Nobody wrote a template for either of these people.
+
+**Point at the line above the pages.**
+
+> They qualify for the same *number* of blocks — seven of sixteen each. Not the same
+> seven. Six of them differ.
 >
-> Same sixteen blocks, same order, twice. Look straight down.
-
-*(let them scan — the one moment the room works instead of you)*
-
-> Six differ. And nobody wrote a template for either of these people.
+> And underneath each page is why: not what they told us, what they did.
 
 Optional, and the best answer to the question you will otherwise get in Q&A:
 
@@ -176,17 +182,17 @@ rather than by arguing.
 **Screen** `/stage`
 
 > Manifest on the left — the actual file, read off disk on every request, not a build
-> artifact. Three composed pages on the right.
+> artifact. Same two pages on the right.
 >
 > I'm going to take a block out of the vocabulary.
 
 **Click the square beside `ForkedRecipeCard`** — the row dims, strikes through and
 reads `REMOVED`. **Then ⌘S.**
 
-> Three model calls, running now.
+> Two model calls, running now.
 
-*(~15s, all three live. Narrate the rail — every count moves and the arrows read from
-the back.)*
+*(~10s, both live. Narrate the rail — every count moves and the arrows read from the
+back.)*
 
 > Twin A's page was built around that block. There is no template for "what if the
 > fork is gone", because nobody wrote one. The vocabulary changed and the page
@@ -205,9 +211,14 @@ Struck the wrong one? Click it again — it is a toggle and nothing is deleted.
 
 | What should move | vocabulary | and |
 |---|---|---|
-| The learner | 9/16 → 9/15 | — |
 | Twin A | 7/16 → 6/15 | `obligations 2 → 3`, `blocks 3/3 → 4/4` |
 | Twin B | 7/16 → 7/15 | — |
+
+The learner is deliberately not on this board. Its page does not change when a block
+is struck — `blocks 3/3` before and after — so a third pane would sit perfectly still
+while its neighbours moved, which on a stage reads as *did that one fail?* Two panes
+are also 890px each against three at 578px, which is the difference between seeing
+that a page changed and seeing what it changed into.
 
 **The job:** the only move that cannot be explained away. It gets the most time for
 that reason.

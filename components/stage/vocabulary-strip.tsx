@@ -62,12 +62,15 @@ type Props = {
    * `grouped` — three labelled columns, one per state. What a single page wants: the
    *   question there is "how much of this did the model decide", and the answer is a
    *   count and a column height rather than sixteen boxes to classify one at a time.
+   * `counts` — the three headings and nothing else. What the twins view wants under
+   *   a page: the eligibility difference as two numbers rather than as a wall of
+   *   thirty-two chips, on a view whose payload is the pages themselves.
    * `sequence` — every block in manifest order, states shown as colour. What the
    *   twins view wants: there the question is "which block differs", and that is
    *   answered by two rows in the same order and looking straight down. Grouping
    *   would move a block between columns and turn a glance into a search.
    */
-  layout?: "grouped" | "sequence";
+  layout?: "grouped" | "sequence" | "counts";
   /** Off when something above has already taught the three states — the twins view
    *  shows two strips and a legend printed twice is a legend nobody reads once. */
   showLegend?: boolean;
@@ -139,7 +142,8 @@ export const VocabularyStrip = ({
   };
 
   return (
-    <aside className={styles.strip} aria-label="The vocabulary this page was composed from">
+    <aside className={styles.strip} data-layout={layout} aria-label="The vocabulary this page was composed from">
+      {layout !== "counts" && (
       <div className={styles.head}>
         <h2 className={styles.title}>{heading}</h2>
         <p className={styles.counts}>
@@ -156,6 +160,7 @@ export const VocabularyStrip = ({
           )}
         </p>
       </div>
+      )}
 
       {/* THE STATES ARE THE ARGUMENT, SO THEY ARE THE LAYOUT.
           Sixteen chips in manifest order meant the three states were shuffled
@@ -164,7 +169,19 @@ export const VocabularyStrip = ({
           in each heading is the whole story and nobody has to read a single chip.
           The headings also retire the legend: a column headed "not eligible — a gate
           said no, in code" does not need a swatch above it saying the same. */}
-      {layout === "grouped" ? (
+      {layout === "counts" ? (
+        /* Headings only. Two of these side by side is the whole eligibility argument
+           in six numbers, sitting under two pages that have already made it
+           visually — which is the order a room of designers wants it in. */
+        <div className={styles.countRow}>
+          {groups.map((g) => (
+            <div key={g.key} className={styles.countUnit} data-state={g.key}>
+              <span className={styles.groupCount}>{g.items.length}</span>
+              <span className={styles.groupTitle}>{g.title}</span>
+            </div>
+          ))}
+        </div>
+      ) : layout === "grouped" ? (
         <div className={styles.groups}>
           {groups.map((g) => (
             <section key={g.key} className={styles.group} data-state={g.key}>
@@ -209,7 +226,25 @@ export const VocabularyStrip = ({
       {/* The obligation, apart and last — a fourth position on the same axis rather
           than a fourth kind of thing: code said no, model chose, model declined, and
           then code said YES and the model had no vote at all. It was headed "not a
-          choice", which named the mechanism rather than the fact. */}
+          choice", which named the mechanism rather than the fact.
+
+          One line in `counts`, because on the twins view the interesting fact is
+          simply that it fired for one household and not the other. */}
+      {layout === "counts" ? (
+        <ul className={styles.countObligations}>
+          {obligations.map((o) => {
+            const fired = firedObligations.includes(o.name);
+            return (
+              <li key={o.name} className={styles.countObligation} data-fired={fired}>
+                <span>{o.label || o.name}</span>
+                <span className={styles.countObligationState}>
+                  {fired ? "on the page" : "dormant"}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      ) : (
       <div className={styles.obligations}>
         <div className={styles.obligationsHead}>
           <span className={styles.obligationsLabel}>Placed by the application</span>
@@ -231,6 +266,7 @@ export const VocabularyStrip = ({
           })}
         </ul>
       </div>
+      )}
 
       {/* WHAT IF THEY HAD DONE SOMETHING ELSE.
           Links, not client state: the composed page stays free of client JS and

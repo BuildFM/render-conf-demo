@@ -1,4 +1,4 @@
-# Mise — where this is, 11 Aug 2026
+# Mise — where this is, 12 Aug 2026
 
 **Read this first, from a cold start.** It assumes you know nothing about the
 project. It is the state of play, not a spec — the specs live in the vault at
@@ -595,6 +595,57 @@ the design system doing the work, and it is the thesis with a number attached.
   pressure on 18GB — not isolated.
 - **Two components are built but out of the vocabulary**: `SeasonalNote`,
   `FromYourHistory`. Both produce orphans on a four-block page.
+
+## 12 Aug — pages carry the argument, instruments explain it
+
+**Brian's note:** *"Right now it is 100% diagnostics. We don't even show the pages…
+I am getting too in the weeds during the demo. For a talk aimed at designers, they
+will get lost."* Correct, and the diagnosis is structural rather than cosmetic.
+
+`/twins` was two vocabulary strips and no pages at all — and it is the move carrying
+the sharpest claim in the talk (two people filled in the same form and got different
+products). It was the only move with **no interface on screen**. The strip explains
+why two pages differ; it cannot stand in for the difference. Three moves deep in
+instruments, an audience of designers has stopped watching design.
+
+### `/twins` is two pages now, with the diagnostics as a footnote
+
+Side by side, each in a fixed-height window showing the top of the page, with a caption
+naming the lead block (`opens with — RECIPE, TWO WAYS` against `PREP SCHEDULE`).
+Underneath: the three counts, the obligation as one line, and the five behavioural
+facts. Roughly a third of what was there.
+
+**The pages render UNSCALED, at ~690px, not shrunk to fit.** A page scaled to 0.5 puts
+15px type at 7px and the room sees a texture; rendered natively at half measure it is a
+real responsive render and the type stays 15px. What is being compared is SHAPE, and
+shape survives the narrower measure. The window is a fixed height with the overflow
+clipped, deliberately — it needs no client JavaScript, so there is no measurement race
+in the middle of a live demo and no third client component in the repo.
+
+**The counts alone were not enough, and finding that out was the useful part.** Both
+households qualify for the same NUMBER of blocks — 7 of 16 — so the three counts read
+identically under both pages and the evidence appeared to show nothing. It is not
+nothing: they qualify for a *different* seven. The view now computes and states that
+in one line — *"Both qualify for 7 of the 16 blocks. Not the same 7 — 6 differ."* —
+which is a better sentence than any of the six numbers above it.
+
+### `/stage` is a two-up, and the learner is off the board
+
+Same two pages as move 3, which is the point: the room spends move 3 learning those
+two shapes, so in move 4 any change is measured against something it already knows.
+
+Two other reasons, both measured:
+
+- **Panes go 578px → 890px.** Against the 1180px canvas that is 0.49 → 0.75, which is
+  the difference between seeing that a page changed and seeing what it changed into.
+  You can now read the fork card's two branches from across a room.
+- **The learner's page does not change when a block is struck.** `vocabulary 9/16 →
+  9/15` but `blocks 3/3` before and after. Three panes meant one reorganising, one
+  changing a little, and one sitting perfectly still — and on a stage a still pane does
+  not read as "unaffected", it reads as *"did that one fail?"*
+
+`paneW` divides by `households.length` rather than by a hardcoded 3, so the board takes
+whatever the route hands it. The route filters the learner out and says why.
 
 ## 11 Aug, later — the finale is one click
 

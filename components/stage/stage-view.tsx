@@ -5,7 +5,7 @@ import { setRetired } from "@/lib/manifest/slice";
 import styles from "./stage-view.module.css";
 
 /**
- * The split screen. Manifest on the left, three composed households on the right.
+ * The split screen. Manifest on the left, the two composed twins on the right.
  *
  * This is the spine of the demo, not its finale. Every other view in this app shows
  * an OUTPUT, and outputs are what personalization also produces — any single page
@@ -400,7 +400,11 @@ export const StageView = ({
   const showBlocks = tab.view === "blocks" && !rawMode && components !== null;
 
   const drawerW = open ? DRAWER_OPEN_W : DRAWER_RAIL_W;
-  const paneW = (BOARD_W - PAD * 2 - GAP - drawerW - PANE_GAP * 2) / 3;
+  /* Divided by however many households are on the board, not by three. It was two
+     panes' worth of hardcoding away from being a two-up, and two-up is what the
+     finale wants — see the note on the stage route. */
+  const paneW =
+    (BOARD_W - PAD * 2 - GAP - drawerW - PANE_GAP * (households.length - 1)) / households.length;
   const scale = paneW / PANE_VIEWPORT;
 
   const onFrameLoad = (id: string) => {
@@ -750,8 +754,8 @@ export const StageView = ({
 
         {/* ---- the consolidated rail ----------------------------------------
             The numeric half of the proof, and the only thing here that has to be
-            legible from the back of the room. `obligations 0 → 1` on two
-            households and `0 → 0` on the third is beat 6 in one line. */}
+            legible from the back of the room. `obligations 2 → 3` on Twin A while
+            Twin B holds still is the finale in one line. */}
         <footer className={styles.rail}>
           <div className={styles.railHead}>
             <span className={styles.label}>manifest</span>

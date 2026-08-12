@@ -152,13 +152,13 @@ const StartPage = async () => {
               {
                 href: "/twins",
                 name: "The twins",
-                note: "Same form, byte for byte. Two strips stacked, no pages — the difference reads straight down.",
+                note: "Same form at signup, byte for byte. The two pages side by side, and six numbers underneath saying why.",
                 tag: "3 · the proof"
               },
               {
                 href: "/stage",
                 name: "The split screen",
-                note: "The manifest beside the pages it causes. Strike a block out of the vocabulary and all three rebuild.",
+                note: "The manifest beside the same two pages. Strike a block out of the vocabulary and both rebuild.",
                 tag: "4 · the ending"
               }
             ]}

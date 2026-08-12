@@ -350,3 +350,94 @@
   letter-spacing: var(--micro-track);
   text-transform: uppercase;
 }
+
+/* --- counts: the strip as a footnote --------------------------------------
+   Used under a composed page on the twins view, where the pages are the payload and
+   this is the evidence. It drops the band chrome entirely — no acid rule, no raised
+   ground, no full-bleed inset — because it is sitting inside a column rather than
+   spanning the window. */
+
+.strip[data-layout="counts"] {
+  border-top: 0;
+  background: transparent;
+  padding: 0;
+  gap: var(--space-5);
+}
+
+.countRow {
+  display: flex;
+  gap: var(--space-8);
+  flex-wrap: wrap;
+  border-top: var(--border-width) solid var(--border-default);
+  padding-top: var(--space-4);
+}
+
+/* Numeral and label on one baseline: three of these read as a sentence — seven, six,
+   three — which is what gets said out loud over them. */
+.countUnit {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.countUnit .groupCount { color: var(--text-dim); }
+.countUnit[data-state="offered"] .groupCount { color: var(--text-primary); }
+.countUnit[data-state="chosen"] .groupCount { color: var(--text-signal); }
+
+.countUnit .groupTitle {
+  font-size: var(--micro-size);
+  letter-spacing: var(--micro-track);
+  color: var(--text-dim);
+}
+
+.countObligations {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+}
+
+.countObligation {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  font-family: var(--font-display);
+  font-size: var(--button-size-sm);
+  font-weight: var(--button-wght);
+  font-stretch: calc(var(--button-wdth) * 1%);
+  letter-spacing: var(--button-track);
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.countObligation[data-fired="true"] { color: var(--text-primary); }
+
+.countObligationState {
+  font-family: var(--font-mono);
+  font-size: var(--micro-size);
+  letter-spacing: var(--micro-track);
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* Reversed out in paper when it fired, the same way the chip is — an obligation is
+   the one thing on the page the model had no vote on, and acid means "the model
+   chose this". */
+.countObligation[data-fired="true"] .countObligationState {
+  background: var(--text-primary);
+  color: var(--ink-0);
+  padding: 1px var(--space-2);
+}
+
+/* Inside a ~690px column the five switches want to wrap into a tidy block rather
+   than a ragged line. */
+.strip[data-layout="counts"] .what {
+  border-top: var(--border-width) solid var(--border-faint);
+}
+
+.strip[data-layout="counts"] .switch {
+  font-size: var(--button-size-sm);
+  padding: var(--space-2) var(--space-3);
+}

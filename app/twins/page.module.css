@@ -1,7 +1,11 @@
+/* Wider than the 1180px design canvas, on purpose. This page is not an article; it
+   is two page windows side by side, and holding them to a measure meant for a
+   paragraph would render each at ~560px and cost the comparison its legibility.
+   Prose inside still holds its own measure — see `.lede` and `.aside`. */
 .sheet {
-  width: var(--canvas-width);
+  width: min(100%, 1680px);
   margin: 0 auto;
-  padding: var(--space-13) 0 var(--space-11);
+  padding: var(--space-13) var(--inset-section) var(--space-11);
 }
 
 .head { margin-bottom: var(--rhythm-section); }
@@ -63,41 +67,107 @@
   color: var(--text-primary);
 }
 
-/* Same three samples the strip prints, hoisted up here because two strips means two
-   legends and the second one is noise. Kept in sync by eye — if a fourth state ever
-   arrives, this is the other place it has to be added. */
-.legend {
-  margin: 0;
-  padding: 0;
-  list-style: none;
+/* The one line that carries the argument in words. Set at the statement register:
+   it is the thing to read if you read nothing else on this page. */
+.verdict {
+  composes: displayS from "../../components/type.module.css";
+  margin: var(--rhythm-section) 0 0;
+  max-width: 30ch;
+  color: var(--text-body);
+}
+
+.verdict strong {
+  font-weight: inherit;
+  color: var(--text-signal);
+}
+
+/* --- the two pages ---------------------------------------------------------
+   Full-bleed rather than held to the 1180px sheet: two page windows want every pixel
+   the window has, and the measure that suits a paragraph starves them. */
+
+.columns {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-10);
+  align-items: start;
+  margin-top: var(--rhythm-section);
+}
+
+.column {
   display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.columnHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-5);
   flex-wrap: wrap;
-  gap: var(--space-2);
+  border-bottom: var(--border-width-strong) solid var(--border-signal);
+  padding-bottom: var(--space-3);
+}
+
+.columnTitle {
+  margin: 0;
+  composes: displayM from "../../components/type.module.css";
+  color: var(--text-primary);
+}
+
+.opened {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.openedLabel {
   font-family: var(--font-mono);
   font-size: var(--micro-size);
   letter-spacing: var(--micro-track);
   text-transform: uppercase;
-}
-
-.legendItem {
-  padding: var(--space-2) var(--space-3);
-  border: var(--border-width) solid transparent;
-}
-
-.isOff {
-  border-color: var(--border-faint);
   color: var(--text-dim);
-  background: transparent;
 }
 
-.isOffered {
-  border-color: var(--border-default);
-  color: var(--text-primary);
-  background: var(--surface-raised);
+/* The lead block, named. Two shapes side by side prove they differ; this says what
+   they differ BY, in two words, without anybody reading the page. */
+.openedValue {
+  font-family: var(--font-display);
+  font-size: var(--button-size);
+  font-weight: var(--button-wght);
+  font-stretch: calc(var(--button-wdth) * 1%);
+  letter-spacing: var(--button-track);
+  text-transform: uppercase;
+  color: var(--text-signal);
 }
 
-.isChosen {
-  border-color: var(--border-signal);
-  background: var(--surface-signal);
-  color: var(--text-on-signal);
+/* A window onto the top of the page. Fixed height with the overflow clipped: the
+   opening is where the difference is loudest, and a height that fits the whole page
+   would need measuring it, which needs client JavaScript this view does not have.
+   The rule at the foot says the page continues rather than ends. */
+.window {
+  height: 640px;
+  overflow: hidden;
+  border: var(--border-width) solid var(--border-default);
+  border-bottom-width: var(--border-width-strong);
+  background: var(--surface-page);
+}
+
+/* Sized to the column and TALL, so the page inside lays out as if it had a screen.
+   Given a short height it would render its own scrollbar and lay out against it. */
+.frame {
+  width: 100%;
+  height: 1800px;
+  border: 0;
+  display: block;
+}
+
+.openFull {
+  font-family: var(--font-mono);
+  font-size: var(--micro-size);
+  letter-spacing: var(--micro-track);
+  text-transform: uppercase;
+  align-self: flex-start;
 }
