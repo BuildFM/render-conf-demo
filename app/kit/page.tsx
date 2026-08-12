@@ -430,10 +430,10 @@ export default async function KitPage() {
         </Specimen>
 
         <Specimen name="LeftoversNote" treatment="oneline only">
-          <LeftoversNote
-            recipeTitle={brick.title}
-            text="Thursday's brothy beans, once the carcass has been in the pot an hour"
-          />
+          {/* Sample data that matches what a page actually produces. The old
+              specimen showed an authored "what it becomes" line that no recipe has,
+              which is how a kit starts lying about its own system. */}
+          <LeftoversNote recipeTitle={brick.title} serves={brick.yield} surplus={brick.yield - 1} />
         </Specimen>
 
         <Specimen name="FromYourHistory" treatment="oneline only">

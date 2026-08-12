@@ -231,7 +231,11 @@ export const resolveBlock = (
     case "LeftoversNote": {
       const r = rs.find((x) => x.yield > ctx.householdSize);
       if (!r) return fail("nothing yields more than the household");
-      return ok({ text: `serves ${r.yield}, which is ${r.yield - ctx.householdSize} more than tonight needs`, recipeTitle: r.title }, [r]);
+      /* Values, not a half-written sentence. This used to hand the component a
+         prose fragment that its template then glued after the word "becomes",
+         producing "What is left of Pressed pork belly becomes serves 6, which is 5
+         more than tonight needs." The block writes its own sentence now. */
+      return ok({ recipeTitle: r.title, serves: r.yield, surplus: r.yield - ctx.householdSize }, [r]);
     }
 
     case "ComparisonTable": {
