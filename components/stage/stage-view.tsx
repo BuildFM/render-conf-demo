@@ -222,6 +222,9 @@ export const StageView = ({
   );
 
   const frames = useRef<Record<string, HTMLIFrameElement | null>>({});
+  /* The scroll containers, so a recompose can put every pane back to the top of its
+     new page — see the note in `recompose`. */
+  const viewports = useRef<Record<string, HTMLDivElement | null>>({});
   const started = useRef<Record<string, number>>({});
 
   /* The slices of the manifest this tab holds. Fetched rather than computed here so
@@ -267,6 +270,11 @@ export const StageView = ({
 
   const recompose = useCallback(() => {
     const now = Date.now();
+    /* Back to the top of each pane. Two reasons: the page about to arrive is a new
+       one and its opening is the thing to look at, and the "composing" veil is an
+       absolutely positioned child of the scroll container — scrolled down, it sits
+       above the visible area and the pane appears to do nothing for four seconds. */
+    for (const v of Object.values(viewports.current)) if (v) v.scrollTop = 0;
     setPanes((prev) => {
       const next: Record<string, PaneState> = {};
       for (const [id, p] of Object.entries(prev)) {
@@ -641,7 +649,13 @@ export const StageView = ({
                  length by design — that difference is part of what the room is
                  looking at, and padding them all to a common height hides it. */
               const frameH = p.contentH || PANE_MAX_H / scale;
-              const viewportH = Math.min(PANE_MAX_H, frameH * scale);
+              /* What the page measures once it has been scaled down: the height it
+                 actually OCCUPIES, as opposed to the height it lays out at. The two
+                 are different because `transform` does not change layout, and that
+                 difference is why the pane needed a box of its own to scroll — see
+                 the note on `.frameBox`. */
+              const drawnH = frameH * scale;
+              const viewportH = Math.min(PANE_MAX_H, drawnH);
               return (
                 <article key={h.id} className={styles.pane} style={{ width: paneW }}>
                   <header className={styles.paneHead}>
@@ -718,8 +732,19 @@ export const StageView = ({
                   ) : null}
                   <div
                     className={styles.viewport}
+                    ref={(el) => {
+                      viewports.current[h.id] = el;
+                    }}
                     style={{ width: paneW, height: viewportH, display: showData ? "none" : undefined }}
                   >
+                    {/* A BOX THE SIZE THE PAGE IS DRAWN AT, so the pane can scroll.
+                        The iframe lays out at the page's full height and is then
+                        scaled down by a transform — and `transform` does not change
+                        layout, so the scroll container saw a 2,200px child while only
+                        1,529px of it was on screen. Scrolling it ran a third of the
+                        way past the end into black. This box takes the DRAWN height,
+                        so the scroll range is exactly what is visible. */}
+                    <div className={styles.frameBox} style={{ width: paneW, height: drawnH }}>
                     <iframe
                       ref={(el) => {
                         frames.current[h.id] = el;
@@ -743,6 +768,7 @@ export const StageView = ({
                       }}
                       onLoad={() => onFrameLoad(h.id)}
                     />
+                    </div>
                     {p.status === "composing" && <div className={styles.composing}>composing</div>}
                   </div>
                 </article>

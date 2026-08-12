@@ -433,11 +433,24 @@
 }
 .paneTime[data-live="true"] { color: var(--text-signal); }
 
+/* Scrolls vertically when the page is taller than the pane, and does not otherwise —
+   `auto`, so a short page shows no scrollbar and the pane still reads as a page
+   rather than as a window onto one. Horizontal stays hidden: the page is scaled to
+   the pane's width exactly, so any sideways scroll would be rounding error. */
 .viewport {
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   border: var(--border-width) solid var(--border-default);
   background: var(--surface-page);
+}
+
+/* The scaled page's real footprint. Without it the scroll container measures the
+   iframe's LAYOUT height — which the transform never touched — and scrolls a third
+   of the way past the bottom of the page into black. */
+.frameBox {
+  position: relative;
+  overflow: hidden;
 }
 
 .frame {
