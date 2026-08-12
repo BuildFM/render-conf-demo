@@ -125,9 +125,24 @@ page now opens on a recipe.
 > And look what it had to build — this household just got a recipe on their home page.
 > Take away the one thing we actually learned about them, and they get the page
 > everybody with no history gets.
+
+**Glance back at move 0 if you can — it is the same dish, at the same size.**
+
+> Look familiar? That's the page I opened with. The one a person had to draw, because
+> the system knew nothing about anybody.
 >
 > The order is the whole design. The design system gets to say no first. The model
 > only ever chooses from what survived.
+
+*(This page looks thin next to the one before it. That is the point rather than a
+fault: there is nothing left to say about this household, so the page doesn't say
+much. Say so — it is the whole argument in one sentence.)*
+
+> ⚠ **Check before you use the callback.** With every lead gated out, the opening
+> block is whichever support block the model gives `hero` to — usually `RecipeCard`,
+> which is the same block and the same dish the hand-authored home page opens on. If
+> it came out on the comparison table instead, skip the callback and keep the
+> "everybody with no history" line, which is true either way.
 
 **Point at the rail** — `profile: withheld — facts overridden`.
 
