@@ -83,6 +83,17 @@ and this text is shown to an audience beside the data it came from.
 
 Write the salient inference as something they would recognise about themselves and
 would not have thought to say. Never a count.
+
+PLAIN ENGLISH, in both fields. Say it the way you would say it to somebody standing
+next to you in a kitchen: short common words, one clause where one will do, no
+metaphor, no wordplay, no rhythm, no sentence built so that it can be quoted. This
+text is read aloud beside the data it came from, and writing that draws attention to
+itself reads as a machine performing rather than a system being useful.
+
+  Good:  "They read the technique notes before cooking, and quit when the
+          ingredient list is long."
+  Bad:   "They circle a dish for weeks, then cook something else entirely."
+          — a line of prose. Say what they did.
 `;
 
 /** Routed through the Vercel AI Gateway: a plain "provider/model" string routes

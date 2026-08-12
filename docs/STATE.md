@@ -1246,6 +1246,21 @@ entirely, nothing here needs finishing first.**
   anything appended to a composed page inflates every frame in it. The vocabulary
   strip is kept out with `?strip=0` for exactly this reason. Whatever gets appended
   next has to do the same.
+- **A SENTENCE MUST BE WRITTEN IN ONE PLACE.** The recurring bug in this codebase is
+  prose assembled across the resolver/component boundary: the resolver writes a
+  fragment, the component's template writes the rest, and neither end is in a
+  position to check the two fit. It has produced "What is left of Pressed pork belly
+  becomes serves 6, which is 5 more than tonight needs", "…up to four days ahead. it
+  is better on day two., ahead of time.", and "White beans, long cooked feeds the
+  week". Swept 12 Aug: **resolvers emit values, components write sentences**, and the
+  only strings a resolver may hand over whole are authored editorial it did not
+  compose. Two live cases were left alone because they are grammatical for every
+  fixture — `Finish ${title}.` and `Make ${title}.` — and one, `${title} feeds the
+  week`, was cut because it was not.
+- **A template that embeds a fixture title inherits that title's punctuation and
+  number.** Recipe titles here carry commas ("White beans, long cooked") and plurals
+  ("Smashed potatoes"), so any sentence built around one has to survive both. Five of
+  seven make-ahead dishes broke the PrepSchedule headline before it was replaced.
 - **A hover state on anything that might be an anchor must state its own `color`.**
   `tokens.css` carries a global `a:hover { color: var(--link-hover) }`, and
   `--link-hover` is `--paper`. `Button` renders an `<a>` whenever it has an `href`, so

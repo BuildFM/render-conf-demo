@@ -323,8 +323,11 @@ export const resolveBlock = (
       const occ = ctx.occasion;
       return ok({
         sections,
+        /* Dashed, not a third comma. The occasion's label carries one of its own
+           ("dinner, eight people"), so the comma form piled three clauses into one
+           breath: "Everything for dinner, eight people, in 11 days." */
         standfirst: occ
-          ? `Everything for ${occ.occasion.label.toLowerCase()}, ${occ.daysUntil === 0 ? "today" : occ.daysUntil === 1 ? "tomorrow" : `in ${occ.daysUntil} days`}. Walk the shop in this order.`
+          ? `Everything for ${occ.occasion.label.toLowerCase()} — ${occ.daysUntil === 0 ? "today" : occ.daysUntil === 1 ? "tomorrow" : `in ${occ.daysUntil} days`}. Walk the shop in this order.`
           : undefined,
         treatment: block.treatment
       });
@@ -391,8 +394,21 @@ export const resolveBlock = (
             return merged;
           })()
         : days;
+      /* A HEADLINE, NOT A DISH TITLE WITH A VERB BOLTED ON.
+       *
+       * This was `${shared.title}\nfeeds the week`, which reads as a sentence and is
+       * only a sentence for some dishes. Recipe titles here carry their own commas
+       * and their own number, so the template produced "White beans, long cooked
+       * feeds the week" — a list, then a singular verb — and "Smashed potatoes feeds
+       * the week", which is simply wrong. Five of the seven make-ahead dishes came
+       * out badly, and one of them is on Twin B's page in the demo.
+       *
+       * The dish is not lost: it is what the photograph shows and what Sunday's task
+       * names. The headline's job is to say what the block IS, and the block is the
+       * week ahead. The occasion form was always fine — "Ahead of X" takes any noun
+       * phrase, which is why only one half of this needed changing. */
       return ok({
-        title: po ? `Ahead of\n${po.occasion.label.toLowerCase()}` : `${shared.title}\nfeeds the week`,
+        title: po ? `Ahead of\n${po.occasion.label.toLowerCase()}` : "The week\nahead",
         days: scheduled,
         /* The shared base is `aheads[0]` — the same dish the title names and the
            only day carrying an acid rule. Any other image would contradict the

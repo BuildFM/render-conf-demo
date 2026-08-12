@@ -326,10 +326,22 @@ page and the sentence have to be about the same thing or neither lands.`}
 UNDER 12 WORDS. It is the page explaining itself in the time it takes to read one
 line, so it has to be the truest thing you can say about them.
 
-  Good:  "You don't avoid dairy. You avoid dairy you can't set aside."
-  Good:  "Everything you keep has a step you can do on Sunday."
-  Good:  "Six attempts at one idea, and never once a cold pan."
+PLAIN ENGLISH, and this matters more than any of it. Say it the way you would say
+it to somebody standing next to you in a kitchen. Short, common words. One clause if
+one clause will do. No metaphor, no wordplay, no rhythm, no repeating a word for
+effect, no sentence built so that it can be quoted. If it sounds like a line from an
+advert, it is wrong. Writing that draws attention to itself reads as a machine
+performing, and the whole page is trying to be useful rather than clever.
 
+  Good:  "You read the technique notes before you cook, not after."
+  Good:  "You cook with dairy when it goes in at the end."
+  Good:  "You give up on long ingredient lists before you start."
+
+  Bad:   "You don't avoid dairy. You avoid dairy you can't set aside."
+          — clever. Two clauses doing a turn, built to be quoted. The plain
+            version is above and says the same thing.
+  Bad:   "Six attempts at one idea, and never once a cold pan."
+          — a line of poetry. Say what they did.
   Bad:   "Chicken under a brick is opened constantly but rarely cooked, while
           charred cabbage and beans are what they actually make."
           — third person, a readout about a user rather than a product speaking
