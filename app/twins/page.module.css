@@ -3,6 +3,13 @@
    paragraph would render each at ~560px and cost the comparison its legibility.
    Prose inside still holds its own measure — see `.lede` and `.aside`. */
 .sheet {
+  /* border-box, and it is load-bearing: this project has no global box-sizing reset
+     — `tokens.css` sets only radius and shadow on `*` — so content-box is in force
+     everywhere. A width AND horizontal padding on the same element then overflows by
+     exactly the padding, and the whole page scrolled sideways at 1180px. Nothing else
+     hits it: `.canvas` sets padding and no width, and the other sheets set a width and
+     no horizontal padding. */
+  box-sizing: border-box;
   width: min(100%, 1680px);
   margin: 0 auto;
   padding: var(--space-13) var(--inset-section) var(--space-11);
@@ -37,18 +44,30 @@
 .declared {
   margin: var(--space-7) 0 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 0;
   border-top: var(--border-width) solid var(--border-default);
+  border-bottom: var(--border-width) solid var(--border-faint);
 }
 
+/* LABEL ABOVE VALUE, not label-left and value-right.
+ *
+ * These were `justify-content: space-between`, which reads as a table row while the
+ * fields sit two or three across in a narrow column. This page is 1680px wide and
+ * puts all six in one row, so space-between opened a gap in the middle of each pair
+ * while the pairs themselves closed up against each other — "SIZE ______ 6 WEEKNIGHT
+ * MINUTES" reads as though the 6 belongs to the label on its right. The one thing
+ * this panel has to do is be boring and unambiguous, and it was neither.
+ *
+ * Stacking also fixes the overflow: the widest value wrapped to a second line and
+ * pushed out of the row it was ruled into.
+ */
 .pair {
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-5);
-  padding: var(--space-4) var(--space-3);
-  border-bottom: var(--border-width) solid var(--border-faint);
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5) var(--space-4) 0;
+  min-width: 0;
 }
 
 .pair dt {

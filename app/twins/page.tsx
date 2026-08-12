@@ -120,7 +120,7 @@ const TwinsPage = async ({
             </div>
             <div className={styles.pair}>
               <dt>pantry</dt>
-              <dd>{a.household.pantry.length} items, the same {a.household.pantry.length}</dd>
+              <dd>{a.household.pantry.length} items</dd>
             </div>
           </dl>
         </section>
