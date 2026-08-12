@@ -8,7 +8,7 @@ There are three fixture households with 90 days of generated cooking history eac
 (Twin A and Twin B) declare identical profile data and differ only in behaviour, so their pages
 come out different.
 
-Under every composed page is a **vocabulary strip**: all 16 blocks in three states — not eligible
+Under every composed page is a **vocabulary strip**: all 15 blocks in three states — not eligible
 (a gate said no, in code, with the failing condition printed), offered to the model but not chosen,
 and chosen. It is the quickest way to see what the model actually decided versus what the
 application decided for it.

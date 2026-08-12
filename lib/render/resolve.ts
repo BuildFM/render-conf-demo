@@ -346,22 +346,6 @@ export const resolveBlock = (
       }, matches.map((m) => m.recipe));
     }
 
-    case "SubstitutionTable": {
-      const r = rs[0];
-      if (!r) return fail("no recipe");
-      const have = ctx.pantry.map((p) => p.toLowerCase());
-      const gaps = (ctx.ingredients.get(r.id) ?? []).filter(
-        (i) => !have.some((h) => i.name.toLowerCase().includes(h) || h.includes(i.name.toLowerCase()))
-      );
-      if (!gaps.length) return fail("no gaps against this pantry");
-      const subs = editorial.substitutions as unknown as Record<string, string>;
-      const rows = gaps
-        .filter((g) => subs[g.name])
-        .map((g) => ({ wants: g.name, have: ctx.pantry[0] ?? "—", note: subs[g.name] }));
-      if (!rows.length) return fail("no substitutions authored for those gaps");
-      return ok({ rows, treatment: block.treatment }, [r]);
-    }
-
     case "PrepSchedule": {
       const aheads = rs.filter((r) => r.makeAhead);
       if (aheads.length < 2) return fail("needs two or more recipes with a make-ahead step");

@@ -576,17 +576,24 @@ the design system doing the work, and it is the thesis with a number attached.
   raised** — try `2` for a live density beat, not `8`. Deliberately left as it is:
   deriving those sentences from `maxBlocks` recomposes all three pages, and the
   learner's recipe-free page and the twins' divergence are what the demo rests on.
-- **`SubstitutionTable` is dead vocabulary**, same class as `StoryIntro`. It treats
-  every unmatched ingredient as substitutable, so its gap list is water, salt, pepper
-  and bay leaves and the authored substitutions never get a chance. Mark staples
-  non-substitutable, or cut it. It has never appeared on a page.
-  **Promoted 9 Aug from a wart to a decision that has to be made before recording.**
-  It used to fail invisibly; the strip now gives it a chip, and on the toggle beat
-  (`?facts=technique:0`) the model chooses it, it fails to resolve, and the
-  rail reads `blocks 2/3` with `dropped SubstitutionTable — no substitutions authored
-  for those gaps` underneath. That is a visible failure in the middle of move 2.
-  Cutting it takes the vocabulary to **15**, which is a number the talk says out loud
-  — so this is Brian's call, not a tidy-up.
+- ~~**`SubstitutionTable` is dead vocabulary**~~ **Cut 12 Aug.** It had two faults and
+  the second is the one that decided it. It never resolved reliably — `gaps` is "every
+  ingredient not matched against the pantry", which is dominated by staples nobody
+  authored a substitution for, so it resolved for only **6 of 12 recipes** and dropped
+  with `no substitutions authored for those gaps` on the rest. And when it DID resolve
+  it printed something false: every row read `have: ctx.pantry[0]`, the household's
+  first pantry item, whatever the row was about — "wants Butter, have Cannellini,
+  dried". A table asserting you can substitute dried beans for butter, emitted by the
+  APPLICATION, on a demo whose whole claim is that the architecture prevents exactly
+  that. Fixing it honestly meant authoring a real what-you-have-instead mapping for a
+  block that had never earned a page.
+  Removed: the manifest entry, the `ImprovisePath` assembly it was half of, the
+  resolver case, the registry entry, the component files, the `/kit` specimens and the
+  eleven authored substitutions in `editorial.json`. **The vocabulary is 15 and there
+  is one assembly.** `state.pantryGaps` is still computed and now gates nothing —
+  harmless, and the honest place to start if it ever comes back.
+  *(`docs/component-direction.md`, `docs/CONTENT-GAP.md` and `docs/react-handoff.md`
+  still list it. They are build-time catalogues, not live docs.)*
 - **The learner page is the only one with no photograph.** Deliberate, but check it
   on a real screen beside the twins. If it reads impoverished rather than austere,
   the answer is the fifth component held in reserve, not an image.

@@ -26,8 +26,7 @@ export const BLOCK_MANIFEST = {
   FromYourHistory: ["oneline"],
   SeasonalNote: ["oneline"],
   StoryIntro: ["full", "collapsed"],
-  TechniqueNote: ["full", "oneline"],
-  SubstitutionTable: ["full", "collapsed"]
+  TechniqueNote: ["full", "oneline"]
 } as const satisfies Record<string, readonly Treatment[]>
 
 /* Never offered to the model:

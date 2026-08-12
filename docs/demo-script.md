@@ -7,7 +7,7 @@ built the way it is; this file stays a script.
 **What it has to land:** a design system is what earns a model the right to compose an
 interface. Every move is one step of that, and no move is a feature tour.
 
-The through-line is the **vocabulary strip** — sixteen blocks, in three states. Moves
+The through-line is the **vocabulary strip** — fifteen blocks, in three states. Moves
 1 and 2 teach it in full; move 3 spends it, showing only the three counts under two
 real pages. **Pages carry the argument, instruments explain it.** If a move is all
 instrument, the room has stopped looking at design.
@@ -72,8 +72,8 @@ explained.
 
 **Scroll to the strip.**
 
-> This is the vocabulary. Sixteen blocks — everything this site is capable of putting
-> on a page. A person wrote those sixteen. The model cannot invent a seventeenth.
+> This is the vocabulary. Fifteen blocks — everything this site is capable of putting
+> on a page. A person wrote those fifteen. The model cannot invent a sixteenth.
 >
 > Three columns. Read the numbers.
 >
@@ -83,9 +83,9 @@ explained.
 **Read one chip in the first column out loud, verbatim.** "needs user dot expands
 technique equals true". The machine's own words beat any paraphrase.
 
-> Six it was shown and passed over. Three it used.
+> Five it was shown and passed over. Three it used.
 >
-> So of sixteen blocks, the model got a say over nine of them and used three. Those
+> So of fifteen blocks, the model got a say over eight of them and used three. Those
 > two columns on the right are the whole of its authority. Everything on the left had
 > already been decided.
 
@@ -111,7 +111,7 @@ count. Everything after this depends on the three states being understood.
 
 *(4–6s. Do not fill it with apology. The wait is proof it is happening.)*
 
-It lands. The columns visibly rebalance — **7 / 6 / 3 becomes 11 / 3 / 2** — and the
+It lands. The columns visibly rebalance — **7 / 5 / 3 becomes 11 / 1 / 3** — and the
 page now opens on a recipe.
 
 > Two different things just happened, and they are not the same kind of thing.
@@ -162,10 +162,13 @@ side, obviously not the same page.)*
 
 **Point at the line above the pages.**
 
-> They qualify for the same *number* of blocks — seven of sixteen each. Not the same
-> seven. Six of them differ.
+> They qualify for the same *number* of blocks — six of fifteen each. Not the same
+> six.
 >
 > And underneath each page is why: not what they told us, what they did.
+
+**Read the how-many-differ number off the screen, don't say one from here.** The page
+computes it live, and the model's support choices move it between runs.
 
 Optional, and the best answer to the question you will otherwise get in Q&A:
 
@@ -198,7 +201,7 @@ back.)*
 > fork is gone", because nobody wrote one. The vocabulary changed and the page
 > reorganised itself.
 
-**Then the thing worth waiting for — point at Twin A's `obligations 2 → 3`.**
+**If Twin A's `obligations` went UP, point at it — it is the best thing in the demo.**
 
 > And look: it didn't just lose a block. There are *more* allergy warnings on that
 > page than there were a second ago. Different dishes are on it now, and the warnings
@@ -209,10 +212,14 @@ back.)*
 
 Struck the wrong one? Click it again — it is a toggle and nothing is deleted.
 
-| What should move | vocabulary | and |
-|---|---|---|
-| Twin A | 7/16 → 6/15 | `obligations 2 → 3`, `blocks 3/3 → 4/4` |
-| Twin B | 7/16 → 7/15 | — |
+| What should move | vocabulary |
+|---|---|
+| Twin A | 6/15 → 5/14 |
+| Twin B | 6/15 → 6/14 |
+
+Twin A's `obligations` count often rises as well, because the dishes on the page
+change and the warnings follow the dishes. It does not do it every run — check the
+rail before you point at it.
 
 The learner is deliberately not on this board. Its page does not change when a block
 is struck — `blocks 3/3` before and after — so a third pane would sit perfectly still

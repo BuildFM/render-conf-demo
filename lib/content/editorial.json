@@ -310,19 +310,6 @@
       ]
     }
   },
-  "substitutions": {
-    "_": "What a gap can become. Authored, never generated — a wrong substitution is a ruined dinner, and this is exactly the class of fact the composer is not allowed to invent.",
-    "Pancetta, in a piece": "Anchovy and chilli in the same quantity of oil. Different route to the same depth, and the dish stops being about pork.",
-    "Cavolo nero": "Any dark brassica that holds its shape. Kale wants two more minutes, chard two fewer.",
-    "Savoy cabbage": "Hispi or pointed cabbage, cut the same way. Anything that gives you a flat cut face.",
-    "Pecorino Romano": "Parmesan works and is milder. Nothing non-dairy emulsifies this sauce — see the allergen notice.",
-    "Butter": "Olive oil, and finish with lemon rather than trying to replace the richness.",
-    "Sherry vinegar": "Red wine vinegar with a pinch of sugar, or cider vinegar on its own.",
-    "Quail, spatchcocked": "Poussin, halved. Same weight, same method, four minutes longer.",
-    "Cannellini, dried": "Any medium white bean. Tinned works and the liquid is worse — add a parmesan rind or accept a thinner broth.",
-    "Fennel seed": "Caraway, half the quantity. It is a different dish and a good one.",
-    "Capers": "Green olives, chopped, rinsed. Less sharp, so add lemon."
-  },
   "evidence": {
     "_": "One line per recipe when it appears as evidence under a principle: the tool that dish uses to solve the shared problem.",
     "041": "Weight",

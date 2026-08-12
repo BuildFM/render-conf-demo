@@ -14,7 +14,6 @@ import { ShoppingList } from "@/components/blocks/shopping-list"
 import { SiteChrome } from "@/components/blocks/site-chrome"
 import { SkillPrimer } from "@/components/blocks/skill-primer"
 import { StoryIntro } from "@/components/blocks/story-intro"
-import { SubstitutionTable } from "@/components/blocks/substitution-table"
 import { TechniqueNote } from "@/components/blocks/technique-note"
 import { TechniqueThread } from "@/components/blocks/technique-thread"
 import { TonightShortlist } from "@/components/blocks/tonight-shortlist"
@@ -121,23 +120,6 @@ const matches = [
   { recipe: brick, missing: ["Pancetta", "Savoy cabbage"] }
 ]
 
-const substitutions = [
-  {
-    wants: "Pecorino Romano",
-    have: "Parmesan",
-    note: "Less sharp and less salty. Add a third more, and hold back the salt in the water."
-  },
-  {
-    wants: "Double cream",
-    have: "Crème fraîche",
-    note: "Splits less at heat, and the sourness is welcome against the beans."
-  },
-  {
-    wants: "Pancetta",
-    have: "Smoked bacon",
-    note: "The smoke arrives whether you want it or not. Render it further to compensate."
-  }
-]
 
 const steps = [
   "Dry the surface. Wet food steams before it browns.",
@@ -202,7 +184,7 @@ export default async function KitPage() {
           <AllergenNotice
             allergen="Dairy"
             recipeTitle={cacio.title}
-            detail="Pecorino Romano is the sauce; there is no version of this dish without it. The substitution table is not a workaround for the allergy — it is for the second cook at the same table."
+            detail="Pecorino Romano is the sauce; there is no version of this dish without it. The fork is not a workaround for the allergy — it is for the second cook at the same table."
           />
         </Specimen>
 
@@ -486,13 +468,7 @@ export default async function KitPage() {
           />
         </Specimen>
 
-        <Specimen name="SubstitutionTable" treatment="full">
-          <SubstitutionTable rows={substitutions} treatment="full" />
-        </Specimen>
 
-        <Specimen name="SubstitutionTable" treatment="collapsed">
-          <SubstitutionTable rows={substitutions} treatment="collapsed" />
-        </Specimen>
 
         <Specimen name="ScalingControl" treatment="control · client component">
           <ScalingControl defaultYield={6} householdSize={4} />

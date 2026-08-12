@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "_": "The design system, as far as the model is concerned. It never sees CSS, tokens or markup \u2014 only this. Four kinds of statement: permissions (what MAY appear), obligations (what MUST), assemblies (what moves as one unit), and the content contract in slots. Read from disk on every request, never bundled \u2014 this file is edited live on stage.",
+  "_": "The design system, as far as the model is concerned. It never sees CSS, tokens or markup — only this. Four kinds of statement: permissions (what MAY appear), obligations (what MUST), assemblies (what moves as one unit), and the content contract in slots. Read from disk on every request, never bundled — this file is edited live on stage.",
   "invariants": [
     "SiteChrome is always present and always in the same position.",
     "Search is always reachable without scrolling.",
@@ -17,7 +17,7 @@
     {
       "name": "OccasionPlan",
       "label": "Occasion plan",
-      "intent": "A one-off occasion the household scheduled, sequenced backwards from its date for a guest count larger than the household. Not a weekly rhythm \u2014 it expires.",
+      "intent": "A one-off occasion the household scheduled, sequenced backwards from its date for a guest count larger than the household. Not a weekly rhythm — it expires.",
       "requires": [
         {
           "fact": "state.occasionPhase",
@@ -55,7 +55,7 @@
     {
       "name": "TechniqueThread",
       "label": "Technique thread",
-      "intent": "Every attempt at one technique, in order, with what changed each time and the one variable not yet tried. For someone learning a move rather than collecting dishes. When this is on a page it IS the page \u2014 it takes the Display XL and everything else is support.",
+      "intent": "Every attempt at one technique, in order, with what changed each time and the one variable not yet tried. For someone learning a move rather than collecting dishes. When this is on a page it IS the page — it takes the Display XL and everything else is support.",
       "requires": [
         {
           "fact": "user.techniqueRepeats",
@@ -150,7 +150,7 @@
         "oneline"
       ],
       "slots": {
-        "requires": "recipe: exactly 1 recipeId. Use \"hero\" for the one dish this page is about \u2014 it takes the whole top of the page and claims the page's single Display XL, so a page with a hero may not also run TechniqueThread at full."
+        "requires": "recipe: exactly 1 recipeId. Use \"hero\" for the one dish this page is about — it takes the whole top of the page and claims the page's single Display XL, so a page with a hero may not also run TechniqueThread at full."
       },
       "role": "support",
       "carriesPhoto": true,
@@ -498,33 +498,6 @@
       ]
     },
     {
-      "name": "SubstitutionTable",
-      "label": "Substitutions",
-      "intent": "The gap between what a dish wants and what is available.",
-      "requires": [
-        {
-          "fact": "state.pantryGaps",
-          "op": ">=",
-          "value": 1
-        }
-      ],
-      "adjacency": {
-        "maxPerPage": 1
-      },
-      "treatments": [
-        "full",
-        "collapsed"
-      ],
-      "slots": {
-        "requires": "rows: exactly 1 recipeId \u2014 the dish with the gap."
-      },
-      "role": "support",
-      "spans": [
-        "full",
-        "half"
-      ]
-    },
-    {
       "name": "TechniqueNote",
       "label": "Technique note",
       "intent": "Why a step works.",
@@ -597,13 +570,6 @@
   ],
   "assemblies": [
     {
-      "name": "ImprovisePath",
-      "members": [
-        "PantryMatch",
-        "SubstitutionTable"
-      ]
-    },
-    {
       "name": "PlanTheWeek",
       "members": [
         "PrepSchedule",
@@ -611,5 +577,5 @@
       ]
     }
   ],
-  "_role": "Some blocks can be what a page is ABOUT; the rest can only support one. A comparison table is useful on a page about choosing and is never the reason for the page. blocks[0] must be a lead, or a support block at \"hero\" \u2014 which is the treatment that makes a block the subject."
+  "_role": "Some blocks can be what a page is ABOUT; the rest can only support one. A comparison table is useful on a page about choosing and is never the reason for the page. blocks[0] must be a lead, or a support block at \"hero\" — which is the treatment that makes a block the subject."
 }
