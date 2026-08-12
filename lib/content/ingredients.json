@@ -1,5 +1,5 @@
 {
-  "_": "Keyed by recipe id. Sections are the order you walk a shop, which is the order ShoppingList groups by. Counts here are the source of truth for Recipe.ingredientCount — scripts/check-content.mjs enforces that they agree.",
+  "_": "Keyed by recipe id. Sections are the order you walk a shop, which is the order ShoppingList groups by. Counts here are the source of truth for Recipe.ingredientCount — scripts/check-content.mjs enforces that they agree. `tap: true` marks an ingredient that comes out of a tap: it is a real part of the recipe and it is not a thing you buy, so the shopping list leaves it out.",
   "041": [
     {
       "name": "Chicken, spatchcocked",
@@ -184,7 +184,8 @@
     {
       "name": "Water",
       "qty": "400 ml",
-      "section": "Store cupboard"
+      "section": "Store cupboard",
+      "tap": true
     }
   ],
   "035": [

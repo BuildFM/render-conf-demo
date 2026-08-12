@@ -24,7 +24,14 @@ type Fork = {
   branches: [Branch, Branch];
 };
 
-export type Ingredient = { name: string; qty: string; section: string };
+export type Ingredient = {
+  name: string;
+  qty: string;
+  section: string;
+  /** Comes out of a tap. A real part of the recipe and not a thing you buy, so the
+   *  shopping list leaves it out — see the filter in the ShoppingList case. */
+  tap?: boolean;
+};
 
 export type Resolved =
   /** `recipeIds` is what the block ACTUALLY renders, which is not always what the
@@ -283,6 +290,14 @@ export const resolveBlock = (
       const bySection = new Map<string, { name: string; qty: string }[]>();
       for (const r of rs) {
         for (const i of ctx.ingredients.get(r.id) ?? []) {
+          /* Tap ingredients are not shopping. "Water — 400 ml" is a true line about
+             the focaccia and a daft line on a list you take to a shop, and the room
+             notices: nobody blames the model for it, because the model did not build
+             this list, but somebody does ask about it. Filtered HERE rather than
+             dropped from the fixture, so the recipe keeps its real ingredients — and
+             filtered here only, because `state.pantryGaps` gates SubstitutionTable and
+             quietly changing what counts as a gap changes what is eligible. */
+          if (i.tap) continue;
           bySection.set(i.section, [...(bySection.get(i.section) ?? []), { name: i.name, qty: i.qty }]);
         }
       }
