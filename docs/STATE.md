@@ -297,8 +297,9 @@ a vocabulary instead of a blank.
 
 ### `/stage` — the split screen
 
-Manifest left, three composed households right. Edit, save, all three recompose.
-Stills in `docs/stills/`.
+Manifest left, the two composed twins right. Edit, save, both recompose. *(It was
+three households until 12 Aug — see that entry for why the learner came off the
+board.)*
 
 Laid out to a **fixed 2560×1440 board** (27" Studio Display, 16:9) and scaled to fit
 whatever window it is in, so what you see while working is what records. Every size
