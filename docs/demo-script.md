@@ -1,8 +1,16 @@
-# The demo, as performed — 7 minutes, four moves
+# How this demo was performed — 7 minutes, four moves
 
-The run sheet for the live demo inside the RenderATL talk: what is on screen, what you
-do, and what you say. `docs/STATE.md` is authority on what the code does and why it is
-built the way it is; this file stays a script.
+A record of the live demo given inside the RenderATL talk: what was on screen, what
+was clicked, and what was said over it. It is kept here because the reasons behind the
+sequence are the most useful thing in the repo for anyone building something similar —
+why the pages carry the argument and the instruments only explain it, why a move that
+is all diagnostics loses a room, and where each beat was measured rather than guessed.
+
+If you are reading this to understand the system rather than to run it,
+`docs/STATE.md` is the authority on what the code does and why.
+
+Written in the second person because it started life as a run sheet, and reads better
+left that way.
 
 **What it has to land:** a design system is what earns a model the right to compose an
 interface. Every move is one step of that, and no move is a feature tour.

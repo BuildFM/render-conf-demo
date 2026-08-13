@@ -1,8 +1,9 @@
 # Mise — where this is, 12 Aug 2026
 
 **Read this first, from a cold start.** It assumes you know nothing about the
-project. It is the state of play, not a spec — the specs live in the vault at
-`~/Documents/_Obsidian/brain/meta/plans/`.
+project. It is the state of play and an engineering log: what the code does, and
+why each decision was made — including the ones that were wrong first. The
+failures are kept deliberately. They are the part worth reading.
 
 ---
 
@@ -27,26 +28,14 @@ rather than on a page.
 **It is a proof of concept built in a couple of days**, not a product. Do not
 over-engineer it.
 
-### The documents, and which is authoritative
+### The two documents here
 
 | Document | Authority on |
 |---|---|
-| **This file** | the live state of the code |
-| `~/Documents/_Obsidian/brain/domains/business/renderatl-2026-realtime-uis-talk.md` | the talk as a performance — beats, timings, lines |
-| `…/meta/plans/2026-07-26-realtime-ui-demo.md` | the build spec — what the demo must prove and why |
-| `…/meta/plans/2026-07-26-demo-design-brief.md` | the visual system and the manifest's contents |
-| `…/meta/plans/2026-08-04-mise-implementation-plan.md` | stack and build order |
-| `…/meta/plans/2026-08-06-occasion-beat.md` | the occasion beat — why it is a form and not a prompt |
-| `…/outputs/renderatl-2026-talk-script.md` | the spoken script |
-| `docs/component-direction.md`, `docs/react-handoff.md` | the component catalogue |
+| **This file** | what the code does, and why |
+| `docs/demo-script.md` | how the demo was performed — the sequence, and the reasoning behind it |
 
-Where this file disagrees with a plan about *what the code does*, this file wins.
-Where a plan disagrees with this file about *intent*, the plan wins.
-
-**The vault has its own operating rules** (`~/Documents/_Obsidian/brain/CLAUDE.md`)
-— notably: never write to `positions/` without approval, and never commit in a
-repository other than the vault. Work here is left in the working tree for Brian
-to review and commit.
+The build specs, the design brief and the spoken talk live outside this repo.
 
 ---
 
@@ -592,8 +581,6 @@ the design system doing the work, and it is the thesis with a number attached.
   eleven authored substitutions in `editorial.json`. **The vocabulary is 15 and there
   is one assembly.** `state.pantryGaps` is still computed and now gates nothing —
   harmless, and the honest place to start if it ever comes back.
-  *(`docs/component-direction.md`, `docs/CONTENT-GAP.md` and `docs/react-handoff.md`
-  still list it. They are build-time catalogues, not live docs.)*
 - **The learner page is the only one with no photograph.** Deliberate, but check it
   on a real screen beside the twins. If it reads impoverished rather than austere,
   the answer is the fifth component held in reserve, not an image.

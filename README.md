@@ -13,8 +13,10 @@ Under every composed page is a **vocabulary strip**: all 15 blocks in three stat
 and chosen. It is the quickest way to see what the model actually decided versus what the
 application decided for it.
 
-`docs/demo-script.md` is the run sheet for the talk. `docs/STATE.md` is the long-form state of the
-project and explains why most things are the way they are.
+**If you are here to read rather than to run it**, the two documents worth your time are
+`docs/STATE.md` — an engineering log of what the code does and why, including the decisions that
+were wrong first — and `docs/demo-script.md`, which is how the demo was performed and why it is
+sequenced that way. The comments in the files listed under *Key files* below carry the rest.
 
 ## Requirements
 
